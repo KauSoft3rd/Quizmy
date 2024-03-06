@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "bulid": "webpack",
     "start": "nodemon --exec babel-node index.js"
   },
   "author": "",
