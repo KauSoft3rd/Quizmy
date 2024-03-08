@@ -1,4 +1,6 @@
-import express from 'express'
+// import express from 'express'
+// const nodeExternals = require("webpack-node-externals");
+const express = require('express')
 
 const app = express()
 const port = 3000
