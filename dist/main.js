@@ -1,0 +1,1 @@
+(()=>{var e,r={252:e=>{"use strict";e.exports=require("express")}},o={};(e=function e(t){var n=o[t];if(void 0!==n)return n.exports;var s=o[t]={exports:{}};return r[t](s,s.exports,e),s.exports}(252)()).get("/",(function(e,r){r.send("Hello World")})),e.listen(3e3,(function(){console.log("Example app listening on port ".concat(3e3))}))})();
