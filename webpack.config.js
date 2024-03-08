@@ -1,8 +1,8 @@
 // ./webpack.config.js
-import nodeExternals from "webpack-node-externals";
-import path from "path";
+const nodeExternals = require("webpack-node-externals");
+const path = require("path");
 
-export default {
+module.exports = {
     mode: "development",
     context: __dirname + '/src',
     entry: {
@@ -14,16 +14,16 @@ export default {
     },
     module: {
         rules: [
-            {
-                test: /\.js$/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ["@babel/preset-env"],
-                    },
-                },
-                exclude: /node_modules/,
+        {
+            test: /\.js$/,
+            use: {
+            loader: "babel-loader",
+            options: {
+                presets: ["@babel/preset-env"],
             },
+            },
+            exclude: /node_modules/,
+        },
         ],
     },
     target: "node",
@@ -31,4 +31,4 @@ export default {
         node: true,
     },
     externals: [nodeExternals()],
-};
+    };
