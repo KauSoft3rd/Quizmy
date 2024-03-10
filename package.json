@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "babel": {
+    "presets" : ["@babel/env"]
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "nodemon --exec babel-node index.js",
     "start:dist": "webpack --mode production & node ./dist/main.js",
     "start": "node main.js",
-    "build": "webpack --mode production"
+    "build": "babel-node index.js & webpack --mode production"
   },
   "author": "",
   "license": "ISC",
