@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "babel": {
-    "presets" : ["@babel/env"]
+    "presets": [
+      "@babel/env"
+    ]
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -17,7 +19,10 @@
   "license": "ISC",
   "dependencies": {
     "babel-loader": "^9.1.3",
-    "express": "^4.18.3"
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.3",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
