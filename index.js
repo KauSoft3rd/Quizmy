@@ -2,6 +2,7 @@ import express from 'express';
 import { healthRoute } from './src/routes/health.router';
 import { database } from './src/config/database';
 import { newsRouter } from './src/routes/news.router';
+import { usersRouter } from './src/routes/users.router';
 
 const app = express();
 const port = 3000;
@@ -22,3 +23,4 @@ app.get('/', function (req, res) {
 
 app.use('/news', newsRouter);
 app.use('/health', healthRoute);
+app.use('/mypage', usersRouter);
