@@ -1,44 +1,35 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
+import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
 
-
-
-const getHTML = async () => {
-    try {
-        return await axios.get("https://finance.naver.com/news/news_list.naver?mode=LSS2D&section_id=101&section_id2=258");
-    } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
-    }
-}
-
-const parsing = async () => {
-    const html = await getHTML();
-    const $ = cheerio.load(html.data);
-    const $titlist = $("newsList top");
-    console.log($titlist);
-    let information = [];
-    $titlist.each((idx, node) => {
-        const title = $(node).find(".news_tit").text();  
-        informations.push({
-            title: $(node).find(".news_tit:eq(0)").text(), // 뉴스제목 크롤링
-            press: $(node).find(".info_group > a").text(), // 출판사 크롤링
-            time: $(node).find(".info_group > span").text(), // 기사 작성 시간 크롤링
-            contents: $(node).find(".dsc_wrap").text(), // 기사 내용 크롤링
-        })
-        console.log(informations);
-    });
-}
-
-
+/*
+API 1 : 네이버페이 증권 사이트의 주요 뉴스 크롤링 API
+반환결과 : [ { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }, ]
+*/
 
 export const getNews = async (req, res, next) => {
     try {
-        parsing();
-        return res.send(response(status.SUCCESS));
-    } catch (error) {
-        console.log(error);
+        let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
+        { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
+        let encodedData = iconv.decode(html.data, "EUC-KR");
+        let $ = cheerio.load(encodedData);
+        let newsData = $('.newsList .block1');
+
+        const newsList = [];
+
+        newsData.each((idx, node) => {
+            let title = $(node).find('.articleSubject a').text().trim();
+            let company = $(node).find('.articleSummary .press').text().trim();
+            let link = $(node).find('.articleSubject a').attr('href');
+            let date = $(node).find('.articleSummary .wdate').text().trim();
+            let img = $(node).find('.thumb a img').attr('src');
+
+            newsList.push({ title, company, link, date, img });
+        })
+        return res.send(response(status.SUCCESS, newsList));
+    } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
 }
