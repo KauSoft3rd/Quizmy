@@ -1,9 +1,12 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import { healthRoute } from './src/routes/health.router';
 import { database } from './src/config/database';
 import { newsRouter } from './src/routes/news.router';
 import { usersRouter } from './src/routes/users.router';
 import { loginRouter } from './src/routes/login.router';
+
+dotenv.config();
 
 const app = express();
 const port = 3000;
