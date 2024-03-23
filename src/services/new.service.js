@@ -1,8 +1,3 @@
-import axios from 'axios';
-import cheerio from 'cheerio';
-import iconv from 'iconv-lite';
-import { response } from '../config/response';
-import { status } from '../config/response.status';
 import { database } from '../config/database';
 
 /*
@@ -25,13 +20,7 @@ Service 2 : 북마크에 존재하는 기사인지 확인하는 서비스
 */
 
 export const getBookmarkNewsDB = () => {
-    return new Promise((resolve, reject) => {
-        database.query('SELECT link from News', (error, rows, fields) => {
-            if (error) reject(error);
-            const links = rows.map(row => row.link);
-            resolve(links);
-        });
-    });
+
 };
 
 /*
