@@ -68,8 +68,13 @@ export const logoutUser = async (req, res) => {
 };
 
 // 레벨테스트
-export const levelTest = (req, res)=>{
+export const levelTest = async (req, res)=>{
     console.log("level test");
     console.log("body:", req.body);
+    const accessToken = req.headers.authorization;
+    const userinfo = await LoginService.getUserInfo(accessToken);
+
+    // return res.send(response(status.SUCCESS, await LoginService.levelTest(req.body)));
+    return res.send(response(status.SUCCESS, await LoginService.levelTest(userinfo.id, req.body.point)));
 
 }

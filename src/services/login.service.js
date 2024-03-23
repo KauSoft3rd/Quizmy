@@ -120,9 +120,14 @@ export const userLogin = async (accessToken, profile) => {
     }
 }
 
-export const levelTest = (req, res)=>{
+export const levelTest = async (user_id, point)=>{
   try {
+    console.log("유저: ", user_id); 
+    console.log("point: ", point);
 
+    const userspec = await LoginDao.levelTest(user_id, point);
+
+    return userspec;
   } catch (error) {
 
   }

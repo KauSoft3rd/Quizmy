@@ -1,6 +1,6 @@
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { finishKakaoLogin, getUserInfo, logoutUser, postLevel, startKakaoLogin } from "../controllers/login.controller";
+import { finishKakaoLogin, getUserInfo, levelTest, logoutUser, startKakaoLogin } from "../controllers/login.controller";
 
 export const loginRouter = express.Router();
 
@@ -17,4 +17,4 @@ loginRouter.get('/me', getUserInfo);
 loginRouter.get('/logout', logoutUser);
 
 // 레벨테스트
-loginRouter.post('/level', asyncHandler(postLevel));
+loginRouter.post('/level', asyncHandler(levelTest));
