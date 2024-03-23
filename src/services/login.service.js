@@ -1,7 +1,43 @@
 import axios from 'axios';
+import * as LoginDao from '../models/login.dao.js';
 
 // 토큰 받기
-export const getKakaoAccessToken = async (reqcode) => {
+export const getKakaoAccessTokenAndProfile = async (code) => {
+  try {
+      // 카카오에서 액세스 토큰 가져오기
+      const tokenResponse = await axios.post('https://kauth.kakao.com/oauth/token', null, {
+          params: {
+              grant_type: 'authorization_code',
+              client_id: process.env.KAKAO_ID,
+              redirect_uri: process.env.REDIRECT_URL,
+              code: code,
+          },
+      });
+
+      const accessToken = tokenResponse.data.access_token;
+
+      console.log('accessToken: ', accessToken);
+
+      // 액세스 토큰을 사용하여 사용자 프로필 가져오기
+      const profile = await getUserInfo(accessToken);
+
+      // 필요한 정보만 추출하여 반환
+      return {
+          accessToken,
+          profile: {
+              id: profile.id,
+              email: profile.kakao_account.email,
+              nickname: profile.kakao_account.profile.nickname,
+              profile_image: profile.kakao_account.profile.profile_image_url
+          },
+      };
+  } catch (error) {
+      console.error('Error getting Kakao access token and profile:', error);
+      throw error;
+  }
+};
+
+/*export const getKakaoAccessToken = async (reqcode) => {
     const baseUrl = "https://kauth.kakao.com/oauth/token";
     const config = {
       client_id: process.env.KAKAO_ID,
@@ -19,9 +55,21 @@ export const getKakaoAccessToken = async (reqcode) => {
       },
     });
     const json = await kakaoTokenRequest.json();
-    console.log(json);
-    return JSON.stringify(json); // 프론트엔드에서 확인용
-};
+    const userinfo = await getUserInfo(json.access_token);
+    const usercheck = await LoginDao.userCheck(userinfo.id);
+    // 유저 있음
+    if (usercheck) {
+      await LoginDao.updateAccessToken(profile.id, accessToken);
+      return { "user_id": existingUser.id };
+    } else { 
+      const userId = await LoginDao.userlogin();
+
+    }
+    // const usertocken = await LoginDao.userlogin(json.access_token);
+
+    console.log('json: ', json.access_token);
+    return json; // 프론트엔드에서 확인용
+};*/
 
 // 유저 정보 받기
 export const getUserInfo = async (accessToken) => {
@@ -54,3 +102,28 @@ export const logoutFromKakao = async (accessToken) => {
         throw error;
     }
 };
+
+// DB에 유저 정보 등록
+export const userLogin = async (accessToken, profile) => {
+  // const userinfo = await getUserInfo(accessToken);
+  console.log('profile.id: ', profile.id);
+  const usercheck = await LoginDao.userCheck(profile.id);
+    // 유저 있음
+    if (usercheck) {
+      const existingUser = await LoginDao.updateAccessToken(profile.id, accessToken);
+      console("user_id", existingUser.id);
+      return { "user_id": existingUser.id };
+    } else { 
+      const userId = await LoginDao.userlogin(accessToken, profile);
+      console.log('userId: ', userId);
+      return userId;
+    }
+}
+
+export const levelTest = (req, res)=>{
+  try {
+
+  } catch (error) {
+
+  }
+}
