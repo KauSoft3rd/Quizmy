@@ -111,8 +111,8 @@ export const userLogin = async (accessToken, profile) => {
     // 유저 있음
     if (usercheck) {
       const existingUser = await LoginDao.updateAccessToken(profile.id, accessToken);
-      console("user_id", existingUser.id);
-      return { "user_id": existingUser.id };
+      console.log("affectedRows: ", existingUser);
+      return { "affectedRows": existingUser };
     } else { 
       const userId = await LoginDao.userlogin(accessToken, profile);
       console.log('userId: ', userId);
