@@ -21,15 +21,16 @@ export const startKakaoLogin = (req, res) => {
 // 콜백 
 export const finishKakaoLogin = async (req, res) => {
     try {
-        const { KAKAO_ID, KAKAO_SECRET, REDIRECT_URL } = process.env;
-        console.log("KAKAO_ID, KAKAO_SECRET, REDIRECT_URL", KAKAO_ID, KAKAO_SECRET, REDIRECT_URL);
         const code = req.query.code;
-        const tokenData = await LoginService.getKakaoAccessToken(req.query.code);
-
-        res.send(tokenData);
+        // const tokenData = await LoginService.getKakaoAccessToken(code);
+        const { accessToken, profile } = await LoginService.getKakaoAccessTokenAndProfile(code);
+      
+        const loginResult = await LoginService.userLogin(accessToken, profile);
+        
+        return res.send(response(status.SUCCESS, accessToken));
     } catch (error) {
         console.error('Error during Kakao login:', error);
-        res.status(error.response?.status || 500).json({ message: error.message });
+        return res.send(response(status.BAD_REQUEST));
     }
 };
 
@@ -41,7 +42,7 @@ export const getUserInfo = async (req, res) => {
         console.log("getUserInfoService(accessToken): ", LoginService.getUserInfo(accessToken));
         return res.send(response(status.SUCCESS, await LoginService.getUserInfo(accessToken)));
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+      return res.send(response(status.BAD_REQUEST));
     }
 };    
 
@@ -49,22 +50,26 @@ export const getUserInfo = async (req, res) => {
 export const logoutUser = async (req, res) => {
     try {
       const accessToken = req.headers.authorization; // "Bearer YOUR_ACCESS_TOKEN" 형식으로 전달된 토큰에서 실제 토큰 값만 추출
-      const response = await LoginService.logoutFromKakao(accessToken);
+      const logoutId = await LoginService.logoutFromKakao(accessToken);
       /*axios.post('https://kapi.kakao.com/v1/user/logout', {}, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },*/
       //});
 
-      console.log("response.data: ", response);
-      return res.status(200).json({ message: 'Successfully logged out', data: response });
+      // db토큰 지우기
+
+      console.log("response.data: ", logoutId);
+      return res.send(response(status.SUCCESS, logoutId)); // 로그아웃 유저 일련번호 출력
     } catch (error) {
       console.error('Logout Error:', error);
-      return res.status(error.response?.status || 500).json({ message: error.message });
+      return res.send(response(status.BAD_REQUEST));
     }
 };
 
 // 레벨테스트
-export const postLevel = (req, res)=>{
+export const levelTest = (req, res)=>{
+    console.log("level test");
+    console.log("body:", req.body);
 
 }
