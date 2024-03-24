@@ -77,7 +77,23 @@ export const deleteBookmark = async (req, res, next) => {
 }
 
 /*
-API 4 : 뉴스 메인화면 기사 제공 API
+API 4 : 사용자의 북마크 조회
+요청형식 : 
+반환결과 : { 뉴스 링크 }
+*/
+
+export const getBookmarkNews = async (req, res, next) => {
+    try {
+        const { user_id } = req.body;
+        const bookmarkList = await getBookmarkNewsDB(user_id); // 사용자의 북마크 목록을 조회
+        return res.send(response(status.SUCCESS, bookmarkList));
+    } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 5 : 뉴스 메인화면 기사 제공 API
 요청형식 : 
 반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
 */
