@@ -3,7 +3,7 @@ import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getBookmarkNewsDB, postBookmarkDao } from '../models/news.dao';
+import { getBookmarkNewsDB, postBookmarkDao, deleteBookmarkDao } from '../models/news.dao';
 import { calculateDate } from '../services/new.service';
 
 /*
@@ -22,17 +22,20 @@ export const getNews = async (req, res, next) => {
 
         const newsList = [];
         const nowDate = new Date();
-        const bookmarkList = await getBookmarkNewsDB(user_id);
+        const bookmarkList = await getBookmarkNewsDB(user_id); // 사용자의 북마크 목록을 조회
 
         newsData.each((idx, node) => {
             let title = $(node).find('.articleSubject a').text().trim();
             let company = $(node).find('.articleSummary .press').text().trim();
             let link = $(node).find('.articleSubject a').attr('href');
+            let article_id = link.match(/article_id=([^&]+)/)[1];
+            let office_id = link.match(/office_id=([^&]+)/)[1];
+            let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
             let date = new Date($(node).find('.articleSummary .wdate').text().trim());
             let img = $(node).find('.thumb a img').attr('src');
             let timeDiff = calculateDate(date, nowDate);
-            let check = bookmarkList.includes(link);
-            newsList.push({ title, company, link, date: timeDiff, img, check });
+            let check = bookmarkList.some(item => item.link === newsLink);
+            newsList.push({ title, company, newsLink, date: timeDiff, img, check });
         });
 
         return res.send(response(status.SUCCESS, newsList));
@@ -50,8 +53,8 @@ API 2 : 뉴스 북마크 추가 API
 export const postBookmark = async (req, res, next) => {
     try {
         const { user_id, link } = req.body;
-        postBookmarkDao(user_id, link);
-        return res.send(response(status.SUCCESS));
+        await postBookmarkDao(user_id, link);
+        return res.send(response(status.SUCCESS, "뉴스가 북마크에 추가되었습니다."));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
@@ -65,7 +68,9 @@ API 3 : 뉴스 북마크 제거 API
 
 export const deleteBookmark = async (req, res, next) => {
     try {
-        return res.send(response(status.SUCCESS));
+        const { user_id, link } = req.body;
+        await deleteBookmarkDao(user_id, link);
+        return res.send(response(status.SUCCESS, "뉴스가 북마크에서 삭제되었습니다."));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
@@ -79,6 +84,7 @@ API 4 : 뉴스 메인화면 기사 제공 API
 
 export const getMainNews = async (req, res, next) => {
     try {
+        const { user_id } = req.body;
         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
         let encodedData = iconv.decode(html.data, "EUC-KR");
@@ -88,17 +94,21 @@ export const getMainNews = async (req, res, next) => {
 
         let date = new Date(newsData.find('.articleSummary .wdate').text().trim());
         let timeDiff = calculateDate(date, nowDate);
-        const bookmarkList = await getBookmarkNewsDB(); // refactoring 가능 ( 최적화 문제 )
+        const bookmarkList = await getBookmarkNewsDB(user_id); // refactoring 가능 ( 최적화 문제 )
 
         let title = newsData.find('.articleSubject a').text().trim();
         let company = newsData.find('.articleSummary .press').text().trim();
         let link = newsData.find('.articleSubject a').attr('href');
+        let article_id = link.match(/article_id=([^&]+)/)[1];
+        let office_id = link.match(/office_id=([^&]+)/)[1];
+        let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
         let img = newsData.find('.thumb a img').attr('src');
-        let check = bookmarkList.includes(link);
+        let check = bookmarkList.some(item => item.link === newsLink);
+
         let mainNews = {
             title: title,
             company: company,
-            link: link,
+            link: newsLink,
             date: timeDiff,
             img: img,
             check: check

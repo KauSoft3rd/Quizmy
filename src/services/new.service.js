@@ -1,5 +1,3 @@
-import { database } from '../config/database';
-
 /*
 Service 1 : 시간차이를 반환하는 서비스
 */
