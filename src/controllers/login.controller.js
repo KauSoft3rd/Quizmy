@@ -15,7 +15,8 @@ export const startKakaoLogin = (req, res) => {
   
     const finalUrl = `${baseUrl}?${params}`;
     console.log(finalUrl);
-    return res.redirect(finalUrl);
+    return res.send(response(status.SUCCESS, finalUrl));
+    // return res.redirect(finalUrl);
 };
 
 // 콜백 
@@ -29,7 +30,7 @@ export const finishKakaoLogin = async (req, res) => {
         
         return res.send(response(status.SUCCESS, accessToken));
     } catch (error) {
-        console.error('Error during Kakao login:', error);
+        console.error('Error during Kakao login callback:', error);
         return res.send(response(status.BAD_REQUEST));
     }
 };
