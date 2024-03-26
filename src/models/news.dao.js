@@ -12,10 +12,10 @@ export const getBookmarkNewsDB = async (user_id) => {
     }
 };
 
-export const postBookmarkDao = async (user_id, link) => {
+export const postBookmarkDao = async (user_id, link, img) => {
     try {
         const db = await pool.getConnection(); // db와 연결
-        await db.query(postBookmarkSql, [user_id, link]); // 데이터 삽입 쿼리 수행
+        await db.query(postBookmarkSql, [user_id, link, img]); // 데이터 삽입 쿼리 수행
         db.release(); // 연결 끊기
     } catch ( error ) { 
         return error;

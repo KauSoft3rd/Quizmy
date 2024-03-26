@@ -52,8 +52,8 @@ API 2 : 뉴스 북마크 추가 API
 
 export const postBookmark = async (req, res, next) => {
     try {
-        const { user_id, link } = req.body;
-        await postBookmarkDao(user_id, link);
+        const { user_id, link, img } = req.body;
+        await postBookmarkDao(user_id, link, img);
         return res.send(response(status.SUCCESS, "뉴스가 북마크에 추가되었습니다."));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
