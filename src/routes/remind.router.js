@@ -1,6 +1,9 @@
 import express from 'express';
-import { getRemindQuiz } from "../middleware/remind.middleware";
+import { getRemindQuizMiddleware } from "../middleware/remind.middleware";
+import { getRemindTotal, getRemindToday } from '../controllers/remind.controller';
 
 export const remindRouter = express.Router();
 
-remindRouter.get('/', getRemindQuiz);
+remindRouter.get('/', getRemindQuizMiddleware);
+remindRouter.get('/acc', getRemindTotal);
+remindRouter.get('/today', getRemindToday);
