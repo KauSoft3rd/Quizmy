@@ -3,7 +3,7 @@ import { status } from "../../src/config/response.status.js";
 import * as LoginService from '../services/login.service.js';
 
 // 로그인
-export const startKakaoLogin = (req, res) => {
+/*export const startKakaoLogin = (req, res) => {
     const baseUrl = "https://kauth.kakao.com/oauth/authorize";
     const config = {
       client_id: process.env.KAKAO_ID,
@@ -17,10 +17,10 @@ export const startKakaoLogin = (req, res) => {
     console.log(finalUrl);
     return res.send(response(status.SUCCESS, finalUrl));
     // return res.redirect(finalUrl);
-};
+};*/
 
 // 콜백 
-export const finishKakaoLogin = async (req, res) => {
+/*export const finishKakaoLogin = async (req, res) => {
     try {
         const code = req.query.code;
         // const tokenData = await LoginService.getKakaoAccessToken(code);
@@ -34,10 +34,31 @@ export const finishKakaoLogin = async (req, res) => {
         return res.send(response(status.BAD_REQUEST));
     }
 };
+*/
+
+// 로그인
+export const kakaoLogin = async (req, res) => {
+    try {
+        // console.log('req.headers.authorization: ', req.headers.authorization);
+        const kakaoToken = req.headers.authorization; // 헤더에서 액세스 토큰을 받아옵니다.
+        // const headers = req.headers["authorization"];
+        // console.log("headers: ", headers);
+        // const kakaoToken = headers.split(" ")[1];
+        // console.log('kakaoToken: ', kakaoToken);
+        // const kakaoToken = '3nhzPNoCgSJkphXrFru9E8FShDxMKpvRRJsKKiWPAAABjn6FcDu2W8wW6V7rJg';
+
+        // console.log("signInKakao(accessToken): ", LoginService.signInKakao(kakaoToken));
+        return res.send(response(status.SUCCESS, await LoginService.signInKakao(kakaoToken)));
+    } catch (error) {
+      console.log('error: ', error);
+        return res.send(response(status.BAD_REQUEST));
+    }
+};    
 
 // 사용자 정보 조회
 export const getUserInfo = async (req, res) => {
     try {
+        // jwt를 써야하는거 아닌가
         console.log(req.headers);
         const accessToken = req.headers.authorization; // 헤더에서 액세스 토큰을 받아옵니다.
         console.log("getUserInfoService(accessToken): ", LoginService.getUserInfo(accessToken));
