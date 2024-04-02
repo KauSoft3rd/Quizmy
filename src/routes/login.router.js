@@ -1,14 +1,14 @@
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { finishKakaoLogin, getUserInfo, levelTest, logoutUser, startKakaoLogin } from "../controllers/login.controller";
+import { finishKakaoLogin, getUserInfo, kakaoLogin, levelTest, logoutUser, startKakaoLogin } from "../controllers/login.controller";
 
 export const loginRouter = express.Router();
 
 // 로그인
-loginRouter.get("/kakao", asyncHandler(startKakaoLogin));
+loginRouter.post("/kakao", asyncHandler(kakaoLogin));
 
 // 콜백
-loginRouter.get("/kakao/callback", asyncHandler(finishKakaoLogin));
+// loginRouter.get("/kakao/callback", asyncHandler(finishKakaoLogin));
 
 // 사용자 정보 조회
 loginRouter.get('/me', getUserInfo);

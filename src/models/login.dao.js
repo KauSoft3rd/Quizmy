@@ -3,7 +3,7 @@ import { pool } from "../config/db.config.js"; //db
 
 
 // 유저 정보 등록
-export const userlogin = async (accessToken, profile) => {
+/*export const userlogin = async (accessToken, profile) => {
     try {
         const conn = await pool.getConnection(); //db
 
@@ -22,6 +22,28 @@ export const userlogin = async (accessToken, profile) => {
     } catch (err) {
         throw err;
     }
+}*/
+
+// 유저 조회
+export const getUserById = async (id) => {
+    const conn = await pool.getConnection();
+    const getUser = await conn.query(checkUserSql, [id]);
+
+    console.log('getUser: ', getUser[0][0]);
+    conn.release();
+    return getUser[0][0];
+}
+
+// 유저 정보 등록
+export const signUp = async (user_id, nickname, image) => {
+    const conn = await pool.getConnection();
+    const insertUser = await pool.query(insertUserSql, [
+        user_id,
+        new Date(),
+        nickname,
+        image
+    ])
+    conn.release();
 }
 
 // 유저 유무 체크
@@ -31,7 +53,7 @@ export const userCheck = async (id) => {
     
     try {
         // 해당 ID를 가진 유저가 있는지 검색
-        const [rows, fields] = await conn.query(checkUserSql, [id]);
+        const [rows] = await conn.query(checkUserSql, [id]);
         
         conn.release();
         
@@ -44,15 +66,6 @@ export const userCheck = async (id) => {
         return false; // 에러가 발생한 경우 false 반환
     }
 }
-
-// 사용자 토큰 업데이트
-export const updateAccessToken = async (id, accessToken) => {
-    const conn = await pool.getConnection();
-
-    const [result] = await pool.query(updateAccessTokenSql, [accessToken, id]);
-    conn.release();
-    return result.affectedRows; // 업데이트된 행의 수 반환
-};
 
 // 레벨 테스트
 export const levelTest = async(id, point) => {
@@ -91,6 +104,7 @@ export const getUserspec = async(id) => {
 
         return userspec[0][0];
     } catch (error) {
-
+        console.log(error);
+        throw error;
     }
 }

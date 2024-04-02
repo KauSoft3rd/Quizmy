@@ -1,7 +1,9 @@
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
 import * as LoginDao from '../models/login.dao.js';
 
 // 토큰 받기
+/*
 export const getKakaoAccessTokenAndProfile = async (code) => {
   try {
       // 카카오에서 액세스 토큰 가져오기
@@ -35,6 +37,38 @@ export const getKakaoAccessTokenAndProfile = async (code) => {
       console.error('Error getting Kakao access token and profile:', error);
       throw error;
   }
+};
+*/
+
+// 로그인
+export const signInKakao = async (kakaoToken) => {
+  const result = await axios.get("https://kapi.kakao.com/v2/user/me", {
+      headers: {
+          Authorization: `Bearer ${kakaoToken}`,
+      },
+  });
+  const {data} = result
+  console.log('data:', data);
+  const name = data.properties.nickname;
+  const kakaoId = data.id;
+  const profileImage = data.properties.profile_image;
+
+  console.log("name: ", name, "kakaoId: ", kakaoId, "profileImage: ", profileImage);
+
+  if (!name || !kakaoId) throw new error("KEY_ERROR", 400);
+
+  // console.log("id: ", id);
+
+  const user = await LoginDao.getUserById(kakaoId);
+
+  if (!user) {
+    console.log("!user");
+    await LoginDao.signUp(kakaoId, name, profileImage);
+    const getuser = await LoginDao.getUserById(kakaoId);
+    return jwt.sign({ kakao_id: getuser.user_id }, process.env.TOKKENSECRET);
+  }
+
+  return jwt.sign({ kakao_id: user.user_id }, process.env.TOKKENSECRET);
 };
 
 /*export const getKakaoAccessToken = async (reqcode) => {
@@ -120,6 +154,7 @@ export const userLogin = async (accessToken, profile) => {
     }
 }
 
+// 레벨테스트
 export const levelTest = async (user_id, point)=>{
   try {
     console.log("유저: ", user_id); 
@@ -129,6 +164,7 @@ export const levelTest = async (user_id, point)=>{
 
     return userspec;
   } catch (error) {
-
+    console.log(error);
+    throw error;
   }
 }
