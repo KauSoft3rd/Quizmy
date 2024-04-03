@@ -41,6 +41,7 @@ export const kakaoLogin = async (req, res) => {
     try {
         // console.log('req.headers.authorization: ', req.headers.authorization);
         const kakaoToken = req.headers.authorization; // 헤더에서 액세스 토큰을 받아옵니다.
+
         // const headers = req.headers["authorization"];
         // console.log("headers: ", headers);
         // const kakaoToken = headers.split(" ")[1];
