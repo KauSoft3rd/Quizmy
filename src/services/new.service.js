@@ -14,13 +14,5 @@ export const calculateDate = (d1, d2) => {
 }
 
 /*
-Service 2 : 북마크에 존재하는 기사인지 확인하는 서비스
-*/
-
-export const getBookmarkNewsDB = () => {
-
-};
-
-/*
-
+Service 2 : 북마크에 존재하는 기사인지 확인하는 서비스 > 아직 사용되지 않음
 */

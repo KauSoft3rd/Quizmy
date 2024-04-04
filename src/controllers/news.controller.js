@@ -3,7 +3,7 @@ import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getBookmarkNewsDB, postBookmarkDao, deleteBookmarkDao } from '../models/news.dao';
+import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao } from '../models/news.dao';
 import { calculateDate } from '../services/new.service';
 
 /*
@@ -22,7 +22,7 @@ export const getNews = async (req, res, next) => {
 
         const newsList = [];
         const nowDate = new Date();
-        const bookmarkList = await getBookmarkNewsDB(user_id); // 사용자의 북마크 목록을 조회
+        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
 
         newsData.each((idx, node) => {
             let title = $(node).find('.articleSubject a').text().trim();
@@ -85,7 +85,7 @@ API 4 : 사용자의 북마크 조회
 export const getBookmarkNews = async (req, res, next) => {
     try {
         const { user_id } = req.body;
-        const bookmarkList = await getBookmarkNewsDB(user_id); // 사용자의 북마크 목록을 조회
+        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
         return res.send(response(status.SUCCESS, bookmarkList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
@@ -110,7 +110,7 @@ export const getMainNews = async (req, res, next) => {
 
         let date = new Date(newsData.find('.articleSummary .wdate').text().trim());
         let timeDiff = calculateDate(date, nowDate);
-        const bookmarkList = await getBookmarkNewsDB(user_id); // refactoring 가능 ( 최적화 문제 )
+        const bookmarkList = await getBookmarkNewsDBDao(user_id); // refactoring 가능 ( 최적화 문제 )
 
         let title = newsData.find('.articleSubject a').text().trim();
         let company = newsData.find('.articleSummary .press').text().trim();

@@ -1,8 +1,8 @@
 // 사용자의 퀴즈북 레벨 조회
-export const getUserWorkbookLevel = `SELECT quizbook FROM Useritems WHERE user_id = ?`;
+export const getUserWorkbookLevelSql = `SELECT quizbook FROM Useritems WHERE user_id = ?`;
 
 // 사용자의 레벨보다 낮은 모든 퀴즈를 조회
-export const getWordsUnderUserLevel = 'SELECT word, content FROM Words WHERE level <= ?';
+export const getWordsUnderUserLevelSql = 'SELECT word, content FROM Words WHERE level <= ?';
 
 // 사용자가 시도한 모든 단어의 결과를 출력
 export const getUserRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ?';

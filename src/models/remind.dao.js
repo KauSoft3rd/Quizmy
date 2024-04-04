@@ -1,12 +1,12 @@
-import { getWordInfoSql, getUserWorkbookLevel, getWordsUnderUserLevel, getUserRemindListSql, todayRemindListSql } from "./remind.sql";
+import { getWordInfoSql, getUserWorkbookLevelSql, getWordsUnderUserLevelSql, getUserRemindListSql, todayRemindListSql } from "./remind.sql";
 import { pool } from "../config/db.config";
 
 // 사용자 퀴즈북 레벨 조회
-export const getUserQuizbookLevel = async (user_id) => {
+export const getUserQuizbookLevelDao = async (user_id) => {
     try {
         const db = await pool.getConnection();
-        const [quizbookLevel] = await db.query(getUserWorkbookLevel, [user_id]);
-        const [wordsList] = await db.query(getWordsUnderUserLevel, quizbookLevel[0].quizbook);
+        const [quizbookLevel] = await db.query(getUserWorkbookLevelSql, [user_id]); // 사용자의 퀴즈북 레벨 조회
+        const [wordsList] = await db.query(getWordsUnderUserLevelSql, quizbookLevel[0].quizbook); // 레벨보다 낮은 모든 단어를 조회
         db.release();
         return wordsList;
     } catch ( error ) {
