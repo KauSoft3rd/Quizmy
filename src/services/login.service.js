@@ -47,6 +47,7 @@ export const signInKakao = async (kakaoToken) => {
           Authorization: `Bearer ${kakaoToken}`,
       },
   });
+
   const {data} = result
   console.log('data:', data);
   const name = data.properties.nickname;
@@ -55,12 +56,11 @@ export const signInKakao = async (kakaoToken) => {
 
   console.log("name: ", name, "kakaoId: ", kakaoId, "profileImage: ", profileImage);
 
-  if (!name || !kakaoId) throw new error("KEY_ERROR", 400);
-
-  // console.log("id: ", id);
+  if (!name || !kakaoId) throw new Error("KEY_ERROR", 400);
 
   const user = await LoginDao.getUserById(kakaoId);
 
+  // 첫 로그인
   if (!user) {
     console.log("!user");
     await LoginDao.signUp(kakaoId, name, profileImage);
@@ -106,7 +106,7 @@ export const signInKakao = async (kakaoToken) => {
 };*/
 
 // 유저 정보 받기
-export const getUserInfo = async (accessToken) => {
+export const getUserKakaoInfo = async (accessToken) => {
     try {
       const url = 'https://kapi.kakao.com/v2/user/me';
       const headers = {
@@ -120,6 +120,17 @@ export const getUserInfo = async (accessToken) => {
     } catch (error) {
       throw new Error('Failed to retrieve user information from Kakao API');
     }
+};
+
+// 유저 정보 조회
+export const getUserInfo = async (id) => {
+  try {
+    const getUserData = await LoginDao.getUserById(id);
+    
+    return getUserData; 
+  } catch (error) {
+    throw new Error('Failed to retrieve user information from Kakao API');
+  }
 };
 
 // 로그아웃
@@ -136,23 +147,6 @@ export const logoutFromKakao = async (accessToken) => {
         throw error;
     }
 };
-
-// DB에 유저 정보 등록
-export const userLogin = async (accessToken, profile) => {
-  // const userinfo = await getUserInfo(accessToken);
-  console.log('profile.id: ', profile.id);
-  const usercheck = await LoginDao.userCheck(profile.id);
-    // 유저 있음
-    if (usercheck) {
-      const existingUser = await LoginDao.updateAccessToken(profile.id, accessToken);
-      console.log("affectedRows: ", existingUser);
-      return { "affectedRows": existingUser };
-    } else { 
-      const userId = await LoginDao.userlogin(accessToken, profile);
-      console.log('userId: ', userId);
-      return userId;
-    }
-}
 
 // 레벨테스트
 export const levelTest = async (user_id, point)=>{
