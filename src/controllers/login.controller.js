@@ -59,11 +59,12 @@ export const kakaoLogin = async (req, res) => {
 // 사용자 정보 조회
 export const getUserInfo = async (req, res) => {
     try {
-        // jwt를 써야하는거 아닌가
-        console.log(req.headers);
-        const accessToken = req.headers.authorization; // 헤더에서 액세스 토큰을 받아옵니다.
-        console.log("getUserInfoService(accessToken): ", LoginService.getUserInfo(accessToken));
-        return res.send(response(status.SUCCESS, await LoginService.getUserInfo(accessToken)));
+
+        const user_id = req.user.kakao_id;
+        console.log('user_id: ', user_id);
+
+        console.log("getUserInfoService(user_id): ", LoginService.getUserInfo(user_id));
+        return res.send(response(status.SUCCESS, await LoginService.getUserInfo(user_id)));
     } catch (error) {
       return res.send(response(status.BAD_REQUEST));
     }
@@ -72,7 +73,10 @@ export const getUserInfo = async (req, res) => {
 // 로그아웃
 export const logoutUser = async (req, res) => {
     try {
-      const accessToken = req.headers.authorization; // "Bearer YOUR_ACCESS_TOKEN" 형식으로 전달된 토큰에서 실제 토큰 값만 추출
+      const user_id = req.user.kakao_id;
+      console.log('user_id: ', user_id);
+
+      // const accessToken = req.headers.authorization; // "Bearer YOUR_ACCESS_TOKEN" 형식으로 전달된 토큰에서 실제 토큰 값만 추출
       const logoutId = await LoginService.logoutFromKakao(accessToken);
       /*axios.post('https://kapi.kakao.com/v1/user/logout', {}, {
         headers: {
@@ -94,10 +98,9 @@ export const logoutUser = async (req, res) => {
 export const levelTest = async (req, res)=>{
     console.log("level test");
     console.log("body:", req.body);
-    const accessToken = req.headers.authorization;
-    const userinfo = await LoginService.getUserInfo(accessToken);
 
-    // return res.send(response(status.SUCCESS, await LoginService.levelTest(req.body)));
-    return res.send(response(status.SUCCESS, await LoginService.levelTest(userinfo.id, req.body.point)));
+    console.log('req.user: ', req.user);
+    const user_id = req.user.kakao_id;
 
+    return res.send(response(status.SUCCESS, await LoginService.levelTest(user_id, req.body.point)));
 }
