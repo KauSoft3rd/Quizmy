@@ -1,6 +1,7 @@
 import { response } from '../config/response';
 import { status } from '../config/response.status';
 import { getRemindWordsList } from '../controllers/remind.controller';
+
 /*
 MIDDLE WARE 1 : 단어 되돌아보기에서 옵션에 해당하는 라우팅
 요청형식 : { 오늘의 퀴즈 / 누적 단어, 정렬기준 } 

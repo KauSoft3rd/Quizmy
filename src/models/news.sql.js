@@ -1,5 +1,5 @@
 // 사용자의 북마크 목록 조회
-export const getBookmarkList = 'SELECT link FROM News WHERE user_id = ?';
+export const getBookmarkListSql = 'SELECT link FROM News WHERE user_id = ?';
 
 // 사용자의 북마크 목록에 새로운 링크 추가
 export const postBookmarkSql = `INSERT INTO News VALUES (0, ?, ?, now(), ?)`;

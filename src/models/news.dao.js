@@ -1,10 +1,10 @@
-import { deleteBookmarkSql, getBookmarkList, postBookmarkSql } from "./news.sql";
+import { deleteBookmarkSql, getBookmarkListSql, postBookmarkSql } from "./news.sql";
 import { pool } from "../config/db.config.js"; //db
 
-export const getBookmarkNewsDB = async (user_id) => {
+export const getBookmarkNewsDBDao = async (user_id) => {
     try {
         const db = await pool.getConnection();
-        const [bookmarkGroup] = await db.query(getBookmarkList, [user_id]);
+        const [bookmarkGroup] = await db.query(getBookmarkListSql, [user_id]);
         db.release();
         return bookmarkGroup;
     } catch (error) {

@@ -4,8 +4,8 @@ import { deleteBookmarkMiddleware, postBookmarkMiddleware } from '../middleware/
 
 export const newsRouter = express.Router();
 
-newsRouter.get('/', getNews);
-newsRouter.get('/mainnews', getMainNews);
-newsRouter.post('/bookmark', postBookmarkMiddleware, postBookmark);
-newsRouter.delete('/bookmark', deleteBookmarkMiddleware, deleteBookmark);
-newsRouter.get('/bookmark', getBookmarkNews);
+newsRouter.get('/', getNews); // clear
+newsRouter.get('/mainnews', getMainNews); // clear
+newsRouter.post('/bookmark', postBookmarkMiddleware, postBookmark); // clear
+newsRouter.delete('/bookmark', deleteBookmarkMiddleware, deleteBookmark); // clear
+newsRouter.get('/bookmark', getBookmarkNews); // clear

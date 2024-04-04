@@ -1,6 +1,6 @@
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getUserQuizbookLevel, getWordsInfoDao, getTodayRemindDao } from '../models/remind.dao';
+import { getUserQuizbookLevelDao, getWordsInfoDao, getTodayRemindDao } from '../models/remind.dao';
 
 
 /*
@@ -11,7 +11,7 @@ API 1 :
 export const getRemindWordsList = async (req, res, next) => {
     try {
         const { user_id } = req.body;
-        const [wordList] = await getUserQuizbookLevel(user_id);
+        const [wordList] = await getUserQuizbookLevelDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
