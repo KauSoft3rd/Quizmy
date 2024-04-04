@@ -65,10 +65,10 @@ export const signInKakao = async (kakaoToken) => {
     console.log("!user");
     await LoginDao.signUp(kakaoId, name, profileImage);
     const getuser = await LoginDao.getUserById(kakaoId);
-    return jwt.sign({ kakao_id: getuser.user_id }, process.env.TOKKENSECRET);
+    return jwt.sign({ kakao_id: getuser.user_id }, process.env.TOKEN_SECRET);
   }
 
-  return jwt.sign({ kakao_id: user.user_id }, process.env.TOKKENSECRET);
+  return jwt.sign({ kakao_id: user.user_id }, process.env.TOKEN_SECRET);
 };
 
 /*export const getKakaoAccessToken = async (reqcode) => {
@@ -126,7 +126,7 @@ export const getUserKakaoInfo = async (accessToken) => {
 export const getUserInfo = async (id) => {
   try {
     const getUserData = await LoginDao.getUserById(id);
-    
+
     return getUserData; 
   } catch (error) {
     throw new Error('Failed to retrieve user information from Kakao API');
