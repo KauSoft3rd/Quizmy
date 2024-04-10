@@ -16,3 +16,32 @@ export const calculateDate = (d1, d2) => {
 /*
 Service 2 : 북마크에 존재하는 기사인지 확인하는 서비스 > 아직 사용되지 않음
 */
+
+
+/*
+Service 3 : 램덤으로 4개의 단어를 제공하는 서비스
+*/
+
+export const randomFourKeywordSelectService = (arr) => {
+    try {
+        const randomIndex = [];
+        for (let i = 0; i < arr.length; i++) {
+            if (randomIndex.length === 4) break;
+            let num = Math.floor(Math.random() * arr.length);
+            if (randomIndex.indexOf(num) === -1) {
+                randomIndex.push(num);
+            } else i--;
+        }
+
+        const result = [];
+        for (let i = 0; i < randomIndex.length; i++) {
+            result.push(arr[randomIndex[i]]);
+        }
+
+        return result;
+    } catch ( error ) {
+        return error;
+    }
+}
+
+

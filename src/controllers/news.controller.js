@@ -1,9 +1,10 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
+import request from 'request';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao } from '../models/news.dao';
+import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao } from '../models/news.dao';
 import { calculateDate } from '../services/new.service';
 
 /*
@@ -130,6 +131,54 @@ export const getMainNews = async (req, res, next) => {
             check: check
         }
         return res.send(response(status.SUCCESS, mainNews));
+    } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 6 : 네이버 키워드 뉴스 API
+요청형식 : 
+반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
+*/
+
+export const getNaverNewsKeyword = async (req, res, next) => {
+    try {
+        const { keyword } = req.body;
+        const api_url = 'https://openapi.naver.com/v1/search/news.json?display=20&query=' + encodeURI(keyword);
+
+        let options = {
+            url: api_url,
+            headers: { 'X-Naver-Client-id':process.env.NAVER_ID, 'X-Naver-Client-Secret': process.env.NAVER_SECRET }
+        };
+
+        request.get(options, (error, response, body) => {
+            if (!error && response.statusCode == 200) {
+                res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'} );
+                res.end(body);
+            } else {
+                res.status(response.statusCode).end();
+                console.log('err = ' + response.statusCode);
+            }
+        })
+    } catch ( error ) {
+        console.log(error);
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 7 : 키워드 검색을 위한 단어를 제시
+요청형식 : 
+반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
+*/
+
+export const getNewsKeyword = async (req, res, next) => {
+    try {
+        const { user_id } = req.body;
+        const randomKeyword = await getNewsKeywordDao(user_id);
+        console.log(randomKeyword);
+        return res.send(response(status.SUCCESS, randomKeyword));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
