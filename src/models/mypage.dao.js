@@ -5,9 +5,8 @@ import { getQuizAllSql, getQuizCorrectSql } from "./mypage.sql.js";
 // 퀴즈 정답률 조회
 export const getQuiz = async (id) => {
     const conn = await pool.getConnection();
-    const getQuizCorrectData = await conn.query(getQuizCorrectSql, [11]);
-    const getQuizAllData = await conn.query(getQuizAllSql, [11]);
-    // 일단 유저 11인친구만 계산
+    const getQuizCorrectData = await conn.query(getQuizCorrectSql, [id]);
+    const getQuizAllData = await conn.query(getQuizAllSql, [id]);
 
     console.log('getQuizCorrectData: ', getQuizCorrectData[0][0]['COUNT(*)']);
     console.log('getQuizAllData: ', getQuizAllData[0][0]["COUNT(*)"]);
