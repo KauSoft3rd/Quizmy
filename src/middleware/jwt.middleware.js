@@ -16,6 +16,7 @@ export const verifyToken = (req, res, next) => {
     next()
 ;  } catch (error) {
     console.log(error);
-    return res.send(response(status.TOKEN_TIMEOUT));
+    console.log("error: ", error);
+    return res.send(response(status.TOKEN_TIMEOUT, error));
   }
 };
