@@ -1,4 +1,5 @@
-import { getWordInfoSql, getUserWorkbookLevelSql, getWordsUnderUserLevelSql, getUserRemindListSql, todayRemindListSql } from "./remind.sql";
+import { getWordInfoSql, getUserWorkbookLevelSql, getWordsUnderUserLevelSql, 
+        getUserRemindListSql, todayRemindListSql, getNewestRemindListSql } from "./remind.sql";
 import { pool } from "../config/db.config";
 
 // 사용자 퀴즈북 레벨 조회
@@ -39,6 +40,40 @@ export const getTodayRemindDao = async (user_id) => {
             const [info] = await db.query(getWordInfoSql, [item.words_id]);
             return { item, info };
         }))
+        db.release();
+        return remindList;
+    } catch ( error ) {
+        return error;
+    }
+}
+
+// 사용자가 시도한 단어를 최신순 조회
+export const getNewestRemindDao = async (user_id) => {
+    try {
+        const db = await pool.getConnection();
+        const [userRemindList] = await db.query(getNewestRemindListSql, [user_id]);
+        const remindList = await Promise.all(userRemindList.map(async (item) => {
+            const [info] = await db.query(getWordInfoSql, [item.words_id]);
+            return {item, info};
+        }))
+        db.release();
+        return remindList;
+    } catch ( error ) {
+        return error;
+    }
+}
+
+// 사용자가 시도한 단어를 가나다순 조회
+export const getAlphaRemindDao = async (user_id) => {
+    try {
+        const db = await pool.getConnection();
+        const [userRemindList] = await db.query(getUserRemindListSql, [user_id]);
+        const remindList = await Promise.all(userRemindList.map(async (item) => {
+            const [info] = await db.query(getWordInfoSql, [item.words_id]);
+            return { item, info };
+        }))
+
+        remindList.sort((a, b) => a.info.word.localCompare(b.info.word));
         db.release();
         return remindList;
     } catch ( error ) {

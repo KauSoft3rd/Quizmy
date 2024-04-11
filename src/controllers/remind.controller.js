@@ -1,6 +1,7 @@
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getUserQuizbookLevelDao, getWordsInfoDao, getTodayRemindDao } from '../models/remind.dao';
+import { getUserQuizbookLevelDao, getWordsInfoDao, getTodayRemindDao, getNewestRemindDao } from '../models/remind.dao';
+import { alphaService } from '../services/remind.service';
 
 
 /*
@@ -45,6 +46,37 @@ export const getRemindToday = async (req, res, next) => {
         const { user_id } = req.body;
         const wordsList = await getTodayRemindDao(user_id);
         console.log(wordsList);
+        return res.send(response(status.SUCCESS, wordsList));
+    } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 4 : 오늘 단어를 조회
+반환결과 : [ 단어 : 뜻 ]
+*/
+
+export const getRemindNewest = async (req, res, next) => {
+    try {
+        const {user_id} = req.body;
+        const wordsList = await getNewestRemindDao(user_id);
+        return res.send(response(status.SUCCESS, wordsList));
+    } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 5 : 오늘 단어를 조회
+반환결과 : [ 단어 : 뜻 ]
+*/
+
+export const getRemindAlpha = async (req, res, next) => {
+    try {
+        const { user_id } = req.body;
+        const wordsList = await getWordsInfoDao(user_id);
+        wordsList.sort(alphaService);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));

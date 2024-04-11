@@ -25,7 +25,7 @@ export const getNews = async (req, res, next) => {
         const nowDate = new Date();
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
 
-        newsData.each((idx, node) => {
+        newsData.each((idx, node) => { // CPU 중심 계산
             let title = $(node).find('.articleSubject a').text().trim();
             let company = $(node).find('.articleSummary .press').text().trim();
             let link = $(node).find('.articleSubject a').attr('href');
