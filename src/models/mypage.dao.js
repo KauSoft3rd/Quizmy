@@ -1,5 +1,5 @@
 import { pool } from "../config/db.config.js"; //db
-import { getQuizAllSql, getQuizCorrectSql } from "./mypage.sql.js";
+import { getQuizAllSql, getQuizCorrectSql, getUserPointSql } from "./mypage.sql.js";
 
 
 // 퀴즈 정답률 조회
@@ -43,6 +43,15 @@ export const getStreak = async (id) => {
 }
 
 // 유저 레벨 조회
-export const getLevel = async (req, res) => {
+// 포인트 조회 -> 레벨로 치환
+export const getLevel = async (id) => {
+    const conn = await pool.getConnection();
+    const getUserPointData = await conn.query(getUserPointSql, [id]);
 
+    console.log('getUserPointData: ', getUserPointData[0][0].point);
+
+    // const correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
+
+    conn.release();
+    return getUserPointData[0][0].point;
 }
