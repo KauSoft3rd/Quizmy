@@ -27,8 +27,19 @@ export const getQuiz = async (id) => {
 }
 
 // 퀴즈 스트릭 조회
-export const getStreak = async (req, res) => {
+// 맞춘 단어 개수 반환
+// 오늘꺼만 보내줘도 되는지 아니면 일주일치 계속 보내줘야하는지 
+// 일단 오늘 맞춘 개수만 반환
+export const getStreak = async (id) => {
+    const conn = await pool.getConnection();
+    const getQuizCorrectData = await conn.query(getQuizCorrectSql, [id]);
 
+    console.log('getQuizCorrectData: ', getQuizCorrectData[0][0]['COUNT(*)']);
+
+    const correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
+
+    conn.release();
+    return correctCount;
 }
 
 // 유저 레벨 조회

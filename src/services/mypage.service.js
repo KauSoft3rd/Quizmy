@@ -14,8 +14,15 @@ export const getQuiz = async (id) => {
 }
 
 // 퀴즈 스트릭 조회
-export const getStreak = async (req, res) => {
-
+export const getStreak = async (id) => {
+    try {
+        const getUserStreakData = await mypageDao.getStreak(id);
+        console.log("getUserStreakData: ", getUserStreakData);
+    
+        return getUserStreakData; 
+    } catch (error) {
+        throw error;
+    }
 }
 
 // 유저 레벨 조회
