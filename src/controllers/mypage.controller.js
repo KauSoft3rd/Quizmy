@@ -32,6 +32,16 @@ export const getStreak = async (req, res) => {
 }
 
 // 유저 레벨 조회
+// 레벨은 문자열(Bronze, Silver)로 반환
+// 레벨 퍼센트 반환
 export const getLevel = async (req, res) => {
+    try {
+        console.log("유저 레벨 조회");
+        const user_id = req.user.kakao_id;
+        console.log('user_id: ', user_id);
 
+        return res.send(response(status.SUCCESS, await mypageService.getLevel(user_id)));
+    } catch (error) {
+        return res.send(response(status.BAD_REQUEST));
+    }
 }
