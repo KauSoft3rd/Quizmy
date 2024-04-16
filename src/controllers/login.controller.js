@@ -3,55 +3,19 @@ import { status } from "../../src/config/response.status.js";
 import * as LoginService from '../services/login.service.js';
 
 // 로그인
-/*export const startKakaoLogin = (req, res) => {
-    const baseUrl = "https://kauth.kakao.com/oauth/authorize";
-    const config = {
-      client_id: process.env.KAKAO_ID,
-      redirect_uri: process.env.REDIRECT_URL,
-      response_type: "code",
-    };
-    const params = new URLSearchParams(config).toString();
-    console.log("login params: ", params);
-  
-    const finalUrl = `${baseUrl}?${params}`;
-    console.log(finalUrl);
-    return res.send(response(status.SUCCESS, finalUrl));
-    // return res.redirect(finalUrl);
-};*/
-
-// 콜백 
-/*export const finishKakaoLogin = async (req, res) => {
-    try {
-        const code = req.query.code;
-        // const tokenData = await LoginService.getKakaoAccessToken(code);
-        const { accessToken, profile } = await LoginService.getKakaoAccessTokenAndProfile(code);
-      
-        const loginResult = await LoginService.userLogin(accessToken, profile);
-        
-        return res.send(response(status.SUCCESS, accessToken));
-    } catch (error) {
-        console.error('Error during Kakao login callback:', error);
-        return res.send(response(status.BAD_REQUEST));
-    }
-};
-*/
-
-// 로그인
+// 아이디 조회해서 userinfo에 있는지 확인
+// 없으면 0 반환 있으면 1 반환
+// 0이면 레벨테스트 진행해야함
+// id = 카톡 일련번호
 export const kakaoLogin = async (req, res) => {
     try {
-        // console.log('req.headers.authorization: ', req.headers.authorization);
-        const kakaoToken = req.headers.authorization; // 헤더에서 액세스 토큰을 받아옵니다.
+        console.log("로그인");
+        const user_id = req.user_id;
+        console.log("user_id: ", user_id);
 
-        // const headers = req.headers["authorization"];
-        // console.log("headers: ", headers);
-        // const kakaoToken = headers.split(" ")[1];
-        // console.log('kakaoToken: ', kakaoToken);
-        // const kakaoToken = '3nhzPNoCgSJkphXrFru9E8FShDxMKpvRRJsKKiWPAAABjn6FcDu2W8wW6V7rJg';
-
-        // console.log("signInKakao(accessToken): ", LoginService.signInKakao(kakaoToken));
-        return res.send(response(status.SUCCESS, await LoginService.signInKakao(kakaoToken)));
+        return res.send(response(status.SUCCESS, await LoginService.signInQuizmy(user_id)));
     } catch (error) {
-      console.log('error: ', error);
+        console.log('error: ', error);
         return res.send(response(status.BAD_REQUEST));
     }
 };    
@@ -59,48 +23,22 @@ export const kakaoLogin = async (req, res) => {
 // 사용자 정보 조회
 export const getUserInfo = async (req, res) => {
     try {
-
-        const user_id = req.user.kakao_id;
+        console.log("사용자 정보 조회");  
+        const user_id = req.user_id;
         console.log('user_id: ', user_id);
 
-        console.log("getUserInfoService(user_id): ", LoginService.getUserInfo(user_id));
         return res.send(response(status.SUCCESS, await LoginService.getUserInfo(user_id)));
     } catch (error) {
       return res.send(response(status.BAD_REQUEST));
     }
 };    
 
-// 로그아웃
-export const logoutUser = async (req, res) => {
-    try {
-      const user_id = req.user.kakao_id;
-      console.log('user_id: ', user_id);
-
-      // const accessToken = req.headers.authorization; // "Bearer YOUR_ACCESS_TOKEN" 형식으로 전달된 토큰에서 실제 토큰 값만 추출
-      const logoutId = await LoginService.logoutFromKakao(accessToken);
-      /*axios.post('https://kapi.kakao.com/v1/user/logout', {}, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },*/
-      //});
-
-      // db토큰 지우기
-
-      console.log("response.data: ", logoutId);
-      return res.send(response(status.SUCCESS, logoutId)); // 로그아웃 유저 일련번호 출력
-    } catch (error) {
-      console.error('Logout Error:', error);
-      return res.send(response(status.BAD_REQUEST));
-    }
-};
-
 // 레벨테스트
 export const levelTest = async (req, res)=>{
     console.log("level test");
     console.log("body:", req.body);
 
-    console.log('req.user: ', req.user);
-    const user_id = req.user.kakao_id;
+    const user_id = req.user_id;
 
     return res.send(response(status.SUCCESS, await LoginService.levelTest(user_id, req.body.point)));
 }

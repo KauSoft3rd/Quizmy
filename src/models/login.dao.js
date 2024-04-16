@@ -1,4 +1,4 @@
-import { checkUserSql, getUserspecSql, insertUserSql, insertUserinfoSql, updateAccessTokenSql } from "./login.sql.js";
+import { checkUserIdSql, checkUserInfoSql, checkUserSql, getUserspecSql, insertUserSql, insertUserinfoSql, updateAccessTokenSql } from "./login.sql.js";
 import { pool } from "../config/db.config.js"; //db
 
 
@@ -35,13 +35,12 @@ export const getUserById = async (id) => {
 }
 
 // 유저 정보 등록
-export const signUp = async (user_id, nickname, image) => {
+export const signUp = async (kakao_id) => {
     const conn = await pool.getConnection();
     const insertUser = await pool.query(insertUserSql, [
-        user_id,
+        null,
         new Date(),
-        nickname,
-        image
+        kakao_id
     ])
     conn.release();
 }
@@ -76,7 +75,6 @@ export const levelTest = async(id, point) => {
         const result = await conn.query(insertUserinfoSql, [
             null,
             id, 
-            null,
             point,
             null, 
             null,
@@ -103,6 +101,22 @@ export const getUserspec = async(id) => {
         conn.release();
 
         return userspec[0][0];
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+// 유저 확인
+export const checkUserId = async(id) => {
+    try {
+        const conn = await pool.getConnection();
+
+        const checkUserIdData = await conn.query(checkUserIdSql, [id]);
+
+        conn.release();
+
+        return checkUserIdData[0][0];
     } catch (error) {
         console.log(error);
         throw error;

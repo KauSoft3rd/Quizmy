@@ -41,6 +41,7 @@ export const getKakaoAccessTokenAndProfile = async (code) => {
 */
 
 // 로그인
+/*
 export const signInKakao = async (kakaoToken) => {
   const result = await axios.get("https://kapi.kakao.com/v2/user/me", {
       headers: {
@@ -70,6 +71,7 @@ export const signInKakao = async (kakaoToken) => {
 
   return jwt.sign({ kakao_id: user.user_id }, process.env.TOKEN_SECRET);
 };
+*/
 
 /*export const getKakaoAccessToken = async (reqcode) => {
     const baseUrl = "https://kauth.kakao.com/oauth/token";
@@ -105,8 +107,24 @@ export const signInKakao = async (kakaoToken) => {
     return json; // 프론트엔드에서 확인용
 };*/
 
+// 로그인 
+export const signInQuizmy = async (id) => {
+  try {
+    const userInfoData = await LoginDao.getUserspec(id);
+
+    // 있으면 1 반환
+    if(userInfoData != undefined) return 1;
+    else if(userInfoData == undefined) {
+      return 0;
+    }
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 // 유저 정보 받기
-export const getUserKakaoInfo = async (accessToken) => {
+/*export const getUserKakaoInfo = async (accessToken) => {
     try {
       const url = 'https://kapi.kakao.com/v2/user/me';
       const headers = {
@@ -121,6 +139,7 @@ export const getUserKakaoInfo = async (accessToken) => {
       throw new Error('Failed to retrieve user information from Kakao API');
     }
 };
+*/
 
 // 유저 정보 조회
 export const getUserInfo = async (id) => {
@@ -129,32 +148,14 @@ export const getUserInfo = async (id) => {
 
     return getUserData; 
   } catch (error) {
-    throw new Error('Failed to retrieve user information from Kakao API');
+    throw error;
   }
 };
 
-// 로그아웃
-export const logoutFromKakao = async (accessToken) => {
-    try {
-        const response = await axios.post('https://kapi.kakao.com/v1/user/logout', {}, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Logout Error:", error);
-        throw error;
-    }
-};
-
 // 레벨테스트
-export const levelTest = async (user_id, point)=>{
+export const levelTest = async (id, point)=>{
   try {
-    console.log("유저: ", user_id); 
-    console.log("point: ", point);
-
-    const userspec = await LoginDao.levelTest(user_id, point);
+    const userspec = await LoginDao.levelTest(id, point);
 
     return userspec;
   } catch (error) {
