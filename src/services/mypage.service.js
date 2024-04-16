@@ -1,5 +1,6 @@
 import { LevelandPercentDTO, levelDTO } from "../dtos/mypage.dto";
-import * as mypageDao from "../models/mypage.dao"
+import * as mypageDao from "../models/mypage.dao";
+import * as loginDao from "../models/login.dao";
 
 // 퀴즈 정답률 조회
 // 유저 아이디로 조회해서 db에 있는 유저의 grade 1 인 개수/유저의 전체단어개수 계산
@@ -15,7 +16,7 @@ export const getQuiz = async (id) => {
 }
 
 // 퀴즈 스트릭 조회
-// 오늘 풀었는지
+// 오늘 풀었는지(틀려도 무관)
 export const getStreak = async (id) => {
     try {
         const getUserStreakData = await mypageDao.getStreak(id);
@@ -59,7 +60,6 @@ export const checkLevel = async (id) => {
     try {
         // 푼 문제 개수 조회
         const countUserQuizData = await mypageDao.countQuiz(id);
-        console.log("countUserQuizData: ", countUserQuizData);
 
         let userNewLevel
         if ( countUserQuizData < 50 ) userNewLevel = 'Bronze';
@@ -85,37 +85,20 @@ export const checkLevel = async (id) => {
     }
 }
 
-// 레벨 증가
-/*
-export const plusLevel = async (id) => {
+// 퀴즈 개수 증가 - 맞은 문제만
+export const addCountQuiz = async (id) => {
     try {
-        // 현재 포인트 조회
-        const currentPointData = await mypageDao.getPoint(id);
+        // 개수 증가
+        const addCountQuizData = await mypageDao.addCountQuiz(id);
+        console.log('addCountQuizData: ', addCountQuizData);
 
-        // 포인트를 레벨로 치환 -> pointtoLevel
-        let pointtoLevel
-        if ( currentPointData < 100 ) pointtoLevel = 1;
-        else if ( currentPointData < 300 ) pointtoLevel = 2;
-        else if ( currentPointData < 700 ) pointtoLevel = 3;
-        else if ( currentPointData < 1500 ) pointtoLevel = 4;
-        else if ( currentPointData < 3100 ) pointtoLevel = 5;
-        else pointtoLevel = 6;
+        // 레벨 조회
+        const currentLevelData = await checkLevel(id);
 
-        // 현재 레벨 조회 -> userLevelData
-        const userLevelData = await mypageDao.getLevel(id);
+        const userInfoData = await loginDao.getUserspec(id);
 
-        // pointtoLevel > getLevel => pointtoLevel 값으로 DB 저장값 수정
-        if ( pointtoLevel > userLevelData ) {
-            const patchLevelData = await mypageDao.patchLevel(id, pointtoLevel);
-            console.log("change level: ", patchLevelData);
-            return patchLevelData;
-        }
-        else {
-            console.log("not chage level: ", userLevelData);
-            return userLevelData;
-        }
-    } catch (error) {
+        return userInfoData;
+    } catch (error) { 
         throw error;
     }
 }
-*/

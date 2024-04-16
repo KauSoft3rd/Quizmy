@@ -1,13 +1,14 @@
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { getLevel, getQuiz, getStreak } from "../controllers/mypage.controller";
-import { verifyToken } from "../middleware/jwt.middleware";
+import { addCountQuiz, getLevel, getQuiz, getStreak } from "../controllers/mypage.controller";
+import { kakaoIdToUserIdMiddleware } from "../middleware/user.middleware";
 
 export const mypageRouter = express.Router();
 
-mypageRouter.get("/quiz", verifyToken, asyncHandler(getQuiz));
+mypageRouter.get("/quiz", kakaoIdToUserIdMiddleware, asyncHandler(getQuiz));
 
-mypageRouter.get("/streak", verifyToken, asyncHandler(getStreak));
+mypageRouter.get("/streak", kakaoIdToUserIdMiddleware, asyncHandler(getStreak));
 
-mypageRouter.get("/level", verifyToken, asyncHandler(getLevel));
+mypageRouter.get("/level", kakaoIdToUserIdMiddleware, asyncHandler(getLevel));
 
+mypageRouter.patch("/quiz", kakaoIdToUserIdMiddleware, asyncHandler(addCountQuiz));

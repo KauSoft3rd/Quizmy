@@ -1,5 +1,5 @@
 import { pool } from "../config/db.config.js"; //db
-import { countUserQuizSql, getQuizAllSql, getQuizCorrectSql, getUserLevelSql, getUserPointSql, updateUserPointSql } from "./mypage.sql.js";
+import { addCountQuizSql, countUserQuizSql, getQuizAllSql, getQuizCorrectSql, getUserLevelSql, getUserPointSql, updateUserPointSql } from "./mypage.sql.js";
 
 
 // 퀴즈 정답률 조회
@@ -55,8 +55,6 @@ export const getLevel = async (id) => {
 
     console.log('getUserLevelData: ', getUserLevelData[0][0].level);
 
-    // const correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
-
     conn.release();
     return getUserLevelData[0][0].level;
 }
@@ -68,21 +66,18 @@ export const patchLevel = async (id, point) => {
     // 값 수정
     const updateUserLevelData = await conn.query(updateUserPointSql, [point, id]);
 
-    const getUserLevelData = await conn.query(getUserLevelSql, [id]);
-
-    console.log('getUserPointData: ', getUserLevelData[0][0].level);
+    const getUserLevelData = await getLevel(id);
 
     conn.release();
-    return getUserLevelData[0][0].level;
+    return getUserLevelData;
 }
 
+// 포인트 조회
 export const getPoint = async(id) => {
     const conn = await pool.getConnection();
     const getUserPointData = await conn.query(getUserPointSql, [id]);
 
     console.log('getUserPointData: ', getUserPointData[0][0].point);
-
-    // const correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
 
     conn.release();
     return getUserPointData[0][0].point;
@@ -95,9 +90,22 @@ export const countQuiz = async (id) => {
     // 푼 문제 개수 확인
     const countUserQuizData = await conn.query(countUserQuizSql, [id]);
 
-    console.log('countUserQuizData: ', countUserQuizData[0][0].countquiz);
-
     conn.release();
     
     return countUserQuizData[0][0].countquiz;
+}
+
+// 퀴즈 카운트 증가
+export const addCountQuiz = async (id) => {
+    const conn = await pool.getConnection();
+    
+    // 카운트 1 증가
+    const addCountQuizData = await conn.query(addCountQuizSql, [id]);
+
+    // 푼 문제 개수 확인
+    const countUserQuizData = await countQuiz(id);
+
+    conn.release();
+    
+    return countUserQuizData;
 }
