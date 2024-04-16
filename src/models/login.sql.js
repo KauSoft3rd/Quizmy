@@ -5,10 +5,12 @@ import exp from "constants";
 
 // export const checkUserSql = 'SELECT 1 FROM User WHERE user_id = ?';
 
-export const insertUserinfoSql= 'INSERT INTO Userinfo (userinfo_id, user_id, coin, point, today_percent, weekly_percent, color) VALUES (?, ?, ?, ?, ?, ?, ?)'
+export const insertUserinfoSql= 'INSERT INTO Userinfo (userinfo_id, user_id, point, today_percent, weekly_percent, color) VALUES (?, ?, ?, ?, ?, ?)'
 
 export const getUserspecSql = 'SELECT * FROM Userinfo WHERE user_id = ?';
 
-export const checkUserSql = 'SELECT user_id, nickname, image FROM User WHERE user_id = ?';
+export const checkUserSql = 'SELECT * FROM User WHERE user_id = ?';
 
-export const insertUserSql = 'INSERT INTO User (user_id, created_at, nickname, image) VALUES (?, ?, ?, ?)';
+export const insertUserSql = 'INSERT INTO User (user_id, created_at, kakao_id) VALUES (?, ?, ?)';
+
+export const checkUserIdSql = 'SELECT user_id FROM User WHERE kakao_id = ?'
