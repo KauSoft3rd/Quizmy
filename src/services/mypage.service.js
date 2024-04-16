@@ -52,23 +52,33 @@ export const getLevel = async (id) => {
 // 레벨 증가
 // 100p(bronze) -> 1, 300p(sliver) -> 2, 700p(gold) -> 3 
 // 1500p(platinum) -> 4, 3100(diamond) -> 5, 6300p(ruby) -> 6
-export const plusLevel = async (id, point) => {
+// point = 증가한 포인트
+export const plusLevel = async (id) => {
     try {
+        // 현재 포인트 조회
+        const currentPointData = await mypageDao.getPoint(id);
+
         // 포인트를 레벨로 치환 -> pointtoLevel
         let pointtoLevel
-        if ( point < 100 ) pointtoLevel = 1;
-        else if ( point < 300 ) pointtoLevel = 2;
-        else if ( point < 700 ) pointtoLevel = 3;
-        else if ( point < 1500 ) pointtoLevel = 4;
-        else if ( point < 3100 ) pointtoLevel = 5;
+        if ( currentPointData < 100 ) pointtoLevel = 1;
+        else if ( currentPointData < 300 ) pointtoLevel = 2;
+        else if ( currentPointData < 700 ) pointtoLevel = 3;
+        else if ( currentPointData < 1500 ) pointtoLevel = 4;
+        else if ( currentPointData < 3100 ) pointtoLevel = 5;
         else pointtoLevel = 6;
 
-        // 레벨 조회 -> userLevelData
+        // 현재 레벨 조회 -> userLevelData
         const userLevelData = await mypageDao.getLevel(id);
 
         // pointtoLevel > getLevel => pointtoLevel 값으로 DB 저장값 수정
         if ( pointtoLevel > userLevelData ) {
             const patchLevelData = await mypageDao.patchLevel(id, pointtoLevel);
+            console.log("change level: ", patchLevelData);
+            return patchLevelData;
+        }
+        else {
+            console.log("not chage level: ", userLevelData);
+            return userLevelData;
         }
     } catch (error) {
         throw error;
