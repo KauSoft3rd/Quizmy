@@ -1,4 +1,4 @@
-import { deleteBookmarkSql, getBookmarkListSql, getRandomKeywordSql, postBookmarkSql } from "./news.sql";
+import { deleteBookmarkSql, getBookmarkListSql, getRandomKeywordSql, postBookmarkSql, getRemindWordsTodaySql } from "./news.sql";
 import { getUserRemindWordsIdSql } from "./quiz.sql.js";
 import { randomFourKeywordSelectService } from "../services/new.service.js";
 import { pool } from "../config/db.config.js"; //db
@@ -54,6 +54,9 @@ export const getNewsKeywordDao = async (user_id) => {
     try {
         const db = await pool.getConnection();
         const [remindList] = await db.query(getUserRemindWordsIdSql, [user_id]);
+        const [todayList] = await db.query(getRemindWordsTodaySql, [user_id]);
+
+        
         const randomKeywordId = randomFourKeywordSelectService(remindList);
         const randomKeyword = [];
         for (let i = 0; i < randomKeywordId.length; i++) {

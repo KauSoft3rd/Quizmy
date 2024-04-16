@@ -3,7 +3,6 @@ import { status } from '../config/response.status';
 import { getUserQuizbookLevelDao, getWordsInfoDao, getTodayRemindDao, getNewestRemindDao } from '../models/remind.dao';
 import { alphaService } from '../services/remind.service';
 
-
 /*
 API 1 : 
 반환결과 : [ 단어 : 뜻 ]
@@ -18,7 +17,6 @@ export const getRemindWordsList = async (req, res, next) => {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
 }
-
 
 /*
 API 2 : 누적 단어를 조회

@@ -151,7 +151,7 @@ export const getNaverNewsKeyword = async (req, res, next) => {
             url: api_url,
             headers: { 'X-Naver-Client-id':process.env.NAVER_ID, 'X-Naver-Client-Secret': process.env.NAVER_SECRET }
         };
-
+        
         request.get(options, (error, response, body) => {
             if (!error && response.statusCode == 200) {
                 res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'} );

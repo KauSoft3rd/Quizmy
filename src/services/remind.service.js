@@ -1,6 +1,5 @@
-// 정렬 알고리즘
+// 정렬 알고리즘 - CPU 중심
 export const alphaService = (a, b) => {
-    // wordsList.sort((a, b) => a.info[0].word.localCompare(b.info[0].word));
     const wordA = a.info[0].word.toUpperCase();
     const wordB = b.info[0].word.toUpperCase();
 

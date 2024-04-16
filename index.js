@@ -29,12 +29,6 @@ app.listen(process.env.PORT, () => {
     console.log(`Example app listening on port ${process.env.PORT}`);
 })
 
-/*database.connect();
-database.query('SELECT * from User', (error, rows, fields) => {
-    if (error) throw error;
-    console.log("TEST");
-});*/
-
 app.get('/', function (req, res) { 
     res.send('Hello World');
 });

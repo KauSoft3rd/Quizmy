@@ -37,11 +37,12 @@ export const randomFourKeywordSelectService = (arr) => {
         for (let i = 0; i < randomIndex.length; i++) {
             result.push(arr[randomIndex[i]]);
         }
-
         return result;
     } catch ( error ) {
         return error;
     }
 }
 
-
+/*
+Service 4 : 네이버 API 요청
+*/
