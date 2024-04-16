@@ -1,4 +1,4 @@
-import { levelDTO } from "../dtos/mypage.dto";
+import { LevelandPercentDTO, levelDTO } from "../dtos/mypage.dto";
 import * as mypageDao from "../models/mypage.dao"
 
 // 퀴즈 정답률 조회
@@ -27,37 +27,49 @@ export const getStreak = async (id) => {
 }
 
 // 유저 레벨 조회
+// 레벨을 1~6으로 저장
+// 포인트 증가했을 때 if 문 
+// 포인트가 증가했을 때만 DB에 level 수정 -> 함수로 만들기
+// 레벨 조회는 항상 DB에 저장된거로 
+
 export const getLevel = async (id) => {
     try {
         // 포인트 조회
-        const userPointData = await mypageDao.getLevel(id);
-        console.log("getUserLevelData: ", userPointData);
+        const userLevelData = await mypageDao.getLevel(id);
+        console.log("getUserLevelData: ", userLevelData);
 
-        // 레벨로 치환
-        // 100p(bronze), 300p(sliver), 700p(gold) 
-        // 1500p(platinum), 3100(diamond), 6300p(ruby)
-        let userLevelData;
+        const userPointData = await mypageDao.getPoint(id);
+        console.log('userPointData: ', userPointData);
 
-        if ( userPointData < 100 ) userLevelData = 'Bronze';
-        else if ( userPointData < 300 ) userLevelData = 'Silver';
-        else if ( userPointData < 700 ) userLevelData = 'Gold';
-        else if ( userPointData < 1500 ) userLevelData = 'Platinum';
-        else if ( userPointData < 3100 ) userLevelData = 'Diamond'
-        else userLevelData = 'Ruby';
+        console.log("levelDTO(userPointData, userLevelData, userPercentData): ", LevelandPercentDTO(userPointData, userLevelData));
 
-        // 레벨 퍼센트
-        let userPercentData
+        return LevelandPercentDTO(userPointData, userLevelData);
+    } catch (error) {
+        throw error;
+    }
+}
 
-        if ( userLevelData == 'Bronze' ) userPercentData = (userPointData/100)*100+"%";
-        else if ( userLevelData == 'Silver' ) userPercentData = ((userPointData-100)/200)*100+"%";
-        else if ( userLevelData == 'Gold' ) userPercentData = ((userPointData-200)/400)*100+"%";
-        else if ( userLevelData == 'Platinum' ) userPercentData = ((userPointData-400)/800)*100+"%";
-        else if ( userLevelData == 'Diamond' ) userPercentData = ((userPointData-800)/1600)*100+"%";
-        else if ( userLevelData == 'Ruby' ) userPercentData = ((userPointData-1600)/3200)*100+"%";
+// 레벨 증가
+// 100p(bronze) -> 1, 300p(sliver) -> 2, 700p(gold) -> 3 
+// 1500p(platinum) -> 4, 3100(diamond) -> 5, 6300p(ruby) -> 6
+export const plusLevel = async (id, point) => {
+    try {
+        // 포인트를 레벨로 치환 -> pointtoLevel
+        let pointtoLevel
+        if ( point < 100 ) pointtoLevel = 1;
+        else if ( point < 300 ) pointtoLevel = 2;
+        else if ( point < 700 ) pointtoLevel = 3;
+        else if ( point < 1500 ) pointtoLevel = 4;
+        else if ( point < 3100 ) pointtoLevel = 5;
+        else pointtoLevel = 6;
 
-        console.log("levelDTO(userPointData, userLevelData, userPercentData): ", levelDTO(userPointData, userLevelData, userPercentData));
+        // 레벨 조회 -> userLevelData
+        const userLevelData = await mypageDao.getLevel(id);
 
-        return levelDTO(userPointData, userLevelData, userPercentData);
+        // pointtoLevel > getLevel => pointtoLevel 값으로 DB 저장값 수정
+        if ( pointtoLevel > userLevelData ) {
+            const patchLevelData = await mypageDao.patchLevel(id, pointtoLevel);
+        }
     } catch (error) {
         throw error;
     }
