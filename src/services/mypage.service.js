@@ -9,16 +9,21 @@ export const getQuiz = async (id) => {
         console.log("getUserQuizData: ", getUserQuizData);
     
         return getUserQuizData; 
-      } catch (error) {
+    } catch (error) {
         throw error;
-      }
+    }
 }
 
 // 퀴즈 스트릭 조회
+// 오늘 풀었는지
 export const getStreak = async (id) => {
     try {
         const getUserStreakData = await mypageDao.getStreak(id);
         console.log("getUserStreakData: ", getUserStreakData);
+
+        if (getUserStreakData > 0) {
+            getUserStreakData = 1;
+        }
     
         return getUserStreakData; 
     } catch (error) {
@@ -27,32 +32,61 @@ export const getStreak = async (id) => {
 }
 
 // 유저 레벨 조회
-// 레벨을 1~6으로 저장
-// 포인트 증가했을 때 if 문 
-// 포인트가 증가했을 때만 DB에 level 수정 -> 함수로 만들기
 // 레벨 조회는 항상 DB에 저장된거로 
-
 export const getLevel = async (id) => {
     try {
-        // 포인트 조회
-        const userLevelData = await mypageDao.getLevel(id);
-        console.log("getUserLevelData: ", userLevelData);
+        // 레벨 조회
+        const userCurrentLevel = await mypageDao.getLevel(id);
+        console.log('userCurrentLevel: ', userCurrentLevel);
 
-        const userPointData = await mypageDao.getPoint(id);
-        console.log('userPointData: ', userPointData);
+        // 푼 문제 개수 조회
+        const countUserQuizData = await mypageDao.countQuiz(id);
+        console.log("countUserQuizData: ", countUserQuizData);
 
-        console.log("levelDTO(userPointData, userLevelData, userPercentData): ", LevelandPercentDTO(userPointData, userLevelData));
+        // 레벨 퍼센트
+        console.log("LevelandPercentDTO(countUserQuizData, userCurrentLevel): ", LevelandPercentDTO(countUserQuizData, userCurrentLevel));
 
-        return LevelandPercentDTO(userPointData, userLevelData);
+        return LevelandPercentDTO(countUserQuizData, userCurrentLevel);
+    } catch (error) { 
+        throw error;
+    }
+}
+
+// 레벨 증가하는지 체크
+// 퀴즈 풀 때마다 체크
+// 50, 150, 350, 750, 1550
+export const checkLevel = async (id) => {
+    try {
+        // 푼 문제 개수 조회
+        const countUserQuizData = await mypageDao.countQuiz(id);
+        console.log("countUserQuizData: ", countUserQuizData);
+
+        let userNewLevel
+        if ( countUserQuizData < 50 ) userNewLevel = 'Bronze';
+        else if ( countUserQuizData < 150 ) userNewLevel = 'Silver';
+        else if ( countUserQuizData < 350 ) userNewLevel = 'Gold';
+        else if ( countUserQuizData < 750 ) userNewLevel = 'Platinum';
+        else if ( countUserQuizData < 1550 ) userNewLevel = 'Diamond';
+        else userNewLevel = 'Ruby';
+
+        const userCurrentLevel = await mypageDao.getLevel(id);
+
+        if(userNewLevel != userCurrentLevel) {
+            const patchLevelData = await mypageDao.patchLevel(id, userNewLevel);
+            console.log("change level: ", patchLevelData);
+            return patchLevelData;
+        }
+        else {
+            console.log("not change level: ", userCurrentLevel);
+            return userCurrentLevel;
+        }
     } catch (error) {
         throw error;
     }
 }
 
 // 레벨 증가
-// 100p(bronze) -> 1, 300p(sliver) -> 2, 700p(gold) -> 3 
-// 1500p(platinum) -> 4, 3100(diamond) -> 5, 6300p(ruby) -> 6
-// point = 증가한 포인트
+/*
 export const plusLevel = async (id) => {
     try {
         // 현재 포인트 조회
@@ -84,3 +118,4 @@ export const plusLevel = async (id) => {
         throw error;
     }
 }
+*/
