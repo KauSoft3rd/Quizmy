@@ -76,9 +76,11 @@ export const levelTest = async(id, point) => {
             null,
             id, 
             point,
+            null,
             null, 
             null,
-            null
+            0,
+            'Bronze'
         ]);
 
         conn.release();
