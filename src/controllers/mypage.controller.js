@@ -18,7 +18,8 @@ export const getQuiz = async (req, res) => {
 
 
 // 퀴즈 스트릭 조회
-// 유저 아이디랑 오늘 날짜 검색해서 맞춘 단어 개수 확인 
+// 유저 아이디랑 오늘 날짜 검색해서 맞춘 단어 있는지
+// 1/0 반환
 export const getStreak = async (req, res) => {
     try {
         console.log("퀴즈 스트릭 조회");
@@ -33,7 +34,7 @@ export const getStreak = async (req, res) => {
 
 // 유저 레벨 조회
 // 레벨은 문자열(Bronze, Silver)로 반환
-// 레벨 퍼센트 반환
+// 개수로 판단 후 레벨 퍼센트 반환
 export const getLevel = async (req, res) => {
     try {
         console.log("유저 레벨 조회");
@@ -42,6 +43,7 @@ export const getLevel = async (req, res) => {
 
         return res.send(response(status.SUCCESS, await mypageService.getLevel(user_id)));
     } catch (error) {
+        console.log(error);
         return res.send(response(status.BAD_REQUEST));
     }
 }

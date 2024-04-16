@@ -1,5 +1,5 @@
 import { pool } from "../config/db.config.js"; //db
-import { getQuizAllSql, getQuizCorrectSql, getUserLevelSql, getUserPointSql, updateUserPointSql } from "./mypage.sql.js";
+import { countUserQuizSql, getQuizAllSql, getQuizCorrectSql, getUserLevelSql, getUserPointSql, updateUserPointSql } from "./mypage.sql.js";
 
 
 // 퀴즈 정답률 조회
@@ -21,8 +21,8 @@ export const getQuiz = async (id) => {
         const result = ratio+"%";
         return result;
     } else {
-        // 푼 단어가 없을 때 - 반환
-        return '-';
+        // 푼 단어 없을 때 0% 반환
+        return '0%';
     }
 }
 
@@ -46,6 +46,11 @@ export const getStreak = async (id) => {
 // 포인트 조회 -> 레벨로 치환
 export const getLevel = async (id) => {
     const conn = await pool.getConnection();
+    
+    // 푼 문제 개수 확인
+    const countUserQuizData = await conn.query(countUserQuizSql, [id]);
+
+
     const getUserLevelData = await conn.query(getUserLevelSql, [id]);
 
     console.log('getUserLevelData: ', getUserLevelData[0][0].level);
@@ -81,4 +86,18 @@ export const getPoint = async(id) => {
 
     conn.release();
     return getUserPointData[0][0].point;
+}
+
+// 푼 문제 개수 확인
+export const countQuiz = async (id) => {
+    const conn = await pool.getConnection();
+    
+    // 푼 문제 개수 확인
+    const countUserQuizData = await conn.query(countUserQuizSql, [id]);
+
+    console.log('countUserQuizData: ', countUserQuizData[0][0].countquiz);
+
+    conn.release();
+    
+    return countUserQuizData[0][0].countquiz;
 }
