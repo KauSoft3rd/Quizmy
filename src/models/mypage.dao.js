@@ -1,5 +1,5 @@
 import { pool } from "../config/db.config.js"; //db
-import { getQuizAllSql, getQuizCorrectSql, getUserPointSql } from "./mypage.sql.js";
+import { getQuizAllSql, getQuizCorrectSql, getUserLevelSql, getUserPointSql, updateUserPointSql } from "./mypage.sql.js";
 
 
 // 퀴즈 정답률 조회
@@ -45,6 +45,33 @@ export const getStreak = async (id) => {
 // 유저 레벨 조회
 // 포인트 조회 -> 레벨로 치환
 export const getLevel = async (id) => {
+    const conn = await pool.getConnection();
+    const getUserLevelData = await conn.query(getUserLevelSql, [id]);
+
+    console.log('getUserLevelData: ', getUserLevelData[0][0].level);
+
+    // const correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
+
+    conn.release();
+    return getUserLevelData[0][0].level;
+}
+
+// 레벨 수정
+export const patchLevel = async (id, point) => {
+    const conn = await pool.getConnection();
+
+    // 값 수정
+    const updateUserLevelData = await conn.query(updateUserPointSql, [point, id]);
+
+    const getUserLevelData = await conn.query(getUserLevelSql, [id]);
+
+    console.log('getUserPointData: ', getUserLevelData[0][0].level);
+
+    conn.release();
+    return getUserLevelData[0][0].level;
+}
+
+export const getPoint = async(id) => {
     const conn = await pool.getConnection();
     const getUserPointData = await conn.query(getUserPointSql, [id]);
 

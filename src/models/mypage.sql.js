@@ -2,4 +2,8 @@ export const getQuizCorrectSql= 'SELECT COUNT(*) FROM Remind WHERE user_id = ? A
 
 export const getQuizAllSql = 'SELECT COUNT(*) FROM Remind WHERE user_id = ? AND DATE(created_at) = CURDATE();'
 
+export const getUserLevelSql = 'SELECT level FROM Userinfo WHERE user_id = ?;'
+
+export const updateUserPointSql = 'UPDATE Userinfo SET level = ? WHERE user_id = ?'
+
 export const getUserPointSql = 'SELECT point FROM Userinfo WHERE user_id = ?;'
