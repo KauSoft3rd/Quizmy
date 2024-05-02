@@ -1,10 +1,11 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
+import request from 'request';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao } from '../models/news.dao';
-import { calculateDate } from '../services/new.service';
+import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao } from '../models/news.dao';
+import { calculateDate, getNewsImageURL } from '../services/new.service';
 
 /*
 API 1 : 네이버페이 증권 사이트의 주요 뉴스 크롤링 API
@@ -24,7 +25,7 @@ export const getNews = async (req, res, next) => {
         const nowDate = new Date();
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
 
-        newsData.each((idx, node) => {
+        newsData.each((idx, node) => { // CPU 중심 계산
             let title = $(node).find('.articleSubject a').text().trim();
             let company = $(node).find('.articleSummary .press').text().trim();
             let link = $(node).find('.articleSubject a').attr('href');
@@ -118,9 +119,9 @@ export const getMainNews = async (req, res, next) => {
         let article_id = link.match(/article_id=([^&]+)/)[1];
         let office_id = link.match(/office_id=([^&]+)/)[1];
         let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-        let img = newsData.find('.thumb a img').attr('src');
+        // let img = newsData.find('.thumb a img').attr('src');
         let check = bookmarkList.some(item => item.link === newsLink);
-
+        let img = await getNewsImageURL(newsLink); 
         let mainNews = {
             title: title,
             company: company,
@@ -130,6 +131,64 @@ export const getMainNews = async (req, res, next) => {
             check: check
         }
         return res.send(response(status.SUCCESS, mainNews));
+    } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 6 : 네이버 키워드 뉴스 API
+요청형식 : 
+반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
+*/
+
+export const getNaverNewsKeyword = async (req, res, next) => {
+    try {
+        const { keyword } = req.body;
+        const sort = 'sim'; // 날짜순으로 정렬 유사도 정렬을 원할 경우 'sim'
+        const display = 5; // 한번에 읽어올 뉴스의 갯수
+        const api_url = `https://openapi.naver.com/v1/search/news.json?query=${encodeURI(keyword)}&display=${display}&sort=${sort}`;
+
+        const newsList = await axios.get(api_url, {
+            headers: { 
+                'X-Naver-Client-id':process.env.NAVER_ID,
+                'X-Naver-Client-Secret': process.env.NAVER_SECRET
+            },
+        });
+
+        const items = newsList.data.items;
+        const keywordNewsList = await Promise.all(items.map(async (item) => {
+            var title = item.title.replace(/<[^>]*>?/gm, '');
+            var link = item.link;
+            var date = item.pubDate;
+            var image = await getNewsImageURL(link); 
+            return {
+                title: title,
+                newsLink: link,
+                date: date,
+                img: image
+            };
+        }));
+
+        return res.send(response(status.SUCCESS, keywordNewsList));
+    } catch ( error ) {
+        console.log(error);
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 7 : 키워드 검색을 위한 단어를 제시
+요청형식 : 
+반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
+*/
+
+export const getNewsKeyword = async (req, res, next) => {
+    try {
+        const { user_id } = req.body;
+        const randomKeyword = await getNewsKeywordDao(user_id);
+        console.log(randomKeyword);
+        return res.send(response(status.SUCCESS, randomKeyword));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }

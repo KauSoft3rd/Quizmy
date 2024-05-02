@@ -12,3 +12,6 @@ export const getWordInfoSql = 'SELECT word, content FROM Words WHERE words_id = 
 
 // 오늘 기준으로 조회 사용자가 시도한 모든 단어의 결과를 출력
 export const todayRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? AND DATE(created_at) = CURDATE()';
+
+// 사용자가 시도한 문제를 최신순으로 조회
+export const getNewestRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? ORDER BY created_at DESC';
