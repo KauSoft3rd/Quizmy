@@ -1,6 +1,7 @@
 import { pool } from "../config/db.config";
 import { getUserWorkbookLevelSql } from "./remind.sql";
-import { getUserRemindWordsIdSql, getQuizWordsIdSql, getRandomQuizSql, updateRemindGradeSql } from "./quiz.sql";
+import { getUserRemindWordsIdSql, getQuizWordsIdSql, getRandomQuizSql, updateRemindGradeSql, getTodayWordsSql, getAccWordsSql } from "./quiz.sql";
+import { getCorrectWordsSql, getIncorrectWordsSql } from "./quiz.sql";
 import { randomSelectService } from "../services/quiz.service";
 
 // 사용자가 안풀었던 퀴즈 중 랜덤으로 제공
@@ -36,6 +37,83 @@ export const patchRemindWordDao = async (user_id, words_id, grade) => {
         await db.query(updateRemindGradeSql, [user_id, words_id, grade]);
         db.release();
         return;
+    } catch ( error ) {
+        return error;
+    }
+}
+
+// 사용자가 오늘 시도한 퀴즈의 단어들을 조회
+export const getTodayWordsDao = async (user_id) => {
+    try {
+        const db = await pool.getConnection();
+
+        const [todayWordsId] = await db.query(getTodayWordsSql, [user_id]);
+        const result = [];
+        for (let i = 0 ;i < todayWordsId.length; i++) {
+            const [wordInfo] = await db.query(getRandomQuizSql, todayWordsId[i].words_id);
+            wordInfo['grade'] = todayWordsId[i].grade;
+            result.push(wordInfo);
+        }
+        console.log(result);
+        db.release();
+        return result;
+    } catch ( error ) {
+        return error;
+    }
+}
+
+// 사용자가 시도한 모든 단어들을 조회
+export const getAccWordsDao = async (user_id) => {
+    try {
+        const db = await pool.getConnection();
+
+        const [accWordsId] = await db.query(getAccWordsSql, [user_id]);
+        const result = [];
+
+        for (let i = 0; i < accWordsId.length; i++) {
+            const [wordInfo] = await db.query(getRandomQuizSql, accWordsId[i].words_id);
+            result.push(wordInfo);
+        }
+        console.log(result);
+        db.release();
+        return result;
+    } catch ( error ) {
+        return error;
+    }
+}
+
+// 사용자가 정답을 맞춘 단어들을 조회
+export const getCorrectWordsDao = async (user_id) => {
+    try {
+        const db = await pool.getConnection();
+
+        const [correctWordsId] = await db.query(getCorrectWordsSql, [user_id]);
+        const result = [];
+        for (let i = 0; i < correctWordsId.length; i++) {
+            const [wordInfo] = await db.query(getRandomQuizSql, correctWordsId[i].words_id);
+            result.push(wordInfo);
+        }
+        db.release();
+        return result;
+    } catch ( error ) {
+        return error;
+    }
+}
+
+// 사용자가 오답을 맞춘 단어들을 조회
+export const getIncorrectWordsDao = async (user_id) => {
+    try {
+        const db = await pool.getConnection();
+
+        const [incorrectWordsId] = await db.query(getIncorrectWordsSql, [user_id]);
+        const result = [];
+
+        for (let i = 0; i < incorrectWordsId.length; i++) {
+            const [wordInfo] = await db.query(getRandomQuizSql, incorrectWordsId[i].words_id);
+            result.push(wordInfo);
+        }
+        db.release();
+        return result;
     } catch ( error ) {
         return error;
     }
