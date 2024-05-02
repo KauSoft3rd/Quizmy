@@ -160,13 +160,11 @@ export const getNaverNewsKeyword = async (req, res, next) => {
         const keywordNewsList = await Promise.all(items.map(async (item) => {
             var title = item.title.replace(/<[^>]*>?/gm, '');
             var link = item.link;
-            // var originalLink = item.originallink;
             var date = item.pubDate;
             var image = await getNewsImageURL(link); 
             return {
                 title: title,
                 newsLink: link,
-                // originalLink: originalLink,
                 date: date,
                 img: image
             };
