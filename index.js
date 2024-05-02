@@ -1,5 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import { scheduleJob } from 'node-schedule'; // 해당 시간에 함수 실행
+import { updateUserData } from './src/models/mypage.dao';
+
 import { healthRoute } from './src/routes/health.router';
 import { newsRouter } from './src/routes/news.router';
 import { usersRouter } from './src/routes/users.router';
@@ -26,8 +29,15 @@ app.use((err, req, res, next) => {
     res.status(err.data.status || status.INTERNAL_SERVER_ERROR).send(response(err.data));
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`Example app listening on port ${process.env.PORT}`);
+app.listen(app.get('port'), () => {
+    console.log(`Example app listening on port ${app.get('port')}`);
+
+    // 매일 0시 스트릭, 정답률 업데이트
+    /*scheduleJob('0 0 * * *', function() {
+        console.log('매일 0시에 실행됩니다.');
+        // 업데이트 함수 불러올 예정
+    });
+    */
 })
 
 app.get('/', function (req, res) { 
