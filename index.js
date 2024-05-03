@@ -33,11 +33,13 @@ app.listen(app.get('port'), () => {
     console.log(`Example app listening on port ${app.get('port')}`);
 
     // 매일 0시 스트릭, 정답률 업데이트
+    // 이 부분 한번 해보고 푸시하겠음(05.03)
     /*scheduleJob('0 0 * * *', function() {
         console.log('매일 0시에 실행됩니다.');
-        // 업데이트 함수 불러올 예정
+        updateUserData();
     });
     */
+    
 })
 
 app.get('/', function (req, res) { 

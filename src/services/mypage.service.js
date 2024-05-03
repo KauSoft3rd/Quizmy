@@ -2,7 +2,7 @@ import { LevelandPercentDTO, levelDTO } from "../dtos/mypage.dto";
 import * as mypageDao from "../models/mypage.dao";
 import * as loginDao from "../models/login.dao";
 
-// 퀴즈 정답률 조회
+// 위클리 퀴즈 정답률 조회
 // 유저 아이디로 조회해서 db에 있는 유저의 grade 1 인 개수/유저의 전체단어개수 계산
 // 배열 반환
 export const getQuiz = async (id) => {
@@ -11,23 +11,6 @@ export const getQuiz = async (id) => {
         console.log("getUserQuizData: ", getUserQuizData);
     
         return getUserQuizData; 
-    } catch (error) {
-        throw error;
-    }
-}
-
-// 퀴즈 스트릭 조회
-// 오늘 풀었는지(틀려도 무관)
-export const getStreak = async (id) => {
-    try {
-        const getUserStreakData = await mypageDao.getStreak(id);
-        console.log("getUserStreakData: ", getUserStreakData);
-
-        if (getUserStreakData > 0) {
-            getUserStreakData = 1;
-        }
-    
-        return getUserStreakData; 
     } catch (error) {
         throw error;
     }
