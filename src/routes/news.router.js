@@ -1,5 +1,6 @@
 import express from 'express';
-import { getNews, postBookmark, getMainNews, deleteBookmark, getBookmarkNews, getNaverNewsKeyword, getNewsKeyword } from '../controllers/news.controller';
+import { getNews, postBookmark, getMainNews, deleteBookmark, 
+    getBookmarkNews, getNaverNewsKeyword, getNewsKeyword, getMainNewsList } from '../controllers/news.controller';
 import { deleteBookmarkMiddleware, postBookmarkMiddleware } from '../middleware/news.middleware';
 
 export const newsRouter = express.Router();
@@ -11,4 +12,6 @@ newsRouter.delete('/bookmark', deleteBookmarkMiddleware, deleteBookmark); // cle
 newsRouter.get('/bookmark', getBookmarkNews); // clear
 
 newsRouter.get('/keyword', getNewsKeyword); // 
-newsRouter.get('/keywordNews', getNaverNewsKeyword); // 
+newsRouter.get('/keywordNews', getNaverNewsKeyword); //
+
+newsRouter.get('/test', getMainNewsList);

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
-import request from 'request';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
 import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao } from '../models/news.dao';
@@ -25,7 +24,7 @@ export const getNews = async (req, res, next) => {
         const nowDate = new Date();
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
 
-        newsData.each((idx, node) => { // CPU 중심 계산
+        await Promise.all(newsData.map(async(idx, node) => { // CPU 중심 계산
             let title = $(node).find('.articleSubject a').text().trim();
             let company = $(node).find('.articleSummary .press').text().trim();
             let link = $(node).find('.articleSubject a').attr('href');
@@ -33,11 +32,11 @@ export const getNews = async (req, res, next) => {
             let office_id = link.match(/office_id=([^&]+)/)[1];
             let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
             let date = new Date($(node).find('.articleSummary .wdate').text().trim());
-            let img = $(node).find('.thumb a img').attr('src');
+            let img = await getNewsImageURL(newsLink); 
             let timeDiff = calculateDate(date, nowDate);
             let check = bookmarkList.some(item => item.link === newsLink);
             newsList.push({ title, company, newsLink, date: timeDiff, img, check });
-        });
+        }));
 
         return res.send(response(status.SUCCESS, newsList));
     } catch ( error ) {
@@ -189,6 +188,40 @@ export const getNewsKeyword = async (req, res, next) => {
         const randomKeyword = await getNewsKeywordDao(user_id);
         console.log(randomKeyword);
         return res.send(response(status.SUCCESS, randomKeyword));
+    } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 8 : 카테고리의 주요 뉴스 조회 API
+요청형식 : 
+반환결과 : 
+*/
+
+export const getMainNewsList = async (req, res, next) => {
+    try {
+        const category = 'business';
+        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?language=ko&category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
+        const newsData = newsList.data.articles;
+        const result = [];
+        
+        // 아래의 코드부분에서 오류가 발생 중
+        newsData.forEach(item => {
+            let title = item.title.replace(/<[^>]*>?/gm, '');
+            let link = item.url;
+            let date = item.publishedAt;
+            let image = item.urlToImage;
+
+            result.push({
+                title: title,
+                newsLink: link,
+                date: date,
+                img: image
+            })
+        })
+        
+        return res.send(response(status.SUCCESS, result));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
