@@ -1,4 +1,4 @@
-import { checkUserIdSql, checkUserInfoSql, checkUserSql, getUserspecSql, insertUserSql, insertUserinfoSql, updateAccessTokenSql } from "./login.sql.js";
+import { checkUserIdSql, checkUserInfoSql, checkUserSql, getUserspecSql, insertUserItemSql, insertUserSql, insertUserinfoSql, updateAccessTokenSql } from "./login.sql.js";
 import { pool } from "../config/db.config.js"; //db
 
 
@@ -76,12 +76,22 @@ export const levelTest = async(id, point) => {
             null,
             id, 
             point,
-            null,
-            null, 
-            null,
             0,
-            'Bronze'
+            JSON.stringify(["0%","0%","0%","0%","0%"]), 
+            0,
+            0,
+            'Bronze',
+            JSON.stringify(["0","0","0","0","0"]),
+            0
         ]);
+
+        const itemresult = await conn.query(insertUserItemSql, [
+            null,
+            id,
+            0, // 스트릭
+            0, // 뽑기 티켓
+            0 // 레벨북
+        ])
 
         conn.release();
         
