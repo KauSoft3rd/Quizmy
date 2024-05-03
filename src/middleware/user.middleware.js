@@ -3,7 +3,7 @@ import { status } from "../../src/config/response.status.js";
 import * as LoginDao from "../models/login.dao.js";
 
 export const kakaoIdToUserIdMiddleware = async (req, res, next) => {
-    const { kakao_id } = req.body;
+    const { kakao_id } = req.query;
 
     console.log('kakao_id: ', kakao_id);
 
