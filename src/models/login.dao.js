@@ -1,4 +1,4 @@
-import { checkUserIdSql, checkUserInfoSql, checkUserSql, getUserspecSql, insertUserSql, insertUserinfoSql, updateAccessTokenSql } from "./login.sql.js";
+import { checkUserIdSql, checkUserInfoSql, checkUserSql, getUserspecSql, insertUserItemSql, insertUserSql, insertUserinfoSql, updateAccessTokenSql } from "./login.sql.js";
 import { pool } from "../config/db.config.js"; //db
 
 
@@ -77,11 +77,11 @@ export const levelTest = async(id, point) => {
             id, 
             point,
             0,
-            ["0%","0%","0%","0%","0%"], 
+            JSON.stringify(["0%","0%","0%","0%","0%"]), 
             0,
             0,
             'Bronze',
-            ["0","0","0","0","0"],
+            JSON.stringify(["0","0","0","0","0"]),
             0
         ]);
 

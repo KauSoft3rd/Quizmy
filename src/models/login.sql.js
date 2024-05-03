@@ -14,3 +14,5 @@ export const checkUserSql = 'SELECT * FROM User WHERE user_id = ?';
 export const insertUserSql = 'INSERT INTO User (user_id, created_at, kakao_id) VALUES (?, ?, ?)';
 
 export const checkUserIdSql = 'SELECT user_id FROM User WHERE kakao_id = ?'
+
+export const insertUserItemSql = 'INSERT INTO Useritems (useritems_id, user_id, streak, ticket, quizbook) VALUES (?, ?, ?, ?, ?);'

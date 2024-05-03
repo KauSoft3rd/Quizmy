@@ -1,10 +1,6 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
-<<<<<<< Updated upstream
-=======
-// import request from 'request';
->>>>>>> Stashed changes
 import { response } from '../config/response';
 import { status } from '../config/response.status';
 import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao } from '../models/news.dao';
