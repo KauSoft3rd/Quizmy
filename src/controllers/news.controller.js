@@ -20,11 +20,12 @@ export const getNews = async (req, res, next) => {
         let $ = cheerio.load(encodedData);
         let newsData = $('.newsList .block1');
 
-        const newsList = [];
+        // const newsList = [];
         const nowDate = new Date();
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
 
-        await Promise.all(newsData.map(async(idx, node) => { // CPU 중심 계산
+
+        const promises = newsData.map(async(idx, node) => {
             let title = $(node).find('.articleSubject a').text().trim();
             let company = $(node).find('.articleSummary .press').text().trim();
             let link = $(node).find('.articleSubject a').attr('href');
@@ -35,9 +36,22 @@ export const getNews = async (req, res, next) => {
             let img = await getNewsImageURL(newsLink); 
             let timeDiff = calculateDate(date, nowDate);
             let check = bookmarkList.some(item => item.link === newsLink);
-            newsList.push({ title, company, newsLink, date: timeDiff, img, check });
-        }));
-
+            return { title, company, newsLink, date: timeDiff, img, check };
+        });
+        // await Promise.all(newsData.map(async(idx, node) => { // CPU 중심 계산
+        //     let title = $(node).find('.articleSubject a').text().trim();
+        //     let company = $(node).find('.articleSummary .press').text().trim();
+        //     let link = $(node).find('.articleSubject a').attr('href');
+        //     let article_id = link.match(/article_id=([^&]+)/)[1];
+        //     let office_id = link.match(/office_id=([^&]+)/)[1];
+        //     let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
+        //     let date = new Date($(node).find('.articleSummary .wdate').text().trim());
+        //     let img = await getNewsImageURL(newsLink); 
+        //     let timeDiff = calculateDate(date, nowDate);
+        //     let check = bookmarkList.some(item => item.link === newsLink);
+        //     newsList.push({ title, company, newsLink, date: timeDiff, img, check });
+        // }));
+        const newsList = await Promise.all(promises);
         return res.send(response(status.SUCCESS, newsList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
@@ -201,23 +215,26 @@ API 8 : 카테고리의 주요 뉴스 조회 API
 
 export const getMainNewsList = async (req, res, next) => {
     try {
+        const { user_id } = req.body;
         const category = 'business';
-        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
+        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr&category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
         const newsData = newsList.data.articles;
+        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
         const result = [];
-        
-        // 아래의 코드부분에서 오류가 발생 중
+
         newsData.forEach(item => {
             let title = item.title.replace(/<[^>]*>?/gm, '');
             let link = item.url;
             let date = getTimeDiff(item.publishedAt);
             let image = item.urlToImage;
+            let check = bookmarkList.some(item => item.link === link);
 
             result.push({
                 title: title,
                 newsLink: link,
                 date: date,
-                img: image
+                img: image,
+                check: check
             })
         })
         
