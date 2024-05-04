@@ -4,7 +4,7 @@ import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
 import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao } from '../models/news.dao';
-import { calculateDate, getNewsImageURL } from '../services/new.service';
+import { calculateDate, getNewsImageURL, getTimeDiff } from '../services/new.service';
 
 /*
 API 1 : 네이버페이 증권 사이트의 주요 뉴스 크롤링 API
@@ -202,7 +202,7 @@ API 8 : 카테고리의 주요 뉴스 조회 API
 export const getMainNewsList = async (req, res, next) => {
     try {
         const category = 'business';
-        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?language=ko&category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
+        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
         const newsData = newsList.data.articles;
         const result = [];
         
@@ -210,7 +210,7 @@ export const getMainNewsList = async (req, res, next) => {
         newsData.forEach(item => {
             let title = item.title.replace(/<[^>]*>?/gm, '');
             let link = item.url;
-            let date = item.publishedAt;
+            let date = getTimeDiff(item.publishedAt);
             let image = item.urlToImage;
 
             result.push({

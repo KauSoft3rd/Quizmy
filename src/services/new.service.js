@@ -62,3 +62,19 @@ export const getNewsImageURL = async (newsURL) => {
     }
 }
 
+/*
+Service 5 : 카테고리 뉴스 시간 차이 적용
+*/
+
+export const getTimeDiff = (time) => {
+    const millisecondsDiff = new Date() - new Date(time);
+    const minutesDiff = Math.floor(millisecondsDiff / (1000 * 60));
+
+    if (minutesDiff < 60) {
+        return `${minutesDiff}분 전`;
+    } else {
+        const hoursDiff = Math.floor(minutesDiff / 60);
+        return `${hoursDiff}시간 전`;
+    }
+}
+
