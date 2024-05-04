@@ -201,23 +201,26 @@ API 8 : 카테고리의 주요 뉴스 조회 API
 
 export const getMainNewsList = async (req, res, next) => {
     try {
+        const { user_id } = req.body;
         const category = 'business';
-        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
+        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr&category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
         const newsData = newsList.data.articles;
+        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
         const result = [];
-        
-        // 아래의 코드부분에서 오류가 발생 중
+
         newsData.forEach(item => {
             let title = item.title.replace(/<[^>]*>?/gm, '');
             let link = item.url;
             let date = getTimeDiff(item.publishedAt);
             let image = item.urlToImage;
+            let check = bookmarkList.some(item => item.link === link);
 
             result.push({
                 title: title,
                 newsLink: link,
                 date: date,
-                img: image
+                img: image,
+                check: check
             })
         })
         
