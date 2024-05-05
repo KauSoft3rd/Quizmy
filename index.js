@@ -5,7 +5,6 @@ import { updateUserData } from './src/models/mypage.dao';
 
 import { healthRoute } from './src/routes/health.router';
 import { newsRouter } from './src/routes/news.router';
-import { usersRouter } from './src/routes/users.router';
 import { loginRouter } from './src/routes/login.router';
 import { remindRouter } from './src/routes/remind.router';
 import { quizRouter } from './src/routes/quiz.router';
@@ -48,7 +47,6 @@ app.get('/', function (req, res) {
 
 app.use('/news', newsRouter);
 app.use('/health', healthRoute);
-app.use('/mypage', usersRouter);
 app.use('/auth', loginRouter);
 app.use('/remind', remindRouter);
 app.use('/quiz', quizRouter);

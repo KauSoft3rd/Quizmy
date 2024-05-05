@@ -1,6 +1,7 @@
 import { response } from '../config/response';
 import { status } from '../config/response.status';
 import { getRandomWordDao, patchRemindWordDao, getTodayWordsDao, getAccWordsDao, getCorrectWordsDao, getIncorrectWordsDao } from '../models/quiz.dao';
+import { addCountQuiz } from '../services/mypage.service';
 
 /*
 API 1 : 오늘 풀어볼 단어를 조회
@@ -27,7 +28,10 @@ export const patchRemindWord = async (req, res, next) => {
     try {
         const { user_id, words_id, grade } = req.body;
         let msg;
-        if (grade) msg = "정답입니다.";
+        if (grade) {
+            msg = "정답입니다.";
+            await addCountQuiz(user_id);
+        } 
         else msg = "오답입니다.";
         
         await patchRemindWordDao(user_id, words_id, grade);
