@@ -1,5 +1,6 @@
 import express from 'express';
-import { getQuizWord, patchRemindWord, getTodayWords, getAccWords, getCorrectWords, getIncorrectWords } from '../controllers/quiz.controller';
+import { getQuizWord, patchRemindWord, getTodayWords, 
+    getAccWords, getCorrectWords, getIncorrectWords, reqChatGPT } from '../controllers/quiz.controller';
 
 export const quizRouter = express.Router();
 
@@ -9,3 +10,5 @@ quizRouter.get('/today', getTodayWords); //
 quizRouter.get('/acc', getAccWords); //
 quizRouter.get('/correct', getCorrectWords);
 quizRouter.get('/incorrect', getIncorrectWords);
+
+quizRouter.get('/chat', reqChatGPT); //
