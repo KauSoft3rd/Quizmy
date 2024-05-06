@@ -1,4 +1,4 @@
-import { deleteBookmarkSql, getBookmarkListSql, getRandomKeywordSql, postBookmarkSql, getRemindWordsTodaySql } from "./news.sql";
+import { deleteBookmarkSql, getBookmarkListSql, getRandomKeywordSql, postBookmarkSql, getRemindWordsTodaySql, getBookmarkData } from "./news.sql";
 import { getUserRemindWordsIdSql } from "./quiz.sql.js";
 import { randomFourKeywordSelectService } from "../services/new.service.js";
 import { pool } from "../config/db.config.js"; //db
@@ -22,10 +22,10 @@ export const getBookmarkNewsDBDao = async (user_id) => {
 DAO 2 : 새로운 뉴스 기사를 스크랩
 */
 
-export const postBookmarkDao = async (user_id, link, img) => {
+export const postBookmarkDao = async (user_id, link, title, img) => {
     try {
         const db = await pool.getConnection(); // db와 연결
-        await db.query(postBookmarkSql, [user_id, link, img]); // 데이터 삽입 쿼리 수행
+        await db.query(postBookmarkSql, [user_id, link, title, img]); // 데이터 삽입 쿼리 수행
         db.release(); // 연결 끊기
     } catch ( error ) { 
         return error;
@@ -69,3 +69,18 @@ export const getNewsKeywordDao = async (user_id) => {
         return error;
     }
 }
+
+/*
+DAO 5 : 사용자의 스크랩 목록을 조회
+*/
+
+export const getUserBookmarkDao = async (user_id) => {
+    try {
+        const db = await pool.getConnection();
+        const [bookmarkGroup] = await db.query(getBookmarkData, [user_id]);
+        db.release();
+        return bookmarkGroup;
+    } catch (error) {
+        return error;
+    }
+};

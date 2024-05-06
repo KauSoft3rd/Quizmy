@@ -3,7 +3,7 @@ import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao } from '../models/news.dao';
+import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao, getUserBookmarkDao } from '../models/news.dao';
 import { calculateDate, getNewsImageURL, getTimeDiff } from '../services/new.service';
 
 /*
@@ -66,8 +66,8 @@ API 2 : 뉴스 북마크 추가 API
 
 export const postBookmark = async (req, res, next) => {
     try {
-        const { user_id, link, img } = req.body;
-        await postBookmarkDao(user_id, link, img);
+        const { user_id, link, title, img } = req.body;
+        await postBookmarkDao(user_id, link, title, img);
         return res.send(response(status.SUCCESS, "뉴스가 북마크에 추가되었습니다."));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
@@ -100,6 +100,16 @@ export const getBookmarkNews = async (req, res, next) => {
     try {
         const { user_id } = req.body;
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
+        return res.send(response(status.SUCCESS, bookmarkList));
+    } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+export const getUserBookmark = async (req, res, next) => {
+    try {
+        const { user_id } = req.body;
+        const bookmarkList = await getUserBookmarkDao(user_id); // 사용자의 북마크 목록을 조회
         return res.send(response(status.SUCCESS, bookmarkList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
