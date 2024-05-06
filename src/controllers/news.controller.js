@@ -38,19 +38,6 @@ export const getNews = async (req, res, next) => {
             let check = bookmarkList.some(item => item.link === newsLink);
             return { title, company, newsLink, date: timeDiff, img, check };
         });
-        // await Promise.all(newsData.map(async(idx, node) => { // CPU 중심 계산
-        //     let title = $(node).find('.articleSubject a').text().trim();
-        //     let company = $(node).find('.articleSummary .press').text().trim();
-        //     let link = $(node).find('.articleSubject a').attr('href');
-        //     let article_id = link.match(/article_id=([^&]+)/)[1];
-        //     let office_id = link.match(/office_id=([^&]+)/)[1];
-        //     let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-        //     let date = new Date($(node).find('.articleSummary .wdate').text().trim());
-        //     let img = await getNewsImageURL(newsLink); 
-        //     let timeDiff = calculateDate(date, nowDate);
-        //     let check = bookmarkList.some(item => item.link === newsLink);
-        //     newsList.push({ title, company, newsLink, date: timeDiff, img, check });
-        // }));
         const newsList = await Promise.all(promises);
         return res.send(response(status.SUCCESS, newsList));
     } catch ( error ) {
