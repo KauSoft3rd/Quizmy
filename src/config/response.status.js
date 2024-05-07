@@ -14,6 +14,10 @@ export const status = {
     NOT_FOUND: {status: StatusCodes.NOT_FOUND, isSuccess: false, code: 'COMMON005', message: "해당 페이지를 찾을 수 없습니다." },
 
     // 로그인 err
-    TOKEN_TIMEOUT: {status: StatusCodes.UNAUTHORIZED, isSuccess: false, code: 'USER000', message: "유효하지 않은 토큰입니다." }
+    TOKEN_TIMEOUT: {status: StatusCodes.UNAUTHORIZED, isSuccess: false, code: 'USER000', message: "유효하지 않은 토큰입니다." },
+
+    // 상점 err
+    POINT_LACK: {status: StatusCodes.UNAUTHORIZED, isSuccess: false, code: 'STORE000', message: "포인트가 부족합니다." },
+    ITEM_LACK: {status: StatusCodes.UNAUTHORIZED, isSuccess: false, code: 'STORE001', message: "아이템을 보유하고있지 않습니다." }
 
 };
