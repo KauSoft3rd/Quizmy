@@ -8,7 +8,7 @@ export const updateWeeklySql = 'UPDATE Userinfo SET weekly_percent = ? WHERE use
 
 export const getUserLevelSql = 'SELECT level FROM Userinfo WHERE user_id = ?;'
 
-export const updateUserPointSql = 'UPDATE Userinfo SET level = ? WHERE user_id = ?'
+export const updateUserPointSql = 'UPDATE Userinfo SET point = ? WHERE user_id = ?'
 
 export const getUserPointSql = 'SELECT point FROM Userinfo WHERE user_id = ?;'
 
