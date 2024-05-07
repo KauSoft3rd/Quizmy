@@ -36,6 +36,7 @@ export const getAllUserId = async ()=> {
 
         const allUserIdData = await conn.query(getAllUserIdsSql);
         console.log('allUserIdData: ', allUserIdData[0]);
+        conn.release();
         return allUserIdData[0];
     } catch (error) {
         console.log(error);
@@ -186,6 +187,7 @@ export const updateWeeklyStreak = async (id) => {
     await conn.query(updateWeeklyStreakSql, [JSON.stringify(weeklyStreak), id]);
 
     const currentWeeklyStreakData = await conn.query(getWeeklyStreakSql, [id]);
+    conn.release();
 
     console.log('currentWeeklyStreakData: ', currentWeeklyStreakData[0][0]);
     return currentWeeklyStreakData[0][0];
