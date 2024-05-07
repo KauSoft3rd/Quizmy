@@ -1,5 +1,6 @@
 import { response } from '../config/response';
 import { status } from '../config/response.status';
+import axios from 'axios';
 import { getRandomWordDao, patchRemindWordDao, getTodayWordsDao, getAccWordsDao, getCorrectWordsDao, getIncorrectWordsDao } from '../models/quiz.dao';
 import { addCountQuiz } from '../services/mypage.service';
 
@@ -99,6 +100,33 @@ export const getIncorrectWords = async (req, res, next) => {
         const wordList = await getIncorrectWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+export const reqChatGPT = async (req, res, next) => {
+    try {
+        const { user_id, prompt } = req.body;
+        const model = "gpt-3.5-turbo";
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.CHAT_GPT_KEY}`
+        };
+
+        const params = {
+            model: model,
+            messages: [{ role: "user", content: prompt}],
+            temperature: 0.7
+        };
+        
+        const chatResult = await axios.post('https://api.openai.com/v1/chat/completions', params, { headers });
+
+        const result = chatResult.data.choices[0].message.content;
+
+        return res.send(response(status.SUCCESS, result));
+    } catch ( error ) {
+        console.log(error);
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
 }
