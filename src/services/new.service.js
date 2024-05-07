@@ -56,9 +56,11 @@ export const getNewsImageURL = async (newsURL) => {
         const html = response.data;
         const $ = cheerio.load(html);
         const imageSrc = $('meta[property="og:image"]').attr('content');
+        console.log(imageSrc);
         return imageSrc ? imageSrc : '';
     } catch ( error ) {
-        return error;
+        console.error(error);
+        return '';
     }
 }
 
