@@ -25,7 +25,7 @@ API 2 : 누적 단어를 조회
 
 export const getRemindTotal = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.query;
         const wordsList = await getWordsInfoDao(user_id);
         console.log(wordsList);
         return res.send(response(status.SUCCESS, wordsList));
