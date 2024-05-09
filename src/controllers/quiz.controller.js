@@ -16,7 +16,7 @@ export const getQuizWord = async (req, res, next) => {
         console.log(quizWord);
         return res.send(response(status.SUCCESS, quizWord));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
 
@@ -39,7 +39,7 @@ export const patchRemindWord = async (req, res, next) => {
 
         return res.send(response(status.SUCCESS, msg));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
 
@@ -55,7 +55,7 @@ export const getTodayWords = async (req, res, next) => {
         const wordList = await getTodayWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
 
@@ -70,7 +70,7 @@ export const getAccWords = async (req, res, next) => {
         const wordList = await getAccWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
 
@@ -85,7 +85,7 @@ export const getCorrectWords = async (req, res, next) => {
         const wordList = await getCorrectWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
 
@@ -100,7 +100,7 @@ export const getIncorrectWords = async (req, res, next) => {
         const wordList = await getIncorrectWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
 
@@ -128,6 +128,6 @@ export const reqChatGPT = async (req, res, next) => {
         return res.send(response(status.SUCCESS, result));
     } catch ( error ) {
         console.log(error);
-        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
