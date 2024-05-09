@@ -123,8 +123,9 @@ export const reqChatGPT = async (req, res, next) => {
         const chatResult = await axios.post('https://api.openai.com/v1/chat/completions', params, { headers });
 
         const result = chatResult.data.choices[0].message.content;
+        console.log(result);
 
-        return res.send(response(status.SUCCESS, result));
+        return res.send(response(status.SUCCESS, "test data"));
     } catch ( error ) {
         console.log(error);
         return res.send(response(status.INTERNAL_SERVER_ERROR));
