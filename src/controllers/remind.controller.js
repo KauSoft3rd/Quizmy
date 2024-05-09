@@ -10,7 +10,7 @@ API 1 :
 
 export const getRemindWordsList = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         const [wordList] = await getUserQuizbookLevelDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
@@ -25,7 +25,7 @@ API 2 : 누적 단어를 조회
 
 export const getRemindTotal = async (req, res, next) => {
     try {
-        const { user_id } = req.query;
+        const { user_id } = req.user_id;
         const wordsList = await getWordsInfoDao(user_id);
         console.log(wordsList);
         return res.send(response(status.SUCCESS, wordsList));
@@ -41,7 +41,7 @@ API 3 : 오늘 단어를 조회
 
 export const getRemindToday = async (req, res, next) => {
     try {
-        const { user_id } = req.query;
+        const { user_id } = req.user_id;
         const wordsList = await getTodayRemindDao(user_id);
         console.log(wordsList);
         return res.send(response(status.SUCCESS, wordsList));
@@ -57,7 +57,7 @@ API 4 : 오늘 단어를 최신순 조회
 
 export const getRemindNewest = async (req, res, next) => {
     try {
-        const {user_id} = req.query;
+        const {user_id} = req.user_id;
         const wordsList = await getNewestRemindDao(user_id);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
@@ -72,7 +72,7 @@ API 5 : 오늘 단어를 오름차순으로 조회
 
 export const getRemindAlpha = async (req, res, next) => {
     try {
-        const { user_id } = req.query;
+        const { user_id } = req.user_id;
         const wordsList = await getWordsInfoDao(user_id);
         wordsList.sort(alphaService);
         return res.send(response(status.SUCCESS, wordsList));

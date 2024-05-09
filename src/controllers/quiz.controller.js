@@ -11,7 +11,7 @@ API 1 : 오늘 풀어볼 단어를 조회
 
 export const getQuizWord = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         const quizWord = await getRandomWordDao(user_id);
         console.log(quizWord);
         return res.send(response(status.SUCCESS, quizWord));
@@ -27,7 +27,8 @@ API 2 : 단어를 정답/오답 반영
 
 export const patchRemindWord = async (req, res, next) => {
     try {
-        const { user_id, words_id, grade } = req.body;
+        const { user_id } = req.user_id;
+        const { words_id, grade } = req.body;
         let msg;
         if (grade) {
             msg = "정답입니다.";
@@ -50,7 +51,7 @@ API 3 : 오늘 풀었던 단어들 조회
 
 export const getTodayWords = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
 
         const wordList = await getTodayWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
@@ -66,7 +67,7 @@ API 4 : 누적해서 단어들 조회
 
 export const getAccWords = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         const wordList = await getAccWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
@@ -81,7 +82,7 @@ API 5 : 사용자의 정답 단어들 조회
 
 export const getCorrectWords = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         const wordList = await getCorrectWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
@@ -96,7 +97,7 @@ API 6 : 사용자의 오답 단어들 조회
 
 export const getIncorrectWords = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         const wordList = await getIncorrectWordsDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
@@ -106,7 +107,8 @@ export const getIncorrectWords = async (req, res, next) => {
 
 export const reqChatGPT = async (req, res, next) => {
     try {
-        const { user_id, prompt } = req.body;
+        const { user_id } = req.user_id;
+        const { prompt } = req.body;
         const model = "gpt-3.5-turbo";
 
         const headers = {

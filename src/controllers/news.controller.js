@@ -13,7 +13,7 @@ API 1 : 네이버페이 증권 사이트의 주요 뉴스 크롤링 API
 
 export const getNews = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
         let encodedData = iconv.decode(html.data, "EUC-KR");
@@ -58,7 +58,8 @@ API 2 : 뉴스 북마크 추가 API
 
 export const postBookmark = async (req, res, next) => {
     try {
-        const { user_id, link, title, img } = req.body;
+        const { user_id } = req.user_id;
+        const { link, title, img } = req.body;
         await postBookmarkDao(user_id, link, title, img);
         return res.send(response(status.SUCCESS, "뉴스가 북마크에 추가되었습니다."));
     } catch ( error ) {
@@ -74,7 +75,8 @@ API 3 : 뉴스 북마크 제거 API
 
 export const deleteBookmark = async (req, res, next) => {
     try {
-        const { user_id, link } = req.body;
+        const { user_id } = req.user_id;
+        const { link } = req.body;
         await deleteBookmarkDao(user_id, link);
         return res.send(response(status.SUCCESS, "뉴스가 북마크에서 삭제되었습니다."));
     } catch ( error ) {
@@ -90,7 +92,7 @@ API 4 : 사용자의 북마크 조회
 
 export const getBookmarkNews = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.query;
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
         return res.send(response(status.SUCCESS, bookmarkList));
     } catch ( error ) {
@@ -100,7 +102,7 @@ export const getBookmarkNews = async (req, res, next) => {
 
 export const getUserBookmark = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.query;
         const bookmarkList = await getUserBookmarkDao(user_id); // 사용자의 북마크 목록을 조회
         console.log(bookmarkList);
         return res.send(response(status.SUCCESS, bookmarkList));
@@ -117,7 +119,7 @@ API 5 : 뉴스 메인화면 기사 제공 API
 
 export const getMainNews = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
         let encodedData = iconv.decode(html.data, "EUC-KR");
@@ -200,7 +202,7 @@ API 7 : 키워드 검색을 위한 단어를 제시
 
 export const getNewsKeyword = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         const randomKeyword = await getNewsKeywordDao(user_id);
         console.log(randomKeyword);
         return res.send(response(status.SUCCESS, randomKeyword));
@@ -217,7 +219,7 @@ API 8 : 카테고리의 주요 뉴스 조회 API
 
 export const getMainNewsList = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.user_id;
         const category = 'business';
         const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr&category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
         const newsData = newsList.data.articles;
