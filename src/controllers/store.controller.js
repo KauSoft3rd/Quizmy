@@ -60,12 +60,15 @@ export const getAllItem = async (req, res) => {
 }
 
 // 포인트 증가
-export const addPoint = async (id, point) => {
+export const getTicket = async (req, res) => {
+    try {
+        console.log("티켓 조회");
+        const user_id = req.user_id;
+        console.log('user_id: ', user_id);
 
-    
-}
-
-// 포인트 감소
-export const subPoint = async (id) => {
-    
+        return res.send(response(status.SUCCESS, await storeDao.getTicket(user_id)));
+    } catch (error) {
+        console.log(error);
+        return res.send(response(status.BAD_REQUEST, error));
+    }
 }
