@@ -163,6 +163,7 @@ API 6 : 네이버 키워드 뉴스 API
 
 export const getNaverNewsKeyword = async (req, res, next) => {
     try {
+        const user_id = req.user_id;
         const { keyword } = req.body;
         const sort = 'sim'; // 날짜순으로 정렬 유사도 정렬을 원할 경우 'sim'
         const display = 5; // 한번에 읽어올 뉴스의 갯수
@@ -176,16 +177,19 @@ export const getNaverNewsKeyword = async (req, res, next) => {
         });
 
         const items = newsList.data.items;
+        const bookmarkList = await getBookmarkNewsDBDao(user_id);
         const keywordNewsList = await Promise.all(items.map(async (item) => {
             var title = item.title.replace(/<[^>]*>?/gm, '');
             var link = item.link;
             var date = item.pubDate;
             var image = await getNewsImageURL(link); 
+            var check = bookmarkList.some(item => item.link === link);
             return {
                 title: title,
                 newsLink: link,
                 date: date,
-                img: image
+                img: image,
+                check: check,
             };
         }));
 
