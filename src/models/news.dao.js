@@ -8,12 +8,14 @@ DAO 1 : 사용자의 스크랩 목록을 조회
 */
 
 export const getBookmarkNewsDBDao = async (user_id) => {
+    const db = await pool.getConnection();
     try {
-        const db = await pool.getConnection();
         const [bookmarkGroup] = await db.query(getBookmarkListSql, [user_id]);
         db.release();
+        console.log(bookmarkGroup);
         return bookmarkGroup;
     } catch (error) {
+        db.release();
         return error;
     }
 };

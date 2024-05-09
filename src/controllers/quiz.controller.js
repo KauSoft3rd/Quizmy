@@ -128,6 +128,6 @@ export const reqChatGPT = async (req, res, next) => {
         return res.send(response(status.SUCCESS, result));
     } catch ( error ) {
         console.log(error);
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }

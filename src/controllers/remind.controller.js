@@ -14,7 +14,7 @@ export const getRemindWordsList = async (req, res, next) => {
         const [wordList] = await getUserQuizbookLevelDao(user_id);
         return res.send(response(status.SUCCESS, wordList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
 
@@ -30,7 +30,7 @@ export const getRemindTotal = async (req, res, next) => {
         console.log(wordsList);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
 
@@ -46,7 +46,7 @@ export const getRemindToday = async (req, res, next) => {
         console.log(wordsList);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
 
@@ -61,7 +61,7 @@ export const getRemindNewest = async (req, res, next) => {
         const wordsList = await getNewestRemindDao(user_id);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
 
@@ -77,6 +77,6 @@ export const getRemindAlpha = async (req, res, next) => {
         wordsList.sort(alphaService);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
