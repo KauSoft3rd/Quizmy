@@ -20,10 +20,8 @@ export const getNews = async (req, res, next) => {
         let $ = cheerio.load(encodedData);
         let newsData = $('.newsList .block1');
 
-        // const newsList = [];
         const nowDate = new Date();
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
-
 
         const promises = newsData.map(async(idx, node) => {
             let title = $(node).find('.articleSubject a').text().trim();
@@ -33,7 +31,14 @@ export const getNews = async (req, res, next) => {
             let office_id = link.match(/office_id=([^&]+)/)[1];
             let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
             let date = new Date($(node).find('.articleSummary .wdate').text().trim());
-            let img = await getNewsImageURL(newsLink); 
+            let img;
+            try {
+                img = await getNewsImageURL(newsLink); 
+            }
+            catch (error) {
+                console.log(error);
+                img = null;
+            }
             let timeDiff = calculateDate(date, nowDate);
             let check = bookmarkList.some(item => item.link === newsLink);
             return { title, company, newsLink, date: timeDiff, img, check };
@@ -129,7 +134,6 @@ export const getMainNews = async (req, res, next) => {
         let article_id = link.match(/article_id=([^&]+)/)[1];
         let office_id = link.match(/office_id=([^&]+)/)[1];
         let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-        // let img = newsData.find('.thumb a img').attr('src');
         let check = bookmarkList.some(item => item.link === newsLink);
         let img = await getNewsImageURL(newsLink); 
         let mainNews = {
