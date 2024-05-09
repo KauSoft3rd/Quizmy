@@ -92,7 +92,7 @@ API 4 : 사용자의 북마크 조회
 
 export const getBookmarkNews = async (req, res, next) => {
     try {
-        const { user_id } = req.query;
+        const { user_id } = req.user_id;
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
         return res.send(response(status.SUCCESS, bookmarkList));
     } catch ( error ) {
@@ -102,7 +102,7 @@ export const getBookmarkNews = async (req, res, next) => {
 
 export const getUserBookmark = async (req, res, next) => {
     try {
-        const { user_id } = req.query;
+        const { user_id } = req.user_id;
         const bookmarkList = await getUserBookmarkDao(user_id); // 사용자의 북마크 목록을 조회
         console.log(bookmarkList);
         return res.send(response(status.SUCCESS, bookmarkList));
