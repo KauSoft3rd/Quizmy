@@ -1,6 +1,6 @@
 import { pool } from "../config/db.config.js"; //db
 import { getUserPointSql, updateUserPointSql } from "./mypage.sql"
-import { getAllItemSql, getItemSql, getPointSql, updateUserItemtSql } from "./store.sql";
+import { getAllItemSql, getItemSql, getPointSql, getTicketSql, updateUserItemtSql } from "./store.sql";
 
 // 아이템 전체 조회
 export const getAllItem = async (id) => {
@@ -53,4 +53,21 @@ export const updateItem = async (id, item, count) => {
     console.log('userPointData: ', getItemData[0][0]);
 
     return getItemData[0][0];
+}
+
+// 티켓 조회
+export const getTicket = async (id) => {
+    try{
+        const conn = await pool.getConnection();
+
+        const getTicketData = await conn.query(getTicketSql, [id]);
+        console.log('getItemData: ', getTicketData[0][0]);
+    
+        conn.release();
+    
+        return getTicketData[0][0];   
+    } catch(error){
+        console.log(error);
+        return error;
+    }
 }
