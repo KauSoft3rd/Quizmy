@@ -232,9 +232,11 @@ export const getMainNewsList = async (req, res, next) => {
             let date = getTimeDiff(item.publishedAt);
             let image = item.urlToImage;
             let check = bookmarkList.some(item => item.link === link);
+            let company = "항공대"
 
             result.push({
                 title: title,
+                company: company,
                 newsLink: link,
                 date: date,
                 img: image,
