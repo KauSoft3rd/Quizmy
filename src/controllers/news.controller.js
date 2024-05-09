@@ -102,6 +102,7 @@ export const getUserBookmark = async (req, res, next) => {
     try {
         const { user_id } = req.body;
         const bookmarkList = await getUserBookmarkDao(user_id); // 사용자의 북마크 목록을 조회
+        console.log(bookmarkList);
         return res.send(response(status.SUCCESS, bookmarkList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
