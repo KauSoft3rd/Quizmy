@@ -18,11 +18,13 @@ export const getNews = async (req, res, next) => {
         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
         let encodedData = iconv.decode(html.data, "EUC-KR");
         let $ = cheerio.load(encodedData);
-        let newsData = $('.newsList .block1');
+        // let newsData = $('.newsList .block1');
+        let newsData = $('.newsList .block1').slice(0, 8);
 
         const nowDate = new Date();
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
-
+        // 현재 아래의 newsData는 총 20개의 node를 가지게 된다.
+        // node를 총 8번만 반복해서 promises 배열을 가질 수 있도록 코드를 수정해줘
         const promises = newsData.map(async(idx, node) => {
             let title = $(node).find('.articleSubject a').text().trim();
             let company = $(node).find('.articleSummary .press').text().trim();
@@ -221,7 +223,7 @@ export const getMainNewsList = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const category = 'business';
-        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr&category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
+        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
         const newsData = newsList.data.articles;
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
         const result = [];
