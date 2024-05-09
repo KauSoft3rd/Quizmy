@@ -125,7 +125,7 @@ export const reqChatGPT = async (req, res, next) => {
         const result = chatResult.data.choices[0].message.content;
         console.log(result);
 
-        return res.send(response(status.SUCCESS, "test data"));
+        return res.send(response(status.SUCCESS, result));
     } catch ( error ) {
         console.log(error);
         return res.send(response(status.INTERNAL_SERVER_ERROR));
