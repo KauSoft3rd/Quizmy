@@ -140,7 +140,14 @@ export const getMainNews = async (req, res, next) => {
         let office_id = link.match(/office_id=([^&]+)/)[1];
         let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
         let check = bookmarkList.some(item => item.link === newsLink);
-        let img = await getNewsImageURL(newsLink); 
+        let img; 
+        try {
+            img = await getNewsImageURL(newsLink); 
+        }
+        catch (error) {
+            console.log(error);
+            img = null;
+        }
         let mainNews = {
             title: title,
             company: company,
