@@ -24,10 +24,10 @@ export const getBookmarkNewsDBDao = async (user_id) => {
 DAO 2 : 새로운 뉴스 기사를 스크랩
 */
 
-export const postBookmarkDao = async (user_id, link, title, img) => {
+export const postBookmarkDao = async (user_id, title, link, img) => {
     try {
         const db = await pool.getConnection(); // db와 연결
-        await db.query(postBookmarkSql, [user_id, link, title, img]); // 데이터 삽입 쿼리 수행
+        await db.query(postBookmarkSql, [user_id, title, link, img]); // 데이터 삽입 쿼리 수행
         db.release(); // 연결 끊기
     } catch ( error ) { 
         return error;
