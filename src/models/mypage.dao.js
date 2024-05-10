@@ -136,13 +136,13 @@ export const getStreak = async (id) => {
 
     let correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
 
-    conn.release();
-
     if (correctCount > 0) {
         correctCount = 1;
     }
     
     await conn.query(updatetodayStreakSql, [correctCount, id]);
+
+    conn.release();
 
     return correctCount;
 }
