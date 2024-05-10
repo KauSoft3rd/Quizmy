@@ -13,7 +13,6 @@ export const getQuizWord = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const quizWord = await getRandomWordDao(user_id);
-        console.log(quizWord);
         return res.send(response(status.SUCCESS, quizWord));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
