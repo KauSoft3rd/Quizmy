@@ -191,10 +191,28 @@ export const getNaverNewsKeyword = async (req, res, next) => {
             var date = item.pubDate;
             var image = await getNewsImageURL(link); 
             var check = bookmarkList.some(item => item.link === link);
+
+            const newsDate = new Date(date);
+            const now = new Date();
+            const diffInMillis = now - newsDate;
+            const diffInMinutes = Math.round(diffInMillis / (1000 * 60));
+            const diffInHours = Math.round(diffInMinutes / 60);
+            const diffInDays = Math.round(diffInHours / 24);
+
+            // 분 단위로 표시
+            let formattedDate;
+            if (diffInDays > 0) {
+                formattedDate = `${diffInDays}일`;
+            } else if (diffInHours > 0) {
+                formattedDate = `${diffInHours}시간`;
+            } else {
+                formattedDate = `${diffInMinutes}분`;
+            }
+            
             return {
                 title: title,
                 newsLink: link,
-                date: date,
+                date: formattedDate,
                 img: image,
                 check: check,
             };
