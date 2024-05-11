@@ -34,7 +34,7 @@ export const patchRemindWord = async (req, res, next) => {
             await addCountQuiz(user_id);
         } 
         else msg = "오답입니다.";
-        
+    
         await patchRemindWordDao(user_id, words_id, grade);
 
         return res.send(response(status.SUCCESS, msg));
