@@ -19,7 +19,7 @@ export const getNews = async (req, res, next) => {
         let encodedData = iconv.decode(html.data, "EUC-KR");
         let $ = cheerio.load(encodedData);
         // let newsData = $('.newsList .block1');
-        let newsData = $('.newsList .block1').slice(0, 8);
+        let newsData = $('.newsList .block1').slice(1, 9);
 
         const nowDate = new Date();
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회

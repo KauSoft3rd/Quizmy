@@ -12,3 +12,6 @@ quizRouter.get('/correct', kakaoIdToUserIdMiddleware, getCorrectWords);
 quizRouter.get('/incorrect', kakaoIdToUserIdMiddleware, getIncorrectWords);
 
 quizRouter.post('/chat', kakaoIdToUserIdMiddleware, reqChatGPT); //
+
+import { testapi } from '../controllers/quiz.controller'
+quizRouter.get('/testapi', kakaoIdToUserIdMiddleware, testapi);
