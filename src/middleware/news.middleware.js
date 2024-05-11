@@ -32,7 +32,8 @@ MIDDLE WARE 2 : 해당 뉴스가 북마크에 존재하는 뉴스인지 확인�
 export const deleteBookmarkMiddleware = async (req, res, next) => {
     try {
         const user_id = req.user_id;
-        const { link } = req.body;
+        const { link } = req.query;
+        console.log(user_id, link);
         const bookmarkList = await getBookmarkNewsDBDao(user_id);
         if (!bookmarkList.some(item => item.link === link)) {
             return res.send(response(status.BAD_REQUEST, "이미 북마크에서 삭제된 뉴스입니다."))
