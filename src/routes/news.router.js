@@ -17,4 +17,4 @@ newsRouter.get('/bookmark', kakaoIdToUserIdMiddleware, getUserBookmark); // clea
 newsRouter.get('/keyword', kakaoIdToUserIdMiddleware, getNewsKeyword); // 
 newsRouter.get('/keywordNews', kakaoIdToUserIdMiddleware, getNaverNewsKeyword); //
 
-newsRouter.get('/test', kakaoIdToUserIdMiddleware, getMainNewsList);
+// newsRouter.get('/test', kakaoIdToUserIdMiddleware, getMainNewsList);
