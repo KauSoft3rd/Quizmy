@@ -1,6 +1,6 @@
 import { pool } from "../config/db.config";
 import { getUserWorkbookLevelSql } from "./remind.sql";
-import { getUserRemindWordsIdSql, getQuizWordsIdSql, getRandomQuizSql, updateRemindGradeSql, getTodayWordsSql, getAccWordsSql } from "./quiz.sql";
+import { getUserRemindWordsIdSql, getQuizWordsIdSql, getRandomQuizSql, getTodayWordsSql, getAccWordsSql, } from "./quiz.sql";
 import { getCorrectWordsSql, getIncorrectWordsSql } from "./quiz.sql";
 import { randomSelectService } from "../services/quiz.service";
 
@@ -31,10 +31,22 @@ export const getRandomWordDao = async (user_id) => {
 }
 
 // 사용자 퀴즈를 시도한 결과에 따른 Remind Patch
-export const patchRemindWordDao = async (user_id, words_id, grade) => {
+// 사용자가 새롭게 문제를 풀 경우 -> insert
+// 사용자가 풀었던 문제를 푼 경우 -> update
+import { getUserRemindListSql, updateWordGrade, insertWordGrade } from '../models/quiz.sql';
+export const patchRemindWordDao = async (user_id, word_id, grade) => {
     try {
         const db = await pool.getConnection();
-        await db.query(updateRemindGradeSql, [user_id, words_id, grade]);
+        const [userWordList] = await db.query(getUserRemindListSql, [user_id, word_id]); // 사용자가 해당단어 시도 기록을 조회
+        console.log(userWordList);
+        if (userWordList.length === 0) { 
+            console.log("최초시도");
+            await db.query(insertWordGrade, [user_id, word_id, grade])
+        }
+        else {
+            console.log("재시도");
+            await db.query(updateWordGrade, [grade, user_id, word_id]);
+        }
         db.release();
         return;
     } catch ( error ) {
