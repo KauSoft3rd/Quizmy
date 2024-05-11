@@ -51,7 +51,8 @@ try {
 export const getNewestRemindDao = async (user_id) => {
 try {
     const db = await pool.getConnection();
-    const [userRemindList] = await db.query(getNewestRemindListSql, [user_id]);
+    const [userRemindList] = await db.query(getNewestRemindListSql, user_id);
+    console.log(userRemindList);
     const remindList = await Promise.all(userRemindList.map(async (item) => {
         const [info] = await db.query(getWordInfoSql, [item.words_id]);
         return {item, info};

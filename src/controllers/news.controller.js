@@ -79,6 +79,7 @@ export const deleteBookmark = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const { link } = req.query;
+        console.log(user_id, link);
         await deleteBookmarkDao(user_id, link);
         return res.send(response(status.SUCCESS, "뉴스가 북마크에서 삭제되었습니다."));
     } catch ( error ) {
