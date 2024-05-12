@@ -193,10 +193,10 @@ export const getNaverNewsKeyword = async (req, res, next) => {
             var date = item.pubDate;
             var image = await getNewsImageURL(link); 
             var check = bookmarkList.some(item => item.link === link);
-
+            
             const newsDate = new Date(date);
             const timeDiff = keywordNewsCalculateDate(newsDate, now)
-
+            console.log(timeDiff);
             return {
                 title: title,
                 newsLink: link,
