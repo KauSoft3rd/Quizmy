@@ -12,7 +12,6 @@ export const getBookmarkNewsDBDao = async (user_id) => {
     try {
         const [bookmarkGroup] = await db.query(getBookmarkListSql, [user_id]);
         db.release();
-        console.log(bookmarkGroup);
         return bookmarkGroup;
     } catch (error) {
         db.release();
@@ -30,6 +29,7 @@ export const postBookmarkDao = async (user_id, title, link, img) => {
         await db.query(postBookmarkSql, [user_id, title, link, img]); // 데이터 삽입 쿼리 수행
         db.release(); // 연결 끊기
     } catch ( error ) { 
+        db.release(); // 연결 끊기
         return error;
     }
 };
@@ -44,6 +44,7 @@ export const deleteBookmarkDao = async (user_id, link) => {
         await db.query(deleteBookmarkSql, [user_id, link]);
         db.release();
     } catch ( error ) {
+        db.release(); // 연결 끊기
         return error;
     }
 }
@@ -68,6 +69,7 @@ export const getNewsKeywordDao = async (user_id) => {
         db.release();
         return randomKeyword;
     } catch ( error ) {
+        db.release(); // 연결 끊기
         return error;
     }
 }
@@ -83,6 +85,46 @@ export const getUserBookmarkDao = async (user_id) => {
         db.release();
         return bookmarkGroup;
     } catch (error) {
+        db.release(); // 연결 끊기
         return error;
     }
 };
+
+/*
+DAO 6 : 뉴스 크롤링 업데이트 수행
+*/
+
+import { deleteCrawlingSql, updateCrawlingSql } from "./news.sql";
+export const updateNewsDataDao = async (newsData) => {
+    try {
+        const db = await pool.getConnection();
+        await db.query(deleteCrawlingSql); // 데이터 베이스를 날린다.
+
+        for (const news of newsData) { // 새롭게 크롤링 정보를 삽입한다.
+            const { title, company, newsLink, date, img } = news;
+            await db.query(updateCrawlingSql, [title, company, newsLink, date, img]);
+        }
+
+        db.release();
+    } catch ( error ) {
+        db.release(); // 연결 끊기
+        return error;
+    }
+}
+
+/*
+DAO 7 : 데이터 베이스에 저장된 뉴스 크롤링 정보를 조회
+*/
+
+import { getNewsFromDBSql } from "./news.sql";
+export const getNewsDateDao = async () => {
+    try {
+        const db = await pool.getConnection();
+        let [newsList] = await db.query(getNewsFromDBSql);
+        db.release();
+        return newsList;
+    } catch ( error ) {
+        db.release(); // 연결 끊기
+        return error;
+    }
+}
