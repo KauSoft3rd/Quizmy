@@ -30,6 +30,7 @@ export const keywordNewsCalculateDate = (d1, d2) => { // d1 = 뉴스 시간, d2 
     if (diffInDays > 0) timeDiff = `${diffInDays}일`;
     else if (diffInHours > 0) timeDiff = `${diffInHours}시간`
     else timeDiff = `${diffInMinutes}분`;
+    return timeDiff;
 }
 
 /*
