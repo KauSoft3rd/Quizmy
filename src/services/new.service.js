@@ -91,3 +91,30 @@ export const getTimeDiff = (time) => {
     }
 }
 
+
+export const getNewestNews = async () => {
+    try {
+    const pageSize = 30;
+    const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr&pageSize=${pageSize}&apiKey=${process.env.NEWS_API_KEY}`);
+    const newsData = newsList.data.articles;
+
+    const result = [];
+
+    newsData.forEach(item => {
+        let title = item.title.replace(/<[^>]*>?/gm, '');
+        title = item.title.split(' - ');
+        const company = title.length > 1 ? title.pop() : 'NULL';
+        result.push({
+            title: title.join(' - '), // 제목 재조합
+            company: company,
+            newsLisk: item.url,
+            date: item.publishedAt,
+            img: item.urlToImage,
+        });
+    });
+
+    return result;
+    } catch (error) {
+        console.log(error);
+    }
+}

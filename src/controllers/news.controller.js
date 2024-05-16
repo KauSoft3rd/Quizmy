@@ -344,3 +344,44 @@ export const updateNewsData = async () => {
     }
 }
 scheduler.scheduleJob('*/10 * * * *', updateNewsData);
+
+
+import { getNewestNews } from '../services/new.service';
+import path from 'path'
+export const predictAPI = async (req, res, next) => {
+    try {
+        const newestNewsList = await getNewestNews(); // 네이버 뉴스 조회 API 호출하여 [제목/발행사/링크/img/날짜] 리스트 획득
+        const pyPath = path.join(__dirname, 'news_classify.py'); // classify 프로그램 위치
+        const updateNewsList = []; // 올바른 카테고리로 분류된 뉴스 정보들이 담기는 리스트
+
+        for (const item of newestNewsList) { // forEach 대신 for...of 루프를 사용
+            if (await predictNews(pyPath, item.title)) {
+                updateNewsList.push(item); // 올바른 카테고리의 경우 갱신할 뉴스 리스트에 추가
+            }
+        };
+         
+        return res.send(response(status.SUCCESS, updateNewsList));
+    } catch ( error ) {
+        console.log(error);
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
+    }
+}
+
+import { spawnSync } from 'child_process';
+const predictNews = ( pyPath, title ) => {
+    return new Promise((resolve, reject) => {
+        const process = spawnSync('python', [pyPath, title]); // 프로세스를 실행
+
+        const stdout = process.stdout.toString();
+        const stderr = process.stderr.toString();
+        console.log(stdout);
+        if (stdout.includes(1)) {
+            console.log("올바른 카테고리의 뉴스");
+            resolve(true);
+        }
+        else if (stdout.includes(0)) {
+            console.log("올바르지 않은 카테고리의 뉴스");
+            resolve(false);
+        }
+    });
+}

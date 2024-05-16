@@ -66,6 +66,7 @@ export const getNewsKeywordDao = async (user_id) => {
             let [[word]] = await db.query(getRandomKeywordSql, [randomKeywordId[i].words_id]);
             randomKeyword.push(word.word);
         }
+        console.log(randomKeyword);
         db.release();
         return randomKeyword;
     } catch ( error ) {
