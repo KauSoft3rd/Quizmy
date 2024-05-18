@@ -18,8 +18,7 @@ export const getNews = async (req, res, next) => {
         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
         let encodedData = iconv.decode(html.data, "EUC-KR");
         let $ = cheerio.load(encodedData);
-        // let newsData = $('.newsList .block1');
-        let newsData = $('.newsList .block1').slice(0, 8);
+        let newsData = $('.newsList .block1').slice(1, 9);
 
         const nowDate = new Date();
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
@@ -41,8 +40,8 @@ export const getNews = async (req, res, next) => {
                 console.log(error);
                 img = null;
             }
-            let timeDiff = calculateDate(date, nowDate);
-            let check = bookmarkList.some(item => item.link === newsLink);
+            let timeDiff = calculateDate(date, nowDate); // 크롤링한 시간을 분, 시간, 일 단위로 변환
+            let check = bookmarkList.some(item => item.link === newsLink); // 사용자의 스크랩 목록에 존재하는 뉴스 기사인지 파악
             return { title, company, newsLink, date: timeDiff, img, check };
         });
         const newsList = await Promise.all(promises);
@@ -78,7 +77,8 @@ API 3 : 뉴스 북마크 제거 API
 export const deleteBookmark = async (req, res, next) => {
     try {
         const user_id = req.user_id;
-        const { link } = req.body;
+        const { link } = req.query;
+        console.log(user_id, link);
         await deleteBookmarkDao(user_id, link);
         return res.send(response(status.SUCCESS, "뉴스가 북마크에서 삭제되었습니다."));
     } catch ( error ) {
@@ -140,7 +140,14 @@ export const getMainNews = async (req, res, next) => {
         let office_id = link.match(/office_id=([^&]+)/)[1];
         let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
         let check = bookmarkList.some(item => item.link === newsLink);
-        let img = await getNewsImageURL(newsLink); 
+        let img; 
+        try {
+            img = await getNewsImageURL(newsLink); 
+        }
+        catch (error) {
+            console.log(error);
+            img = null;
+        }
         let mainNews = {
             title: title,
             company: company,
@@ -161,6 +168,7 @@ API 6 : 네이버 키워드 뉴스 API
 반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
 */
 
+import { keywordNewsCalculateDate } from '../services/new.service';
 export const getNaverNewsKeyword = async (req, res, next) => {
     try {
         const user_id = req.user_id;
@@ -176,18 +184,23 @@ export const getNaverNewsKeyword = async (req, res, next) => {
             },
         });
 
+        const now = new Date(); // 현재 시각
         const items = newsList.data.items;
-        const bookmarkList = await getBookmarkNewsDBDao(user_id);
+        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 스크랩 유무를 확인하기 위한 조회
         const keywordNewsList = await Promise.all(items.map(async (item) => {
             var title = item.title.replace(/<[^>]*>?/gm, '');
             var link = item.link;
             var date = item.pubDate;
             var image = await getNewsImageURL(link); 
             var check = bookmarkList.some(item => item.link === link);
+
+            const newsDate = new Date(date);
+            const timeDiff = keywordNewsCalculateDate(newsDate, now);
+            console.log(timeDiff);
             return {
                 title: title,
                 newsLink: link,
-                date: date,
+                date: timeDiff,
                 img: image,
                 check: check,
             };
@@ -213,6 +226,7 @@ export const getNewsKeyword = async (req, res, next) => {
         console.log(randomKeyword);
         return res.send(response(status.SUCCESS, randomKeyword));
     } catch ( error ) {
+        console.log(error);
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
 }
@@ -255,3 +269,78 @@ export const getMainNewsList = async (req, res, next) => {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
 }
+
+/*
+API 9 : 데이터 베이스의 뉴스를 조회
+요청형식 : 
+반환결과 : 
+*/
+
+import { getNewsDateDao } from '../models/news.dao';
+export const getNewsFromDB = async (req, res, next) => {
+    try {
+        const user_id = req.user_id;
+        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 스크랩 리스트를 조회
+        const newsList = await getNewsDateDao(); // DB에 저장된 크롤링 뉴스를 조회
+        const nowDate = new Date();
+
+        const resultList = [];
+
+        for (const node of newsList) {
+            const { title, company, newsLink, date, img } = node;
+            const timeDiff = calculateDate(date, nowDate);
+            const check = bookmarkList.some(item => item.link === newsLink);
+            resultList.push({ title: title, company: company, newsLink: newsLink, date: timeDiff, img: img, check: check });
+        }
+        console.log(resultList);
+        return res.send(response(status.SUCCESS, resultList));
+    } catch ( error ) {
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}
+
+/*
+API 10 : 뉴스 크롤링 갱신
+요청형식 : 
+반환결과 : 
+*/
+
+import scheduler from 'node-schedule';
+import { updateNewsDataDao } from '../models/news.dao';
+export const updateNewsData = async () => {
+    try {
+        console.log("NEWS CRAWLING START!!!");
+        let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
+        { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
+        let encodedData = iconv.decode(html.data, "EUC-KR");
+        let $ = cheerio.load(encodedData);
+        let newsData = $('.newsList .block1').slice(1, 20); // 19개의 뉴스를 크롤링
+
+        // 현재 아래의 newsData는 총 19개의 node를 가지게 된다.
+        const promises = newsData.map(async(idx, node) => {
+            let title = $(node).find('.articleSubject a').text().trim();
+            let company = $(node).find('.articleSummary .press').text().trim();
+            let link = $(node).find('.articleSubject a').attr('href');
+            let article_id = link.match(/article_id=([^&]+)/)[1];
+            let office_id = link.match(/office_id=([^&]+)/)[1];
+            let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
+            let date = new Date($(node).find('.articleSummary .wdate').text().trim());
+            let img;
+            try {
+                img = await getNewsImageURL(newsLink); 
+            }
+            catch (error) {
+                console.log(error);
+                img = null;
+            }
+            return { title, company, newsLink, date, img };
+        });
+        const newsList = await Promise.all(promises);
+        console.log("NEWS CRAWLING CLEAR!!!");
+        await updateNewsDataDao(newsList);
+    } catch ( error ) {
+        console.error(error);
+        return error;
+    }
+}
+scheduler.scheduleJob('*/10 * * * *', updateNewsData);

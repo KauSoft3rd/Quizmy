@@ -12,7 +12,7 @@ API 1 : 오늘 풀어볼 단어를 조회
 export const getQuizWord = async (req, res, next) => {
     try {
         const user_id = req.user_id;
-        const quizWord = await getRandomWordDao(user_id);
+        const quizWord = await getRandomWordDao(user_id); // 랜덤으로 퀴즈 단어를 제공
         return res.send(response(status.SUCCESS, quizWord));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
@@ -34,7 +34,7 @@ export const patchRemindWord = async (req, res, next) => {
             await addCountQuiz(user_id);
         } 
         else msg = "오답입니다.";
-        
+    
         await patchRemindWordDao(user_id, words_id, grade);
 
         return res.send(response(status.SUCCESS, msg));
@@ -132,3 +132,16 @@ export const reqChatGPT = async (req, res, next) => {
         return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
+
+// import natural from 'natural';
+// export const testapi = async (req, res, next) => {
+//     try {
+//         const tokenizer = new natural.WordTokenizer();
+//         const newTitle = "Node.js is a JavaScript runtime"
+//         const token = tokenizer.tokenize(newTitle);
+//         console.log(token);
+//         return res.send(response(status.SUCCESS, token));
+//     } catch ( error ) {
+//         return res.send(response(status.INTERNAL_SERVER_ERROR, error));
+//     }
+// }
