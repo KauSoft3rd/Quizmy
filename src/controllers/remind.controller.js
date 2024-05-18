@@ -59,6 +59,7 @@ export const getRemindNewest = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const wordsList = await getNewestRemindDao(user_id);
+        console.log(wordsList);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR, error));

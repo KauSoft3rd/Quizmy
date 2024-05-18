@@ -17,9 +17,21 @@ export const calculateDate = (d1, d2) => {
 }
 
 /*
-Service 2 : 북마크에 존재하는 기사인지 확인하는 서비스 > 아직 사용되지 않음
+Service 2 : 키워드를 통해 조회한 뉴스의 시간을 반환
 */
 
+export const keywordNewsCalculateDate = (d1, d2) => { // d1 = 뉴스 시간, d2 = 현재 시간
+    const diffInMillis = d2 - d1;
+    const diffInMinutes = Math.round(diffInMillis / (1000 * 60));
+    const diffInHours = Math.round(diffInMinutes / 60);
+    const diffInDays = Math.round(diffInHours / 24);
+
+    let timeDiff;
+    if (diffInDays > 0) timeDiff = `${diffInDays}일`;
+    else if (diffInHours > 0) timeDiff = `${diffInHours}시간`
+    else timeDiff = `${diffInMinutes}분`;
+    return timeDiff;
+}
 
 /*
 Service 3 : 램덤으로 4개의 단어를 제공하는 서비스 / CPU 사용
@@ -56,7 +68,6 @@ export const getNewsImageURL = async (newsURL) => {
         const html = response.data;
         const $ = cheerio.load(html);
         const imageSrc = $('meta[property="og:image"]').attr('content');
-        console.log(imageSrc);
         return imageSrc ? imageSrc : '';
     } catch ( error ) {
         console.error(error);
