@@ -80,7 +80,7 @@ export const levelTest = async(id, point) => {
             JSON.stringify(["0%","0%","0%","0%","0%"]), 
             0,
             0,
-            'Bronze',
+            1,
             JSON.stringify(["0","0","0","0","0"]),
             0
         ]);
@@ -90,7 +90,7 @@ export const levelTest = async(id, point) => {
             id,
             0, // 스트릭
             0, // 뽑기 티켓
-            0 // 레벨북
+            1 // 레벨북
         ])
 
         conn.release();
