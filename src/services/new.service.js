@@ -91,10 +91,13 @@ export const getTimeDiff = (time) => {
     }
 }
 
+/*
+Service 6 : News api를 활용하여 최신 뉴스를 100개 조회
+*/
 
 export const getNewestNews = async () => {
     try {
-    const pageSize = 30;
+    const pageSize = 100;
     const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr&pageSize=${pageSize}&apiKey=${process.env.NEWS_API_KEY}`);
     const newsData = newsList.data.articles;
 
@@ -107,7 +110,7 @@ export const getNewestNews = async () => {
         result.push({
             title: title.join(' - '), // 제목 재조합
             company: company,
-            newsLisk: item.url,
+            newsLink: item.url,
             date: item.publishedAt,
             img: item.urlToImage,
         });

@@ -31,6 +31,6 @@ if __name__ == '__main__':
     news_title = sys.argv[1]
     prediction = predict_news_category(news_title)
     if prediction == True:
-        print(1)
+        sys.exit(1)
     else:
-        print(0)
+        sys.exit(0)
