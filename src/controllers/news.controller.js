@@ -3,7 +3,7 @@ import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao, getUserBookmarkDao } from '../models/news.dao';
+import { getBookmarkNewsDBDao, getNewsKeywordDao, getUserBookmarkDao } from '../models/news.dao';
 import { calculateDate, getNewsImageURL, getTimeDiff } from '../services/new.service';
 
 /*
@@ -57,6 +57,7 @@ API 2 : 뉴스 북마크 추가 API
 반환결과 : 
 */
 
+import { postBookmarkDao } from '../models/news.dao';
 export const postBookmark = async (req, res, next) => {
     try {
         const user_id = req.user_id;
@@ -74,6 +75,7 @@ API 3 : 뉴스 북마크 제거 API
 반환결과 : 
 */
 
+import { deleteBookmarkDao } from '../models/news.dao';
 export const deleteBookmark = async (req, res, next) => {
     try {
         const user_id = req.user_id;
@@ -172,7 +174,7 @@ import { keywordNewsCalculateDate } from '../services/new.service';
 export const getNaverNewsKeyword = async (req, res, next) => {
     try {
         const user_id = req.user_id;
-        const { keyword } = req.body;
+        const { keyword } = req.query;
         const sort = 'sim'; // 날짜순으로 정렬 유사도 정렬을 원할 경우 'sim'
         const display = 5; // 한번에 읽어올 뉴스의 갯수
         const api_url = `https://openapi.naver.com/v1/search/news.json?query=${encodeURI(keyword)}&display=${display}&sort=${sort}`;
