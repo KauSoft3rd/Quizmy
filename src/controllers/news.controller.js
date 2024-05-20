@@ -3,7 +3,7 @@ import cheerio from 'cheerio';
 import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getBookmarkNewsDBDao, postBookmarkDao, deleteBookmarkDao, getNewsKeywordDao, getUserBookmarkDao } from '../models/news.dao';
+import { getBookmarkNewsDBDao, getNewsKeywordDao, getUserBookmarkDao } from '../models/news.dao';
 import { calculateDate, getNewsImageURL, getTimeDiff } from '../services/new.service';
 
 /*
@@ -57,6 +57,7 @@ API 2 : 뉴스 북마크 추가 API
 반환결과 : 
 */
 
+import { postBookmarkDao } from '../models/news.dao';
 export const postBookmark = async (req, res, next) => {
     try {
         const user_id = req.user_id;
@@ -74,6 +75,7 @@ API 3 : 뉴스 북마크 제거 API
 반환결과 : 
 */
 
+import { deleteBookmarkDao } from '../models/news.dao';
 export const deleteBookmark = async (req, res, next) => {
     try {
         const user_id = req.user_id;
@@ -172,7 +174,7 @@ import { keywordNewsCalculateDate } from '../services/new.service';
 export const getNaverNewsKeyword = async (req, res, next) => {
     try {
         const user_id = req.user_id;
-        const { keyword } = req.body;
+        const { keyword } = req.query;
         const sort = 'sim'; // 날짜순으로 정렬 유사도 정렬을 원할 경우 'sim'
         const display = 5; // 한번에 읽어올 뉴스의 갯수
         const api_url = `https://openapi.naver.com/v1/search/news.json?query=${encodeURI(keyword)}&display=${display}&sort=${sort}`;
@@ -343,4 +345,50 @@ export const updateNewsData = async () => {
         return error;
     }
 }
-scheduler.scheduleJob('*/10 * * * *', updateNewsData);
+scheduler.scheduleJob('*/30 * * * *', updateNewsData);
+
+
+import { getNewestNews } from '../services/new.service';
+import path from 'path'
+import { updateNewsDao } from '../models/news.dao';
+export const predictAPI = async (req, res, next) => {
+    try {
+        const newestNewsList = await getNewestNews(); // 네이버 뉴스 조회 API 호출하여 [제목/발행사/링크/img/날짜] 리스트 획득
+        const pyPath = path.join(__dirname, 'news_classify.py'); // classify 프로그램 위치
+        const updateNewsList = []; // 올바른 카테고리로 분류된 뉴스 정보들이 담기는 리스트
+
+        for (const item of newestNewsList) { // forEach 대신 for...of 루프를 사용
+            console.log(item.title);
+            if (await predictNews(pyPath, item.title.replace(/<[^>]*>?/gm, ''))) {
+                updateNewsList.push(item); // 올바른 카테고리의 경우 갱신할 뉴스 리스트에 추가
+            }
+        };
+        await updateNewsDao(updateNewsList);
+        return res.send(response(status.SUCCESS, updateNewsList));
+    } catch ( error ) {
+        console.log(error);
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
+    }
+}
+
+import { spawn } from 'child_process';
+const predictNews = ( pyPath, title ) => {
+    return new Promise((resolve, reject) => {
+        const process = spawn('python', [pyPath, title]); // 프로세스를 실행
+
+        process.on('close', (code) => {
+            if ( code === 1 ) {
+                console.log("올바른 카테고리의 뉴스\n");
+                resolve(true);
+            } else if ( code === 0) {
+                console.log("올바르지 않은 카테고리의 뉴스\n");
+                resolve(false);
+            } else {
+                reject(new Error(`Unexpected code ${code}`));
+            }
+        });
+        process.on('error', (error) => {
+            reject(error);
+        });
+    });
+};

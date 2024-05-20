@@ -66,6 +66,7 @@ export const getNewsKeywordDao = async (user_id) => {
             let [[word]] = await db.query(getRandomKeywordSql, [randomKeywordId[i].words_id]);
             randomKeyword.push(word.word);
         }
+        console.log(randomKeyword);
         db.release();
         return randomKeyword;
     } catch ( error ) {
@@ -114,6 +115,28 @@ export const updateNewsDataDao = async (newsData) => {
 
 /*
 DAO 7 : 데이터 베이스에 저장된 뉴스 크롤링 정보를 조회
+*/
+
+export const updateNewsDao = async(newsData) => {
+    try {
+        const db = await pool.getConnection();
+        await db.query(deleteCrawlingSql); // 데이터 베이스를 날린다.
+
+        for (const news of newsData) { // 새롭게 크롤링 정보를 삽입한다.
+            const { title, company, newsLink, date, img } = news;
+            await db.query(updateCrawlingSql, [title, company, newsLink, date, img]);
+        }
+
+        db.release();
+    } catch ( error ) {
+        db.release(); // 연결 끊기
+        return error;
+    }
+}
+
+
+/*
+DAO 8 : 데이터 베이스에 저장된 뉴스 크롤링 정보를 조회
 */
 
 import { getNewsFromDBSql } from "./news.sql";
