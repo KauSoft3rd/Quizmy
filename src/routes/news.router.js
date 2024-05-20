@@ -19,3 +19,6 @@ newsRouter.get('/keywordNews', kakaoIdToUserIdMiddleware, getNaverNewsKeyword); 
 import { getNewsFromDB } from '../controllers/news.controller';
 newsRouter.get('/', kakaoIdToUserIdMiddleware, getNewsFromDB);
 // newsRouter.get('/test', kakaoIdToUserIdMiddleware, getMainNewsList);
+
+import { predictAPI } from '../controllers/news.controller';
+newsRouter.get('/pred', kakaoIdToUserIdMiddleware, predictAPI);

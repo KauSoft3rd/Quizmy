@@ -6,7 +6,7 @@ import * as mypageService from "../services/mypage.service.js";
 
 
 // 포인트 조회
-/*export const getPoint = async (id) => {
+export const getPoint = async (id) => {
     try{
         const currentPointData = await mypageDao.getPoint(id);
 
@@ -15,7 +15,7 @@ import * as mypageService from "../services/mypage.service.js";
         throw error;
     }
 }
-*/
+
 
 // 아이템 구매
 // 아이템 개수 늘리기
@@ -27,7 +27,7 @@ export const purchaseItem = async (id, cost, item) => {
         console.log("currentPointData: ", currentPointData);
 
         // 포인트 확인 - cost가 포인트보다 크면 오류
-        if (currentPointData < cost) return res.send(response(status.POINT_LACK));
+        if (currentPointData < cost) return response(status.POINT_LACK);
 
         // 포인트 줄이기
         const newPointData = currentPointData - cost;
@@ -58,7 +58,7 @@ export const useItem = async (id, item) => {
         let getItemData = await storeDao.getItem(id, item);
 
         // 아이템 확인 아이템 개수 0 이면 오류
-        if (getItemData[item] < 0) return res.send(response(status.ITEM_LACK));
+        if (getItemData[item] < 0) return response(status.ITEM_LACK);
 
         const newCount = getItemData[item] - 1;
 

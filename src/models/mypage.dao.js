@@ -14,7 +14,6 @@ export const getTodayQuiz = async (id) => {
     const correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
     const allCount = getQuizAllData[0][0]["COUNT(*)"];
 
-    conn.release();
 
     if (allCount > 0) {
         // const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100) : '0';
@@ -22,9 +21,11 @@ export const getTodayQuiz = async (id) => {
         // const ratio = (correctCount / allCount) * 100;
         const result = todayPercent+"%";
         const insertTodayPercent = await conn.query(insertTodayPercentSql, [todayPercent, id]);
+        conn.release();
         return result;
     } else {
         // 푼 단어 없을 때 0% 반환
+        conn.release();
         return '0%';
     }
 }
