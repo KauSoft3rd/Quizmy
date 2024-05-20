@@ -1,7 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { scheduleJob } from 'node-schedule'; // 해당 시간에 함수 실행
-import { updateUserData } from './src/models/mypage.dao';
 
 import { healthRoute } from './src/routes/health.router';
 import { newsRouter } from './src/routes/news.router';
@@ -32,13 +30,7 @@ app.use((err, req, res, next) => {
 app.listen(app.get('port'), () => {
     console.log(`Example app listening on port ${app.get('port')}`);
 
-    // 매일 0시 스트릭, 정답률 업데이트
-    // 이 부분 한번 해보고 푸시하겠음(05.03)
-    /*scheduleJob('0 0 * * *', function() {
-        console.log('매일 0시에 실행됩니다.');
-        updateUserData();
-    });
-    */
+
     
 })
 
