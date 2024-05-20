@@ -18,6 +18,8 @@ export const status = {
 
     // 상점 err
     POINT_LACK: {status: StatusCodes.UNAUTHORIZED, isSuccess: false, code: 'STORE000', message: "포인트가 부족합니다." },
-    ITEM_LACK: {status: StatusCodes.UNAUTHORIZED, isSuccess: false, code: 'STORE001', message: "아이템을 보유하고있지 않습니다." }
+    ITEM_LACK: {status: StatusCodes.UNAUTHORIZED, isSuccess: false, code: 'STORE001', message: "아이템을 보유하고있지 않습니다." },
 
+    // 홈 err
+    QUESTION_NOT_FOUND: {status: StatusCodes.UNAUTHORIZED, isSuccess: false, code: 'HOME000', message: "오늘의 명언을 찾지 못했습니다." },
 };
