@@ -77,11 +77,11 @@ export const levelTest = async(id, point) => {
             id, 
             point,
             0,
-            JSON.stringify(["0%","0%","0%","0%","0%"]), 
+            JSON.stringify([0,0,0,0,0]), 
             0,
             0,
             1,
-            JSON.stringify(["0","0","0","0","0"]),
+            JSON.stringify([0,0,0,0,0]),
             0
         ]);
 
