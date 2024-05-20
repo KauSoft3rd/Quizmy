@@ -1,5 +1,6 @@
 import { response } from "../../src/config/response.js";
 import { status } from "../../src/config/response.status.js";
+import scheduler from 'node-schedule';
 import * as mypageService from "../services/mypage.service.js";
 import * as mypageDao from "../models/mypage.dao.js";
 
@@ -130,3 +131,8 @@ export const updateWeeklyPercent = async (req, res) => {
         return res.send(response(status.BAD_REQUEST));
     }
 }
+
+scheduler.scheduleJob('0 0 * * *', function() {
+    console.log('유저 정보 갱신');
+    mypageDao.updateUserData();
+});

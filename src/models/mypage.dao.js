@@ -19,14 +19,15 @@ export const getTodayQuiz = async (id) => {
         // const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100) : '0';
         const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100).toFixed(0) : '0';
         // const ratio = (correctCount / allCount) * 100;
-        const result = todayPercent+"%";
+        const result = todayPercent;
         const insertTodayPercent = await conn.query(insertTodayPercentSql, [todayPercent, id]);
         conn.release();
         return result;
     } else {
         // 푼 단어 없을 때 0% 반환
         conn.release();
-        return '0%';
+
+        return 0;
     }
 }
 
@@ -98,7 +99,7 @@ export const updateWeeklyPercent = async (id) => {
         if (weeklyPercent.length >= 5) {
             weeklyPercent.shift(); // 배열의 첫 번째 정답률 제거
         }
-        weeklyPercent.push(`${todayPercent}%`); // 새로운 정답률 추가
+        weeklyPercent.push(todayPercent); // 새로운 정답률 추가
     
         // DB에 업데이트
         
@@ -124,7 +125,11 @@ export const getWeeklyPercent = async (id) => {
 
     console.log("currentWeeklyData: ", currentWeeklyData[0][0]);
 
-    return currentWeeklyData[0][0];
+    const weeklyData = JSON.parse(currentWeeklyData[0][0].weekly_percent);
+
+    console.log("weeklyData: ", weeklyData);
+
+    return weeklyData;
 }
 
 // 퀴즈 스트릭 조회
@@ -155,10 +160,12 @@ export const getWeeklyStreak = async (id) => {
 
     console.log('getWeeklyStreakData: ', getWeeklyStreakData[0][0].streak_array);
 
-    const weeklyStreakData = getWeeklyStreakData[0][0].streak_array;
+    const weeklystreakData = JSON.parse(getWeeklyStreakData[0][0].streak_array);
+
+    console.log("weeklyData: ", weeklystreakData);
 
     conn.release();
-    return weeklyStreakData;
+    return weeklystreakData;
 }
 
 // 위클리 스트릭 업데이트
@@ -191,7 +198,12 @@ export const updateWeeklyStreak = async (id) => {
     conn.release();
 
     console.log('currentWeeklyStreakData: ', currentWeeklyStreakData[0][0]);
-    return currentWeeklyStreakData[0][0];
+
+    const weeklystreakData = JSON.parse(currentWeeklyStreakData[0][0].streak_array);
+
+    console.log("weeklyData: ", weeklystreakData);
+
+    return weeklystreakData;
 }
 
 

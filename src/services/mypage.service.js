@@ -46,12 +46,12 @@ export const checkLevel = async (id) => {
         const countUserQuizData = await mypageDao.countQuiz(id);
 
         let userNewLevel
-        if ( countUserQuizData < 50 ) userNewLevel = 'Bronze';
-        else if ( countUserQuizData < 150 ) userNewLevel = 'Silver';
-        else if ( countUserQuizData < 350 ) userNewLevel = 'Gold';
-        else if ( countUserQuizData < 750 ) userNewLevel = 'Platinum';
-        else if ( countUserQuizData < 1550 ) userNewLevel = 'Diamond';
-        else userNewLevel = 'Ruby';
+        if ( countUserQuizData < 50 ) userNewLevel = 1;
+        else if ( countUserQuizData < 150 ) userNewLevel = 2;
+        else if ( countUserQuizData < 350 ) userNewLevel = 3;
+        else if ( countUserQuizData < 750 ) userNewLevel = 4;
+        else if ( countUserQuizData < 1550 ) userNewLevel = 5;
+        else userNewLevel = 6;
 
         const userCurrentLevel = await mypageDao.getLevel(id);
 
@@ -83,6 +83,7 @@ export const addCountQuiz = async (id) => {
 
         return userInfoData;
     } catch (error) { 
+        console.log(error);
         throw error;
     }
 }
