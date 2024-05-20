@@ -8,6 +8,7 @@ import { remindRouter } from './src/routes/remind.router';
 import { quizRouter } from './src/routes/quiz.router';
 import { mypageRouter } from './src/routes/mypage.router';
 import { storeRouter } from './src/routes/store.router';
+import { homeRouter } from './src/routes/home.router';
 
 dotenv.config();
 
@@ -45,3 +46,4 @@ app.use('/remind', remindRouter);
 app.use('/quiz', quizRouter);
 app.use('/mypage', mypageRouter);
 app.use('/store', storeRouter);
+app.use('/home', homeRouter);
