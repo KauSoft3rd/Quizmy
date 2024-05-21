@@ -59,7 +59,7 @@ export const getAllItem = async (req, res) => {
     }
 }
 
-// 포인트 증가
+// 티켓 조회
 export const getTicket = async (req, res) => {
     try {
         console.log("티켓 조회");
@@ -67,6 +67,21 @@ export const getTicket = async (req, res) => {
         console.log('user_id: ', user_id);
 
         return res.send(response(status.SUCCESS, await storeDao.getTicket(user_id)));
+    } catch (error) {
+        console.log(error);
+        return res.send(response(status.BAD_REQUEST, error));
+    }
+}
+
+// 포인트 구매
+export const addPoint = async (req, res) => {
+    try {
+        console.log("포인트 구매");
+        const user_id = req.user_id;
+        console.log('user_id: ', user_id);
+        console.log('req.body: ', req.body);
+
+        return res.send(response(status.SUCCESS, await storeService.addPoint(user_id, req.body.point)));
     } catch (error) {
         console.log(error);
         return res.send(response(status.BAD_REQUEST, error));
