@@ -19,7 +19,7 @@ storeRouter.get("/item", kakaoIdToUserIdMiddleware, asyncHandler(getAllItem));
 
 // 포인트 구매(증가)
 // 결제 시스템 도입해야
-// storeRouter.patch("/point", kakaoIdToUserIdMiddleware, asyncHandler(addPoint));
+storeRouter.patch("/point", kakaoIdToUserIdMiddleware, asyncHandler(addPoint));
 
 // 포인트 조회
 storeRouter.get("/point", kakaoIdToUserIdMiddleware, asyncHandler(getPoint));

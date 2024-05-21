@@ -1,5 +1,6 @@
 import { response } from "../../src/config/response.js";
 import { status } from "../../src/config/response.status.js";
+import { BaseError } from "../config/error.js";
 import * as storeDao from "../models/store.dao.js";
 import * as mypageDao from "../models/mypage.dao.js";
 import * as mypageService from "../services/mypage.service.js";
@@ -27,7 +28,7 @@ export const purchaseItem = async (id, cost, item) => {
         console.log("currentPointData: ", currentPointData);
 
         // 포인트 확인 - cost가 포인트보다 크면 오류
-        if (currentPointData < cost) return response(status.POINT_LACK);
+        if (currentPointData < cost) return new BaseError(status.POINT_LACK);
 
         // 포인트 줄이기
         const newPointData = currentPointData - cost;
@@ -58,7 +59,7 @@ export const useItem = async (id, item) => {
         let getItemData = await storeDao.getItem(id, item);
 
         // 아이템 확인 아이템 개수 0 이면 오류
-        if (getItemData[item] < 0) return response(status.ITEM_LACK);
+        if (getItemData[item] <= 0) return new BaseError(status.ITEM_LACK);
 
         const newCount = getItemData[item] - 1;
 
@@ -84,6 +85,10 @@ export const addPoint = async (id, point) => {
 
         // 포인트 값 먼저 바꾸고
         const addPointData = await storeDao.updatePoint(id, newPointData);
+
+        const currentPointData = await mypageDao.getPoint(id);
+
+        return currentPointData;
 
     } catch (error){
         throw error;
