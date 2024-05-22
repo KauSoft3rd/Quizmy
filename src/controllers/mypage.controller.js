@@ -107,7 +107,7 @@ export const getAllUserId = async (req, res) => {
 }
 
 // 유저 정보 갱신
-export const updateUserData = async (req, res) => {
+export const updateUserData = async () => {
     try {
         console.log("유저 정보 갱신");
 
@@ -136,3 +136,21 @@ scheduler.scheduleJob('0 0 * * *', function() {
     console.log('유저 정보 갱신');
     mypageDao.updateUserData();
 });
+
+// 퀴즈 포인트 -> todaypoint, point 둘 다 적재
+// 투데이포인트 300 되면 적재 그만하기
+// 본인 기준 5(본인-2), 10(본인-1), 15(본인), 20, 25
+export const addQuizPoint = async (req, res) => {
+    try {
+        console.log("위클리 스트릭 갱신");
+        const user_id = req.user_id;
+        console.log("user_id: ", user_id);
+        // 단어 레벨 바디로 받아오기
+        console.log("req.body.words_id: ", req.body.words_id);
+
+        return res.send(response(status.SUCCESS, await mypageService.addQuizPoint(user_id, req.body.words_id)));
+    } catch (error) {
+        console.log(error);
+        return res.send(response(status.BAD_REQUEST));
+    }
+}
