@@ -97,6 +97,7 @@ export const addQuizPoint = async (id, words_id) => {
 
         // 퀴즈 레벨 조회
         const quizlevel = await mypageDao.getQuizLevel(words_id);
+        console.log('quizlevel: ', quizlevel);
     
         // 퀴즈 레벨이랑 비교
         // 퀴즈 레벨 - 사용자 레벨

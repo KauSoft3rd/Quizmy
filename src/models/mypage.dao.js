@@ -17,7 +17,7 @@ export const getTodayQuiz = async (id) => {
 
     if (allCount > 0) {
         // const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100) : '0';
-        const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100).toFixed(0) : '0';
+        const todayPercent = allCount > 0 ? Math.round((correctCount / allCount) * 100) : 0;
         // const ratio = (correctCount / allCount) * 100;
         const result = todayPercent;
         const insertTodayPercent = await conn.query(insertTodayPercentSql, [todayPercent, id]);
@@ -212,8 +212,6 @@ export const getLevel = async (id) => {
 
     const getUserLevelData = await conn.query(getUserLevelSql, [id]);
 
-    console.log('getUserLevelData: ', getUserLevelData[0][0].level);
-
     conn.release();
     return getUserLevelData[0][0].level;
 }
@@ -236,8 +234,6 @@ export const getPoint = async(id) => {
     const conn = await pool.getConnection();
     const getUserPointData = await conn.query(getUserPointSql, [id]);
 
-    console.log('getUserPointData: ', getUserPointData[0][0].point);
-
     conn.release();
     return getUserPointData[0][0].point;
 }
@@ -246,8 +242,6 @@ export const getPoint = async(id) => {
 export const getTodayPoint = async(id) => {
     const conn = await pool.getConnection();
     const getUserTodayPointData = await conn.query(getUserTodayPointSql, [id]);
-
-    console.log('getUserTodayPointData: ', getUserTodayPointData[0][0].todaypoint);
 
     conn.release();
     return getUserTodayPointData[0][0].todaypoint;
@@ -286,7 +280,6 @@ export const addQuizPoint = async (id, point) => {
     
     await conn.query(addPointSql, [point, id]);
     const userPointData = await conn.query(getUserPointSql, [id]);
-    console.log("userPointData: ", userPointData[0][0]);
 
     conn.release();
     
@@ -299,7 +292,6 @@ export const addQuizTodayPoint = async (id, point) => {
     
     await conn.query(addTodayPointSql, [point, id]);
     const userTodayPointData = await conn.query(getUserTodayPointSql, [id]);
-    console.log("userTodayPointData: ", userTodayPointData[0][0]);
 
     conn.release();
     
@@ -325,7 +317,6 @@ export const getQuizLevel = async (id) => {
     
     await conn.query(resetTodaySql, [id]);
     const quizlevel = await conn.query(getQuizLevelSql, [id]);
-    console.log("quizlevel[0][0].level: ", quizlevel[0][0].level);
 
     conn.release();
     

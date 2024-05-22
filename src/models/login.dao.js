@@ -108,7 +108,6 @@ export const getUserspec = async(id) => {
         const conn = await pool.getConnection();
 
         const userspec = await conn.query(getUserspecSql, [id]);
-        console.log("userspec: ", userspec[0][0]);
 
         conn.release();
 
