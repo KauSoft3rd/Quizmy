@@ -142,7 +142,7 @@ scheduler.scheduleJob('0 0 * * *', function() {
 // 본인 기준 5(본인-2), 10(본인-1), 15(본인), 20, 25
 export const addQuizPoint = async (req, res) => {
     try {
-        console.log("위클리 스트릭 갱신");
+        console.log("퀴즈 포인트 추가");
         const user_id = req.user_id;
         console.log("user_id: ", user_id);
         // 단어 레벨 바디로 받아오기
