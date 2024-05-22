@@ -76,15 +76,6 @@ export const updateWeeklyPercent = async (id) => {
         // 오늘 정답률 조회
         const todayPercentData = await conn.query(getTodayQuizDataSql, [id]);
 
-        // 오늘의 정답률 계산
-        /*
-        const correctData = await conn.query(getQuizCorrectSql, [userId]);
-        const allData = await conn.query(getQuizAllSql, [userId]);
-        const correctCount = correctData[0][0]["COUNT(*)"];
-        const allCount = allData[0][0]["COUNT(*)"];
-        const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100).toFixed(2) : '0';
-        */
-
         console.log("todayPercent: ", todayPercentData[0][0].today_percent);
 
         const todayPercent = todayPercentData[0][0].today_percent;
