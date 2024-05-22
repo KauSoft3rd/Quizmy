@@ -105,8 +105,6 @@ export const getNewestNews = async () => {
             // const newsList = await axios.get(`https://newsapi.org/v2/everything?apiKey=${process.env.NEWS_API_KEY}`);
             const newsData = newsList.data.articles;
             if (newsData.length === 0) break;
-
-            console.log(newsList.data);
             newsData.forEach(item => {
                 let title = item.title.replace(/<[^>]*>?/gm, '');
                 title = item.title.split(' - ');

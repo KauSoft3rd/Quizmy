@@ -117,15 +117,18 @@ export const updateNewsDataDao = async (newsData) => {
 DAO 7 : 데이터 베이스에 저장된 뉴스 크롤링 정보를 조회
 */
 
+import { updateNewsSql, getDB } from './news.sql.js';
 export const updateNewsDao = async(newsData) => {
+    const db = await pool.getConnection();
     try {
-        const db = await pool.getConnection();
         await db.query(deleteCrawlingSql); // 데이터 베이스를 날린다.
-
         for (const news of newsData) { // 새롭게 크롤링 정보를 삽입한다.
             const { title, company, newsLink, date, img } = news;
-            await db.query(updateCrawlingSql, [title, company, newsLink, date, img]);
+            await db.query(updateNewsSql, [title, company, newsLink, date, img]);
         }
+
+        const [temp] = await db.query(getDB);
+        console.log(temp);
 
         db.release();
     } catch ( error ) {

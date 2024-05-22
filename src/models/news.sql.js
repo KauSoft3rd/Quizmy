@@ -24,3 +24,9 @@ export const getNewsFromDBSql = 'SELECT title, company, newsLink, date, img FROM
 export const deleteCrawlingSql = 'DELETE FROM Crawling';
 // 뉴스를 크롤링하고 해당 정보를 DB에 저장
 export const updateCrawlingSql = 'INSERT INTO Crawling (title, company, newsLink, date, img) VALUES (?, ?, ?, ?, ?)';
+
+// 크롤링한 정보를 컨버트하여 DB에 저장
+export const updateNewsSql = `INSERT INTO Crawling (title, company, newsLink, date, img) VALUES (?, ?, ?, CONVERT_TZ(?, '+00:00', '+09:00'), ?`;
+
+// DB 조회
+export const getDB = 'SELECT * FROM Crawling';
