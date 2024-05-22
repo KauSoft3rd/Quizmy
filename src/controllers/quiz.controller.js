@@ -118,7 +118,8 @@ export const reqChatGPT = async (req, res, next) => {
         const params = {
             model: model,
             messages: [{ role: "user", content: prompt}],
-            temperature: 0.7
+            temperature: 0.5,
+            max_tokens: 300
         };
         
         const chatResult = await axios.post('https://api.openai.com/v1/chat/completions', params, { headers });

@@ -190,7 +190,9 @@ export const getNaverNewsKeyword = async (req, res, next) => {
         const items = newsList.data.items;
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 스크랩 유무를 확인하기 위한 조회
         const keywordNewsList = await Promise.all(items.map(async (item) => {
-            var title = item.title.replace(/<[^>]*>?/gm, '');
+            var title = item.title.replace(/<[^>]*>?/gm, ''); // html 태그 제거
+            title = title.replace(/&quot;/g, '"'); // &quot; 문자를 "로 변환
+            title = title.replace(/\//g, ' '); // 슬래시(/)를 공백으로 변환
             var link = item.link;
             var date = item.pubDate;
             var image = await getNewsImageURL(link); 

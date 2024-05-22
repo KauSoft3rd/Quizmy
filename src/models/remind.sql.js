@@ -15,3 +15,20 @@ export const todayRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user
 
 // 사용자가 시도한 문제를 최신순으로 조회
 export const getNewestRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? ORDER BY created_at DESC';
+
+
+
+// 오늘 시도한 단어를 최신순으로 조회
+export const todayNewestRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? AND DATE(created_at) = CURDATE()';
+// 누적 시도한 단어를 최신순으로 조회
+export const accNewestRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ?';
+
+// 오늘 시도한 단어중 정답을 조회
+export const todayCorrectRemindListSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 1 AND DATE(created_at) = CURDATE()';
+// 오늘 시도한 단어중 오답을 조회
+export const todayIncorrectRemindListSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 0 AND DATE(created_at) = CURDATE()';
+
+// 누적 시도한 단어중 정답을 조회
+export const accCorrectRemindListSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 1';
+// 누적 시도한 단어중 오답을 조회
+export const accIncorrectRemindListSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 0';

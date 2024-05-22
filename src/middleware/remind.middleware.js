@@ -1,6 +1,5 @@
 import { response } from '../config/response';
 import { status } from '../config/response.status';
-import { getRemindWordsList } from '../controllers/remind.controller';
 
 /*
 MIDDLE WARE 1 : 단어 되돌아보기에서 옵션에 해당하는 라우팅
@@ -8,47 +7,38 @@ MIDDLE WARE 1 : 단어 되돌아보기에서 옵션에 해당하는 라우팅
 반환결과 : [ 단어, 뜻, 정답/오답 ]
 */
 
-export const getRemindQuizMiddleware = async (req, res, next) => {
+import { getAccNewestRemind, getTodayNewestRemind } from '../controllers/remind.controller';
+import { getAccCorrectRemind, getTodayCorrectRemind } from '../controllers/remind.controller';
+import { getAccIncorrectRemind, getTodayIncorrectRemind } from '../controllers/remind.controller';
+import { getAccAlphaRemind, getTodayAlphaRemind } from '../controllers/remind.controller';
+export const remindMiddleware = async (req, res, next) => {
     try {
-        // const { backOption, sortOption } = req.body();
-
-        getRemindWordsList(req, res, next);
-
-        /*
-        if (backOption === "today") {
-            if (sortOption === "Newest") {
-
-            }
-            else if (sortOption === "alpha") {
-
-            }
-            else if (sortOption === "correct") {
-
-            }
-            else if (sortOption === "incorrect") {
-
-            }
-            else return res.send(response(status.BAD_REQUEST, "올바른 정렬 옵션이 아닙니다."));
+        const { dayParam, sortParam } = req.query;
+        // console.log(dayParam);
+        // console.log(sortParam);
+        if (sortParam === 'newest') {
+            if (dayParam === 'today') await getTodayNewestRemind(req, res, next);
+            else if (dayParam === 'acc') await getAccNewestRemind(req, res, next);
+            else throw error;
         }
-        else if (backOption === "accumulate") {
-            if (sortOption === "Newest") {
-
-            }
-            else if (sortOption === "alpha") {
-
-            }
-            else if (sortOption === "correct") {
-
-            }
-            else if (sortOption === "incorrect") {
-
-            }
-            else return res.send(response(status.BAD_REQUEST, "올바른 정렬 옵션이 아닙니다."));
-        } else {
-            return res.send(response(status.BAD_REQUEST, "요청 옵션이 정확하지 않습니다."));
+        else if (sortParam === 'alpha') {
+            if (dayParam === 'today') await getTodayAlphaRemind(req, res, next);
+            else if (dayParam === 'acc') return await getAccAlphaRemind(req, res, next); 
+            else throw error;
         }
-        */
+        else if (sortParam === 'correct') {
+            if (dayParam === 'today') await getTodayCorrectRemind(req, res, next);
+            else if (dayParam === 'acc') await getAccCorrectRemind(req, res, next);
+            else throw error;
+        }
+        else if (sortParam === 'incorrect') {
+            if (dayParam === 'today') await getTodayIncorrectRemind(req, res, next);
+            else if (dayParam === 'acc') await getAccIncorrectRemind(req, res, next);
+            else throw error;
+        }
+        else throw error;
     } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
+        console.log(error);
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
