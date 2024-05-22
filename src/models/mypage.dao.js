@@ -1,5 +1,5 @@
 import { pool } from "../config/db.config.js"; //db
-import { addCountQuizSql, countUserQuizSql, getAllUserIdsSql, getAllUserWeekPercentSql, getQuizAllSql, getQuizCorrectSql, getTodayQuizDataSql, getTodayStreakSql, getUserLevelSql, getUserPointSql, getWeeklySql, getWeeklyStreakSql, insertTodayPercentSql, updateUserPointSql, updateWeeklySql, updateWeeklyStreakSql, updatetodayStreakSql } from "./mypage.sql.js";
+import { addCountQuizSql, addPointSql, addTodayPointSql, countUserQuizSql, getAllUserIdsSql, getAllUserWeekPercentSql, getQuizAllSql, getQuizCorrectSql, getQuizLevelSql, getTodayQuizDataSql, getTodayStreakSql, getUserLevelSql, getUserPointSql, getUserTodayPointSql, getWeeklySql, getWeeklyStreakSql, insertTodayPercentSql, resetTodayPointSql, resetTodaySql, updateUserPointSql, updateWeeklySql, updateWeeklyStreakSql, updatetodayStreakSql } from "./mypage.sql.js";
 
 // today 퀴즈 정답률 조회
 // 테이블에도 추가해야
@@ -57,6 +57,7 @@ export const updateUserData = async () => {
         const id = user_ids[i].user_id;
         await updateWeeklyPercent(id);
         await updateWeeklyStreak(id);
+        await resetTodayData(id);
     }
 
     const getAllUserWeekPercent = await conn.query(getAllUserWeekPercentSql);
@@ -91,7 +92,7 @@ export const updateWeeklyPercent = async (id) => {
         // 현재 weekly_percent 가져오기
         const weeklyData = await conn.query(getWeeklySql, [id]);
 
-        console.log("weeklyData: ", weeklyData);
+        console.log("weeklyData: ", weeklyData[0][0].weekly_percent);
         
         let weeklyPercent = weeklyData[0][0].weekly_percent ? JSON.parse(weeklyData[0][0].weekly_percent) : [];
         
@@ -180,7 +181,7 @@ export const updateWeeklyStreak = async (id) => {
     // 현재 weekly_streak 가져오기
     const weeklyStreakData = await conn.query(getWeeklyStreakSql, [id]);
 
-    console.log("weeklyStreakData: ", weeklyStreakData);
+    console.log("weeklyStreakData: ", weeklyStreakData[0][0].streak_array);
     
     let weeklyStreak = weeklyStreakData[0][0].streak_array ? JSON.parse(weeklyStreakData[0][0].streak_array) : [];
 
@@ -249,6 +250,17 @@ export const getPoint = async(id) => {
     return getUserPointData[0][0].point;
 }
 
+// 오늘 포인트 조회
+export const getTodayPoint = async(id) => {
+    const conn = await pool.getConnection();
+    const getUserTodayPointData = await conn.query(getUserTodayPointSql, [id]);
+
+    console.log('getUserTodayPointData: ', getUserTodayPointData[0][0].todaypoint);
+
+    conn.release();
+    return getUserTodayPointData[0][0].todaypoint;
+}
+
 // 푼 문제 개수 확인
 export const countQuiz = async (id) => {
     const conn = await pool.getConnection();
@@ -274,4 +286,56 @@ export const addCountQuiz = async (id) => {
     conn.release();
     
     return countUserQuizData;
+}
+
+// 전체 포인트 적재
+export const addQuizPoint = async (id, point) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(addPointSql, [point, id]);
+    const userPointData = await conn.query(getUserPointSql, [id]);
+    console.log("userPointData: ", userPointData[0][0]);
+
+    conn.release();
+    
+    return userPointData[0][0].point;
+}
+
+// 오늘 포인트 적재
+export const addQuizTodayPoint = async (id, point) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(addTodayPointSql, [point, id]);
+    const userTodayPointData = await conn.query(getUserTodayPointSql, [id]);
+    console.log("userTodayPointData: ", userTodayPointData[0][0]);
+
+    conn.release();
+    
+    return userTodayPointData[0][0].todaypoint;
+}
+
+// 오늘 userinfo 데이터 초기화
+export const resetTodayData = async (id) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(resetTodaySql, [id]);
+    const userTodayData = await conn.query(getAllUserWeekPercentSql, [id]);
+    console.log("userTodayPointData: ", userTodayData[0][0]);
+
+    conn.release();
+    
+    return userTodayData[0][0];
+}
+
+// 단어 레벨 조회
+export const getQuizLevel = async (id) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(resetTodaySql, [id]);
+    const quizlevel = await conn.query(getQuizLevelSql, [id]);
+    console.log("quizlevel[0][0].level: ", quizlevel[0][0].level);
+
+    conn.release();
+    
+    return quizlevel[0][0].level;
 }

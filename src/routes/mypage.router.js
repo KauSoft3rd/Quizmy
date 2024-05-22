@@ -1,6 +1,6 @@
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { addCountQuiz, getAllUserId, getLevel, getQuiz, getStreak, getTodayQuiz, getWeeklyStreak, updateUserData, updateWeeklyPercent } from "../controllers/mypage.controller";
+import { addCountQuiz, addQuizPoint, getAllUserId, getLevel, getQuiz, getStreak, getTodayQuiz, getWeeklyStreak, updateUserData, updateWeeklyPercent } from "../controllers/mypage.controller";
 import { kakaoIdToUserIdMiddleware } from "../middleware/user.middleware";
 
 export const mypageRouter = express.Router();
@@ -31,3 +31,5 @@ mypageRouter.patch("/streak", kakaoIdToUserIdMiddleware, asyncHandler(updateWeek
 
 // 위클리 스트릭 조회
 mypageRouter.get("/streak", kakaoIdToUserIdMiddleware, asyncHandler(getWeeklyStreak));
+
+mypageRouter.patch("/point", kakaoIdToUserIdMiddleware, asyncHandler(addQuizPoint));

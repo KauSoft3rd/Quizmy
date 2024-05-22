@@ -87,3 +87,57 @@ export const addCountQuiz = async (id) => {
         throw error;
     }
 }
+
+// 퀴즈 포인트 적제
+export const addQuizPoint = async (id, words_id) => {
+    try {
+        // 사용자 레벨 조회
+        const userlevel = await mypageDao.getLevel(id);
+        console.log('userlevel: ', userlevel);
+
+        // 퀴즈 레벨 조회
+        const quizlevel = await mypageDao.getQuizLevel(words_id);
+    
+        // 퀴즈 레벨이랑 비교
+        // 퀴즈 레벨 - 사용자 레벨
+
+        const diff = quizlevel - userlevel;
+        let point
+        if (diff == 0) point = 15;
+        else if (diff == 1) point = 20;
+        else if (diff == 2) point = 25;
+        else if (diff == -1) point = 10;
+        else if (diff == -2) point = 5;
+
+        console.log('point: ', point);
+
+        // 오늘 포인트 조회해서 더한게 300보다 커지면 300으로 넘김 -> todaypoint
+        const usertodaypointData = await mypageDao.getTodayPoint(id);
+        const userpointData = await mypageDao.getPoint(id);
+
+        console.log('usertodaypointData: ', usertodaypointData);
+        console.log('userpointData: ', userpointData);
+
+        let usernewtodaypoint = usertodaypointData + point;
+        let usernewpoint = userpointData + point;
+        
+        if (usertodaypointData == 300) {
+            return {userlevel, quizlevel, usertodaypointData, userpointData}
+        }
+        else if (usernewtodaypoint > 300) { 
+            usernewtodaypoint = 300;
+            usernewpoint = userpointData + (300 - usertodaypointData);
+        }
+
+        const addtodaypoint = await mypageDao.addQuizTodayPoint(id, usernewtodaypoint);
+        const addpoint = await mypageDao.addQuizPoint(id, usernewpoint);
+
+        console.log('addtodaypoint: ', addtodaypoint);
+        console.log('addpoint: ', addpoint);
+
+        return {userlevel, quizlevel, addtodaypoint, addpoint};
+    } catch (error) { 
+        console.log(error);
+        throw error;
+    }
+}
