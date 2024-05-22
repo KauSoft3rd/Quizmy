@@ -1,5 +1,5 @@
 import { pool } from "../config/db.config.js"; //db
-import { addCountQuizSql, addPointSql, addTodayPointSql, countUserQuizSql, getAllUserIdsSql, getAllUserWeekPercentSql, getQuizAllSql, getQuizCorrectSql, getQuizLevelSql, getTodayQuizDataSql, getTodayStreakSql, getUserLevelSql, getUserPointSql, getUserTodayPointSql, getWeeklySql, getWeeklyStreakSql, insertTodayPercentSql, resetTodayPointSql, resetTodaySql, updateUserPointSql, updateWeeklySql, updateWeeklyStreakSql, updatetodayStreakSql } from "./mypage.sql.js";
+import { addCountQuizSql, addPointSql, addTodayPointSql, countUserQuizSql, getAllUserIdsSql, getAllUserWeekPercentSql, getQuizAllSql, getQuizCorrectSql, getQuizLevelSql, getTicketSql, getTodayQuizDataSql, getTodayStreakSql, getUserLevelSql, getUserPointSql, getUserTodayPointSql, getWeeklySql, getWeeklyStreakSql, insertTodayPercentSql, resetTicketSql, resetTodayPointSql, resetTodaySql, updateUserPointSql, updateWeeklySql, updateWeeklyStreakSql, updatetodayStreakSql } from "./mypage.sql.js";
 
 // today 퀴즈 정답률 조회
 // 테이블에도 추가해야
@@ -58,6 +58,7 @@ export const updateUserData = async () => {
         await updateWeeklyPercent(id);
         await updateWeeklyStreak(id);
         await resetTodayData(id);
+        await resetTicketData(id);
     }
 
     const getAllUserWeekPercent = await conn.query(getAllUserWeekPercentSql);
@@ -329,4 +330,17 @@ export const getQuizLevel = async (id) => {
     conn.release();
     
     return quizlevel[0][0].level;
+}
+
+// 티켓 개수 초기화
+export const resetTicketData = async (id) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(resetTicketSql, [id]);
+    const ticketdata = await conn.query(getTicketSql, [id]);
+    console.log("ticketdata[0][0].ticket: ", ticketdata[0][0].ticket);
+
+    conn.release();
+    
+    return ticketdata[0][0].ticket;
 }

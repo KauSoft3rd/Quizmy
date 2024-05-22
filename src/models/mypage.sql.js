@@ -41,3 +41,7 @@ export const addTodayPointSql = 'UPDATE Userinfo SET todaypoint = ? WHERE user_i
 export const resetTodaySql = 'UPDATE Userinfo SET todaypoint = 0 AND today_percent = 0 AND streak = 0 WHERE user_id = ?;'
 
 export const getQuizLevelSql = 'SELECT level FROM Words WHERE words_id = ?;'
+
+export const resetTicketSql = 'UPDATE Useritems SET ticket = 5 WHERE user_id = ?;'
+
+export const getTicketSql = 'SELECT ticket FROM Useritems WHERE user_id = ?;'

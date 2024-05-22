@@ -107,7 +107,7 @@ export const getAllUserId = async (req, res) => {
 }
 
 // 유저 정보 갱신
-export const updateUserData = async () => {
+export const updateUserData = async (req, res) => {
     try {
         console.log("유저 정보 갱신");
 
@@ -145,7 +145,6 @@ export const addQuizPoint = async (req, res) => {
         console.log("퀴즈 포인트 추가");
         const user_id = req.user_id;
         console.log("user_id: ", user_id);
-        // 단어 레벨 바디로 받아오기
         console.log("req.body.words_id: ", req.body.words_id);
 
         return res.send(response(status.SUCCESS, await mypageService.addQuizPoint(user_id, req.body.words_id)));
