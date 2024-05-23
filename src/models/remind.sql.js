@@ -24,11 +24,11 @@ export const todayNewestRemindListSql = 'SELECT words_id, grade FROM Remind WHER
 export const accNewestRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ?';
 
 // 오늘 시도한 단어중 정답을 조회
-export const todayCorrectRemindListSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 1 AND DATE(created_at) = CURDATE()';
+export const todayCorrectRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? AND grade = 1 AND DATE(created_at) = CURDATE()';
 // 오늘 시도한 단어중 오답을 조회
-export const todayIncorrectRemindListSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 0 AND DATE(created_at) = CURDATE()';
+export const todayIncorrectRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? AND grade = 0 AND DATE(created_at) = CURDATE()';
 
 // 누적 시도한 단어중 정답을 조회
-export const accCorrectRemindListSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 1';
+export const accCorrectRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? AND grade = 1';
 // 누적 시도한 단어중 오답을 조회
-export const accIncorrectRemindListSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 0';
+export const accIncorrectRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? AND grade = 0';

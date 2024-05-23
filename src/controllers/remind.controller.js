@@ -34,26 +34,6 @@ export const getRemindTotal = async (req, res, next) => {
     }
 }
 
-
-export const getAccNewest = async (req, res, next) => {
-    try {
-        const user_id = req.user_id;
-
-    } catch ( error ) {
-        console.log(error);
-        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
-    }
-}
-
-export const getAccAlpha = async (req, res, next) => {
-    try {
-    } catch ( error ) {
-        console.log(error);
-        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
-    }
-}
-
-
 /*
 API 3 : 오늘 단어를 조회
 반환결과 : [ 단어 : 뜻 ]
@@ -186,7 +166,7 @@ export const getTodayAlphaRemind = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const wordsList = await getTodayAlphaRemindListDao(user_id);
-        console.log(wordsList);
+        wordsList.sort(alphaService);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR))
@@ -199,7 +179,7 @@ export const getAccAlphaRemind = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const wordsList = await getAccAlphaRemindListDao(user_id);
-        console.log(wordsList);
+        wordsList.sort(alphaService);
         return res.send(response(status.SUCCESS, wordsList));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR, error));

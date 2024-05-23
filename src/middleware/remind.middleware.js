@@ -14,8 +14,6 @@ import { getAccAlphaRemind, getTodayAlphaRemind } from '../controllers/remind.co
 export const remindMiddleware = async (req, res, next) => {
     try {
         const { dayParam, sortParam } = req.query;
-        // console.log(dayParam);
-        // console.log(sortParam);
         if (sortParam === 'newest') {
             if (dayParam === 'today') await getTodayNewestRemind(req, res, next);
             else if (dayParam === 'acc') await getAccNewestRemind(req, res, next);

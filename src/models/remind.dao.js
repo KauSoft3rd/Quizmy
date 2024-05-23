@@ -174,6 +174,7 @@ export const getAccCorrectRemindListDao = async (user_id) => {
 
 // 누적 시도한 단어중 오답을 조회
 import { accIncorrectRemindListSql } from "./remind.sql";
+import { alphaService } from "../services/remind.service";
 export const getAccIncorrectRemindListDao = async (user_id) => {
     try {
         const db = await pool.getConnection();
@@ -198,7 +199,8 @@ export const getTodayAlphaRemindListDao = async (user_id) => {
             const [info] = await db.query(getWordInfoSql, [item.words_id]);
             return { item, info };
         }));
-        remindList.sort((a, b) => a.info.word.localCompare(b.info.word));
+
+        remindList.sort(alphaService);
         db.release();
         return remindList;
     } catch ( error ) {
@@ -214,7 +216,8 @@ export const getAccAlphaRemindListDao = async (user_id) => {
             const [info] = await db.query(getWordInfoSql, [item.words_id]);
             return { item, info };
         }));
-        remindList.sort((a, b) => a.info.word.localCompare(b.info.word));
+        
+        remindList.sort(alphaService);
         db.release();
         return remindList;
     } catch ( error ) {
