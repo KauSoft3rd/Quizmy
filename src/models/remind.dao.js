@@ -199,7 +199,8 @@ export const getTodayAlphaRemindListDao = async (user_id) => {
             const [info] = await db.query(getWordInfoSql, [item.words_id]);
             return { item, info };
         }));
-        remindList.sort((a, b) => a.info.word.localCompare(b.info.word));
+
+        remindList.sort(alphaService);
         db.release();
         return remindList;
     } catch ( error ) {
@@ -215,6 +216,7 @@ export const getAccAlphaRemindListDao = async (user_id) => {
             const [info] = await db.query(getWordInfoSql, [item.words_id]);
             return { item, info };
         }));
+        
         remindList.sort(alphaService);
         db.release();
         return remindList;
