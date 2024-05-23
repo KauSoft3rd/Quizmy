@@ -9,3 +9,7 @@ export const updateUserItemtSql = 'UPDATE Useritems SET ?? = ?  WHERE user_id = 
 export const getUserPointSql = 'SELECT point FROM Userinfo WHERE user_id = ?;'
 
 export const getTicketSql = 'SELECT ticket FROM Useritems WHERE user_id = ?;'
+
+export const getQuizbookSql = 'SELECT quizbook FROM Useritems WHERE user_id = ?;'
+
+export const purchaseQuizbookSql = 'UPDATE Useritems SET quizbook = quizbook + 1 WHERE user_id = ?'
