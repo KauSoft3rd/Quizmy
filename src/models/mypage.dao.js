@@ -25,6 +25,8 @@ export const getTodayQuiz = async (id) => {
         return result;
     } else {
         // 푼 단어 없을 때 0% 반환
+        const insertTodayPercent = await conn.query(insertTodayPercentSql, [0, id]);
+
         conn.release();
 
         return 0;
