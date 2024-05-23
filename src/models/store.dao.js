@@ -1,6 +1,6 @@
 import { pool } from "../config/db.config.js"; //db
 import { getUserPointSql, updateUserPointSql } from "./mypage.sql"
-import { getAllItemSql, getItemSql, getPointSql, getTicketSql, updateUserItemtSql } from "./store.sql";
+import { getAllItemSql, getItemSql, getPointSql, getQuizbookSql, getTicketSql, purchaseQuizbookSql, updateUserItemtSql } from "./store.sql";
 
 // 아이템 전체 조회
 export const getAllItem = async (id) => {
@@ -66,6 +66,37 @@ export const getTicket = async (id) => {
         conn.release();
     
         return getTicketData[0][0];   
+    } catch(error){
+        console.log(error);
+        return error;
+    }
+}
+
+// 퀴즈북 레벨 조회
+export const getQuizbook = async (id) => {
+    try{
+        const conn = await pool.getConnection();
+
+        const getQuizbookData = await conn.query(getQuizbookSql, [id]);
+        console.log('getQuizbookData: ', getQuizbookData[0][0].quizbook);
+    
+        conn.release();
+    
+        return getQuizbookData[0][0].quizbook;   
+    } catch(error){
+        console.log(error);
+        return error;
+    }
+}
+
+// 퀴즈북 구매
+export const purchaseBook = async (id) => {
+    try{
+        const conn = await pool.getConnection();
+
+        await conn.query(purchaseQuizbookSql, [id]);
+    
+        conn.release();
     } catch(error){
         console.log(error);
         return error;
