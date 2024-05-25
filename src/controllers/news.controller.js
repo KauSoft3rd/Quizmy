@@ -347,7 +347,7 @@ export const updateNewsData = async () => {
         return error;
     }
 }
-scheduler.scheduleJob('*/30 * * * *', updateNewsData);
+// scheduler.scheduleJob('*/30 * * * *', updateNewsData);
 
 
 import { getNewestNews } from '../services/new.service';

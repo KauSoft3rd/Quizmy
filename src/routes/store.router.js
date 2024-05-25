@@ -1,6 +1,6 @@
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { addPoint, geItem, getAllItem, getPoint, purchaseItem, useItem, getTicket } from "../controllers/store.controller";
+import { addPoint, geItem, getAllItem, getPoint, purchaseItem, useItem, getTicket, purchaseBook, ticketColor } from "../controllers/store.controller";
 import { kakaoIdToUserIdMiddleware } from "../middleware/user.middleware";
 
 export const storeRouter = express.Router();
@@ -26,3 +26,9 @@ storeRouter.get("/point", kakaoIdToUserIdMiddleware, asyncHandler(getPoint));
 
 // 뽑기 남은 횟수 조회
 storeRouter.get("/ticket", kakaoIdToUserIdMiddleware, asyncHandler(getTicket));
+
+// 퀴즈북 구매
+storeRouter.patch("/quizbook", kakaoIdToUserIdMiddleware, asyncHandler(purchaseBook))
+
+// 컬러칩 적용
+storeRouter.patch("/color", kakaoIdToUserIdMiddleware, asyncHandler(ticketColor))

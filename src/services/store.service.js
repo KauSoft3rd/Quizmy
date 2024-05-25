@@ -3,8 +3,6 @@ import { status } from "../../src/config/response.status.js";
 import { BaseError } from "../config/error.js";
 import * as storeDao from "../models/store.dao.js";
 import * as mypageDao from "../models/mypage.dao.js";
-import * as mypageService from "../services/mypage.service.js";
-
 
 // 포인트 조회
 export const getPoint = async (id) => {
@@ -100,3 +98,45 @@ export const subPoint = async (id) => {
     
 }
 
+// 퀴즈북 구매
+export const purchaseBook = async (id, level) => {
+    try {
+        // 본인 레벨 조회
+        const getUserLevelData = await mypageDao.getLevel(id);
+
+        const diff = level - getUserLevelData
+
+        if (diff > 2) {
+            return new BaseError(status.BOOK_LEVEL);
+        }
+        else {
+            // 지금 보유 중인 퀴즈북 레벨조회
+            const userQuizbookData = await storeDao.getQuizbook(id);
+            const bookdiff = level - userQuizbookData;
+            if (bookdiff == 1) {
+                // 퀴즈북 구매
+                await storeDao.purchaseBook(id);
+                const newUserQuizbookData = await storeDao.getQuizbook(id);
+                return newUserQuizbookData;
+            }
+            else if (bookdiff == 2) {
+                return new BaseError(status.BOOK_LEVEL_LACK);
+            }
+            else {
+                return new BaseError(status.BOOK_ALREADY);
+            }
+        }
+    } catch (error){
+        throw error;
+    }
+}
+
+// 잠금해제 되어있는건 true
+// 잠금해제 안되어있는건 false
+// quizbook 데이터보다 같거나 작은 레벨의 퀴즈북은 보유 중
+// false인 건 살 수 없음
+// true는 구매 가능
+// 퀴즈북 레벨이 body로 들어왔을 때
+// 0. 본인 레벨 
+// 1. 퀴즈북 데이터랑 비교해서 보유하고 있는건지 확인
+// 2. 레벨 계산해서 true, false 넘기기(살 수 있는지 없는지)
