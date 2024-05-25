@@ -116,3 +116,19 @@ export const purchaseBook = async (req, res) => {
 }
 
 // 보유 개수 제한
+
+
+// 컬러칩 적용
+export const ticketColor = async (req, res) => {
+    try {
+        console.log("컬러칩 적용");
+        const user_id = req.user_id;
+        console.log('user_id: ', user_id);
+        console.log('req.body: ', req.body);
+
+        return res.send(response(status.SUCCESS, await storeDao.ticketColor(user_id, req.body.color)));
+    } catch (error) {
+        console.log(error);
+        return res.send(response(status.BAD_REQUEST, error));
+    }
+}

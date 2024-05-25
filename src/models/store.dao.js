@@ -1,6 +1,6 @@
 import { pool } from "../config/db.config.js"; //db
 import { getUserPointSql, updateUserPointSql } from "./mypage.sql"
-import { getAllItemSql, getItemSql, getPointSql, getQuizbookSql, getTicketSql, purchaseQuizbookSql, updateUserItemtSql } from "./store.sql";
+import { getAllItemSql, getItemSql, getPointSql, getQuizbookSql, getTicketSql, getticketColorSql, purchaseQuizbookSql, updateUserItemtSql, updateticketColorSql } from "./store.sql";
 
 // 아이템 전체 조회
 export const getAllItem = async (id) => {
@@ -97,6 +97,26 @@ export const purchaseBook = async (id) => {
         await conn.query(purchaseQuizbookSql, [id]);
     
         conn.release();
+    } catch(error){
+        console.log(error);
+        return error;
+    }
+}
+
+// 컬러칩 적용
+export const ticketColor = async (id, color) => {
+    try{
+        const conn = await pool.getConnection();
+
+        await conn.query(updateticketColorSql, [color, id]);
+    
+        const colorData = await conn.query(getticketColorSql, [id]);
+
+        conn.release();
+
+        console.log('colorData[0][0].color: ', colorData[0][0].color);
+
+        return colorData[0][0].color;
     } catch(error){
         console.log(error);
         return error;
