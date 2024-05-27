@@ -45,3 +45,5 @@ export const getQuizLevelSql = 'SELECT level FROM Words WHERE words_id = ?;'
 export const resetTicketSql = 'UPDATE Useritems SET ticket = 5 WHERE user_id = ?;'
 
 export const getTicketSql = 'SELECT ticket FROM Useritems WHERE user_id = ?;'
+
+export const getticketColorSql = 'SELECT color FROM Userinfo WHERE user_id = ?;'

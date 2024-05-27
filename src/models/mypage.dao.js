@@ -1,5 +1,5 @@
 import { pool } from "../config/db.config.js"; //db
-import { addCountQuizSql, addPointSql, addTodayPointSql, countUserQuizSql, getAllUserIdsSql, getAllUserWeekPercentSql, getQuizAllSql, getQuizCorrectSql, getQuizLevelSql, getTicketSql, getTodayQuizDataSql, getTodayStreakSql, getUserLevelSql, getUserPointSql, getUserTodayPointSql, getWeeklySql, getWeeklyStreakSql, insertTodayPercentSql, resetTicketSql, resetTodayPointSql, resetTodaySql, updateUserPointSql, updateWeeklySql, updateWeeklyStreakSql, updatetodayStreakSql } from "./mypage.sql.js";
+import { addCountQuizSql, addPointSql, addTodayPointSql, countUserQuizSql, getAllUserIdsSql, getAllUserWeekPercentSql, getQuizAllSql, getQuizCorrectSql, getQuizLevelSql, getTicketSql, getTodayQuizDataSql, getTodayStreakSql, getUserLevelSql, getUserPointSql, getUserTodayPointSql, getWeeklySql, getWeeklyStreakSql, getticketColorSql, insertTodayPercentSql, resetTicketSql, resetTodayPointSql, resetTodaySql, updateUserPointSql, updateWeeklySql, updateWeeklyStreakSql, updatetodayStreakSql } from "./mypage.sql.js";
 
 // today 퀴즈 정답률 조회
 // 테이블에도 추가해야
@@ -201,8 +201,6 @@ export const updateWeeklyStreak = async (id) => {
     return weeklystreakData;
 }
 
-
-
 // 유저 레벨 조회
 // 포인트 조회 -> 레벨로 치환
 export const getLevel = async (id) => {
@@ -336,4 +334,30 @@ export const resetTicketData = async (id) => {
     conn.release();
     
     return ticketdata[0][0].ticket;
+}
+
+// 컬러칩 조회
+export const ticketColor = async (id) => {
+    try{
+        const conn = await pool.getConnection();
+    
+        const colorData = await conn.query(getticketColorSql, [id]);
+
+        let color;
+
+        if(colorData[0][0].color == 0) {
+            const getLevelData = await conn.query(getUserLevelSql, [id]);
+            color = getLevelData[0][0].level;
+        }
+        else color = colorData[0][0].color;
+
+        conn.release();
+
+        console.log('color: ', color);
+
+        return color;
+    } catch(error){
+        console.log(error);
+        return error;
+    }
 }

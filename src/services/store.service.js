@@ -93,11 +93,6 @@ export const addPoint = async (id, point) => {
     }
 }
 
-// 포인트 감소
-export const subPoint = async (id) => {
-    
-}
-
 // 퀴즈북 구매
 export const purchaseBook = async (id, level) => {
     try {
