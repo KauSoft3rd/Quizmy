@@ -132,10 +132,11 @@ export const updateWeeklyPercent = async (req, res) => {
     }
 }
 
-scheduler.scheduleJob('0 0 * * *', function() {
+/*scheduler.scheduleJob('0 0 * * *', function() {
     console.log('유저 정보 갱신');
     mypageDao.updateUserData();
 });
+*/
 
 // 퀴즈 포인트 -> todaypoint, point 둘 다 적재
 // 투데이포인트 300 되면 적재 그만하기
@@ -148,6 +149,22 @@ export const addQuizPoint = async (req, res) => {
         console.log("req.body.words_id: ", req.body.words_id);
 
         return res.send(response(status.SUCCESS, await mypageService.addQuizPoint(user_id, req.body.words_id)));
+    } catch (error) {
+        console.log(error);
+        return res.send(response(status.BAD_REQUEST));
+    }
+}
+
+// 컬러칩 조회
+// 컬러칩에 데이터 있으면 컬러칩데이터로 반환
+// 컬러칩에 데이터 없으면 레벨데이터 반환
+export  const ticketColor = async (req, res) => {
+    try {
+        console.log("컬러칩 조회");
+        const user_id = req.user_id;
+        console.log("user_id: ", user_id);
+
+        return res.send(response(status.SUCCESS, await mypageDao.ticketColor(user_id)));
     } catch (error) {
         console.log(error);
         return res.send(response(status.BAD_REQUEST));
