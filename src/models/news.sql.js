@@ -18,7 +18,7 @@ export const getRemindWordsTodaySql = 'SELECT words_id FROM Remind WHERE user_id
 
 
 // 데이터베이스에 저장된 크롤링 뉴스 정보를 조회
-export const getNewsFromDBSql = 'SELECT title, company, newsLink, date, img FROM Crawling';
+export const getNewsFromDBSql = 'SELECT title, company, newsLink, date, img FROM Crawling ORDER BY date DESC';
 
 // 크롤링한 모든 뉴스를 갱신하기 위해 기존 뉴스 정보를 삭제
 export const deleteCrawlingSql = 'DELETE FROM Crawling';
@@ -26,7 +26,10 @@ export const deleteCrawlingSql = 'DELETE FROM Crawling';
 export const updateCrawlingSql = 'INSERT INTO Crawling (title, company, newsLink, date, img) VALUES (?, ?, ?, ?, ?)';
 
 // 크롤링한 정보를 컨버트하여 DB에 저장
-export const updateNewsSql = `INSERT INTO Crawling (title, company, newsLink, date, img) VALUES (?, ?, ?, CONVERT_TZ(?, '+00:00', '+09:00'), ?`;
+export const updateNewsSql = `INSERT INTO Crawling (title, company, newsLink, date, img) VALUES (?, ?, ?, DATE_ADD(?, INTERVAL 9 HOUR), ?)`;
+
+// 중복 뉴스링크 확인
+export const checkNewsSql = `SELECT 1 FROM Crawling WHERE newsLink = ?`;
 
 // DB 조회
 export const getDB = 'SELECT * FROM Crawling';
