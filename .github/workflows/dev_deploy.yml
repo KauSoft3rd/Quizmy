@@ -66,9 +66,6 @@ jobs:
           cp package.json dist/package.json
           cp package-lock.json dist/package-lock.json
           cp Procfile dist/Procfile
-          mkdir -p dist/controllers
-          cp src/controllers/news_classify.h5 dist/controllers/
-          cp src/controllers/news_classify.py dist/controllers/
           cd dist
           zip -r deploy.zip .
       
@@ -106,3 +103,7 @@ jobs:
       # 그냥 다 했다고 출력하기
       - name: Deployed!
         run: echo App deployed to ELB
+
+    # if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'python'
+
+    
