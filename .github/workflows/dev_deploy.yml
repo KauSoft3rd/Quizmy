@@ -66,6 +66,9 @@ jobs:
           cp package.json dist/package.json
           cp package-lock.json dist/package-lock.json
           cp Procfile dist/Procfile
+          mkdir -p dist/controllers
+          cp src/controllers/news_classify.h5 dist/controllers/
+          cp src/controllers/news_classify.py dist/controllers/
           cd dist
           zip -r deploy.zip .
       
