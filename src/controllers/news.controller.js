@@ -353,7 +353,7 @@ export const updateNewsData = async () => {
 import { getNewestNews } from '../services/new.service';
 import path from 'path'
 import { updateNewsDao } from '../models/news.dao';
-export const predictAPI = async (req, res, next) => {
+export const predictAPI = async () => {
     try {
         const newestNewsList = await getNewestNews(); // 네이버 뉴스 조회 API 호출하여 [제목/발행사/링크/img/날짜] 리스트 획득
         const pyPath = path.join(__dirname, 'news_classify.py'); // classify 프로그램 위치
@@ -366,10 +366,10 @@ export const predictAPI = async (req, res, next) => {
             }
         };
         await updateNewsDao(updateNewsList);
-        return res.send(response(status.SUCCESS, updateNewsList));
+        // return res.send(response(status.SUCCESS, updateNewsList));
     } catch ( error ) {
         console.log(error);
-        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
+        // return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
 export const predictAPIschedule = async () => {
@@ -389,7 +389,7 @@ export const predictAPIschedule = async () => {
         return error;
     }
 }
-scheduler.scheduleJob('*/10 * * * *', predictAPIschedule);
+scheduler.scheduleJob('*/5 * * * *', predictAPIschedule);
 
 import { spawn } from 'child_process';
 const predictNews = ( pyPath, title ) => {

@@ -32,3 +32,9 @@ export const todayIncorrectRemindListSql = 'SELECT words_id, grade FROM Remind W
 export const accCorrectRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? AND grade = 1';
 // 누적 시도한 단어중 오답을 조회
 export const accIncorrectRemindListSql = 'SELECT words_id, grade FROM Remind WHERE user_id = ? AND grade = 0';
+
+
+// 정답률을 반영하여 단어의 레벨을 조정
+export const countWords = 'SELECT words_id FROM Remind GROUP BY words_id HAVING COUNT(*) >= 10 AND SUM(CASE WHEN grade = 0 THEN 1 ELSE 0 END) / COUNT(*) >= 0.7';
+
+export const updateWordsLevelSql = ''
