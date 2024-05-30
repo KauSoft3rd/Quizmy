@@ -357,7 +357,9 @@ export const predictAPI = async (req, res, next) => {
     try {
         const newestNewsList = await getNewestNews(); // 네이버 뉴스 조회 API 호출하여 [제목/발행사/링크/img/날짜] 리스트 획득
 
-        const pyPath = path.join(__dirname, 'news_classify.py'); // classify 프로그램 위치
+        // const pyPath = path.join(__dirname, 'news_classify.py'); // classify 프로그램 위치
+        
+        const pyPath = '/usr/bin/python';
         const updateNewsList = []; // 올바른 카테고리로 분류된 뉴스 정보들이 담기는 리스트
         
         for (const item of newestNewsList) { // forEach 대신 for...of 루프를 사용
@@ -367,7 +369,7 @@ export const predictAPI = async (req, res, next) => {
                 updateNewsList.push(item); // 올바른 카테고리의 경우 갱신할 뉴스 리스트에 추가
             }
 
-            // if (await predictNews('./news_classify.py', item.title.replace(/<[^>]*>?/gm, ''))) {
+            // if (await predictNews('/usr/bin/python', item.title.replace(/<[^>]*>?/gm, ''))) {
             //     updateNewsList.push(item); // 올바른 카테고리의 경우 갱신할 뉴스 리스트에 추가
             // }
         };
@@ -402,7 +404,7 @@ export const predictAPIschedule = async () => {
 import { spawn } from 'child_process';
 const predictNews = ( pyPath, title ) => {
     return new Promise((resolve, reject) => {
-        const process = spawn('python', [pyPath, title]); // 프로세스를 실행
+        const process = spawn('python', ['/var/app/current/news_classify.py', title]); // 프로세스를 실행
 
         process.on('close', (code) => {
             if ( code === 1 ) {
