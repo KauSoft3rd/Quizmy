@@ -98,7 +98,7 @@ Service 6 : News api를 활용하여 최신 뉴스를 100개 조회
 export const getNewestNews = async () => {
     try {
         const pageSize = 100;
-        const page = 1;
+        let page = 1;
         const result = [];
         while (true) {
             const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=kr&pageSize=${pageSize}&page=${page}&apiKey=${process.env.NEWS_API_KEY}`);

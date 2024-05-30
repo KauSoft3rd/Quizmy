@@ -353,12 +353,14 @@ export const updateNewsData = async () => {
 import { getNewestNews } from '../services/new.service';
 import path from 'path'
 import { updateNewsDao } from '../models/news.dao';
-export const predictAPI = async () => {
+export const predictAPI = async (req, res, next) => {
     try {
         const newestNewsList = await getNewestNews(); // 네이버 뉴스 조회 API 호출하여 [제목/발행사/링크/img/날짜] 리스트 획득
+        // console.log(newestNewsList);
+
         const pyPath = path.join(__dirname, 'news_classify.py'); // classify 프로그램 위치
         const updateNewsList = []; // 올바른 카테고리로 분류된 뉴스 정보들이 담기는 리스트
-
+        
         for (const item of newestNewsList) { // forEach 대신 for...of 루프를 사용
             console.log(item.title);
             if (await predictNews(pyPath, item.title.replace(/<[^>]*>?/gm, ''))) {
@@ -366,12 +368,14 @@ export const predictAPI = async () => {
             }
         };
         await updateNewsDao(updateNewsList);
-        // return res.send(response(status.SUCCESS, updateNewsList));
+        return res.send(response(status.SUCCESS, updateNewsList));
     } catch ( error ) {
         console.log(error);
-        // return res.send(response(status.INTERNAL_SERVER_ERROR, error));
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
+
+
 export const predictAPIschedule = async () => {
     try {
         const newestNewsList = await getNewestNews(); // 네이버 뉴스 조회 API 호출하여 [제목/발행사/링크/img/날짜] 리스트 획득
@@ -389,7 +393,7 @@ export const predictAPIschedule = async () => {
         return error;
     }
 }
-scheduler.scheduleJob('*/5 * * * *', predictAPIschedule);
+// scheduler.scheduleJob('*/5 * * * *', predictAPIschedule);
 
 import { spawn } from 'child_process';
 const predictNews = ( pyPath, title ) => {
