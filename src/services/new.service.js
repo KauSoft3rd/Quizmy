@@ -123,5 +123,6 @@ export const getNewestNews = async () => {
         return result;
     } catch (error) {
         console.log(error);
+        console.log("DAO에서 에러가 발생");
     }
 }
