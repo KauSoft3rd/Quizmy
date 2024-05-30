@@ -6,10 +6,10 @@ import { kakaoIdToUserIdMiddleware } from "../middleware/user.middleware.js";
 
 export const newsRouter = express.Router();
 
-newsRouter.get('/test', kakaoIdToUserIdMiddleware, getNews); // clear
+// newsRouter.get('/test', kakaoIdToUserIdMiddleware, getNews); // clear
 
 // newsRouter.get('/', kakaoIdToUserIdMiddleware, getMainNewsList); // clear
-newsRouter.get('/mainnews', kakaoIdToUserIdMiddleware, getMainNews); // 상단 뉴스 조회하기
+// newsRouter.get('/mainnews', kakaoIdToUserIdMiddleware, getMainNews); // 상단 뉴스 조회하기
 newsRouter.post('/bookmark', kakaoIdToUserIdMiddleware, postBookmarkMiddleware, postBookmark); // 스크랩 추가하기
 newsRouter.delete('/bookmark', kakaoIdToUserIdMiddleware, deleteBookmarkMiddleware, deleteBookmark); // 스크랩 삭제하기
 newsRouter.get('/bookmark', kakaoIdToUserIdMiddleware, getUserBookmark); // 스크랩 목록 조회하기

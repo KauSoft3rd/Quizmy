@@ -1,6 +1,6 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
-import iconv from 'iconv-lite';
+// import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
 import { getBookmarkNewsDBDao, getNewsKeywordDao, getUserBookmarkDao } from '../models/news.dao';
@@ -11,45 +11,45 @@ API 1 : 네이버페이 증권 사이트의 주요 뉴스 크롤링 API
 반환결과 : [ { 뉴스 제목 / 신문사 / 링크 / 시간차이 / 이미지 주소 }, ]
 */
 
-export const getNews = async (req, res, next) => {
-    try {
-        const user_id = req.user_id;
-        let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
-        { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
-        let encodedData = iconv.decode(html.data, "EUC-KR");
-        let $ = cheerio.load(encodedData);
-        let newsData = $('.newsList .block1').slice(1, 9);
+// export const getNews = async (req, res, next) => {
+//     try {
+//         const user_id = req.user_id;
+//         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
+//         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
+//         let encodedData = iconv.decode(html.data, "EUC-KR");
+//         let $ = cheerio.load(encodedData);
+//         let newsData = $('.newsList .block1').slice(1, 9);
 
-        const nowDate = new Date();
-        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
-        // 현재 아래의 newsData는 총 20개의 node를 가지게 된다.
-        // node를 총 8번만 반복해서 promises 배열을 가질 수 있도록 코드를 수정해줘
-        const promises = newsData.map(async(idx, node) => {
-            let title = $(node).find('.articleSubject a').text().trim();
-            let company = $(node).find('.articleSummary .press').text().trim();
-            let link = $(node).find('.articleSubject a').attr('href');
-            let article_id = link.match(/article_id=([^&]+)/)[1];
-            let office_id = link.match(/office_id=([^&]+)/)[1];
-            let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-            let date = new Date($(node).find('.articleSummary .wdate').text().trim());
-            let img;
-            try {
-                img = await getNewsImageURL(newsLink); 
-            }
-            catch (error) {
-                console.log(error);
-                img = null;
-            }
-            let timeDiff = calculateDate(date, nowDate); // 크롤링한 시간을 분, 시간, 일 단위로 변환
-            let check = bookmarkList.some(item => item.link === newsLink); // 사용자의 스크랩 목록에 존재하는 뉴스 기사인지 파악
-            return { title, company, newsLink, date: timeDiff, img, check };
-        });
-        const newsList = await Promise.all(promises);
-        return res.send(response(status.SUCCESS, newsList));
-    } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
-    }
-}
+//         const nowDate = new Date();
+//         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
+//         // 현재 아래의 newsData는 총 20개의 node를 가지게 된다.
+//         // node를 총 8번만 반복해서 promises 배열을 가질 수 있도록 코드를 수정해줘
+//         const promises = newsData.map(async(idx, node) => {
+//             let title = $(node).find('.articleSubject a').text().trim();
+//             let company = $(node).find('.articleSummary .press').text().trim();
+//             let link = $(node).find('.articleSubject a').attr('href');
+//             let article_id = link.match(/article_id=([^&]+)/)[1];
+//             let office_id = link.match(/office_id=([^&]+)/)[1];
+//             let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
+//             let date = new Date($(node).find('.articleSummary .wdate').text().trim());
+//             let img;
+//             try {
+//                 img = await getNewsImageURL(newsLink); 
+//             }
+//             catch (error) {
+//                 console.log(error);
+//                 img = null;
+//             }
+//             let timeDiff = calculateDate(date, nowDate); // 크롤링한 시간을 분, 시간, 일 단위로 변환
+//             let check = bookmarkList.some(item => item.link === newsLink); // 사용자의 스크랩 목록에 존재하는 뉴스 기사인지 파악
+//             return { title, company, newsLink, date: timeDiff, img, check };
+//         });
+//         const newsList = await Promise.all(promises);
+//         return res.send(response(status.SUCCESS, newsList));
+//     } catch ( error ) {
+//         return res.send(response(status.INTERNAL_SERVER_ERROR));
+//     }
+// }
 
 /*
 API 2 : 뉴스 북마크 추가 API
@@ -121,48 +121,48 @@ API 5 : 뉴스 메인화면 기사 제공 API
 반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
 */
 
-export const getMainNews = async (req, res, next) => {
-    try {
-        const user_id = req.user_id;
-        let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
-        { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
-        let encodedData = iconv.decode(html.data, "EUC-KR");
-        let $ = cheerio.load(encodedData);
-        let newsData = $('#contentarea_left > div.mainNewsList._replaceNewsLink > ul > li:nth-child(1) > dl');
-        let nowDate = new Date();
+// export const getMainNews = async (req, res, next) => {
+//     try {
+//         const user_id = req.user_id;
+//         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
+//         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
+//         let encodedData = iconv.decode(html.data, "EUC-KR");
+//         let $ = cheerio.load(encodedData);
+//         let newsData = $('#contentarea_left > div.mainNewsList._replaceNewsLink > ul > li:nth-child(1) > dl');
+//         let nowDate = new Date();
 
-        let date = new Date(newsData.find('.articleSummary .wdate').text().trim());
-        let timeDiff = calculateDate(date, nowDate);
-        const bookmarkList = await getBookmarkNewsDBDao(user_id); // refactoring 가능 ( 최적화 문제 )
+//         let date = new Date(newsData.find('.articleSummary .wdate').text().trim());
+//         let timeDiff = calculateDate(date, nowDate);
+//         const bookmarkList = await getBookmarkNewsDBDao(user_id); // refactoring 가능 ( 최적화 문제 )
 
-        let title = newsData.find('.articleSubject a').text().trim();
-        let company = newsData.find('.articleSummary .press').text().trim();
-        let link = newsData.find('.articleSubject a').attr('href');
-        let article_id = link.match(/article_id=([^&]+)/)[1];
-        let office_id = link.match(/office_id=([^&]+)/)[1];
-        let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-        let check = bookmarkList.some(item => item.link === newsLink);
-        let img; 
-        try {
-            img = await getNewsImageURL(newsLink); 
-        }
-        catch (error) {
-            console.log(error);
-            img = null;
-        }
-        let mainNews = {
-            title: title,
-            company: company,
-            link: newsLink,
-            date: timeDiff,
-            img: img,
-            check: check
-        }
-        return res.send(response(status.SUCCESS, mainNews));
-    } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
-    }
-}
+//         let title = newsData.find('.articleSubject a').text().trim();
+//         let company = newsData.find('.articleSummary .press').text().trim();
+//         let link = newsData.find('.articleSubject a').attr('href');
+//         let article_id = link.match(/article_id=([^&]+)/)[1];
+//         let office_id = link.match(/office_id=([^&]+)/)[1];
+//         let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
+//         let check = bookmarkList.some(item => item.link === newsLink);
+//         let img; 
+//         try {
+//             img = await getNewsImageURL(newsLink); 
+//         }
+//         catch (error) {
+//             console.log(error);
+//             img = null;
+//         }
+//         let mainNews = {
+//             title: title,
+//             company: company,
+//             link: newsLink,
+//             date: timeDiff,
+//             img: img,
+//             check: check
+//         }
+//         return res.send(response(status.SUCCESS, mainNews));
+//     } catch ( error ) {
+//         return res.send(response(status.INTERNAL_SERVER_ERROR));
+//     }
+// }
 
 /*
 API 6 : 네이버 키워드 뉴스 API
@@ -311,42 +311,42 @@ API 10 : 뉴스 크롤링 갱신
 
 import scheduler from 'node-schedule';
 import { updateNewsDataDao } from '../models/news.dao';
-export const updateNewsData = async () => {
-    try {
-        console.log("NEWS CRAWLING START!!!");
-        let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
-        { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
-        let encodedData = iconv.decode(html.data, "EUC-KR");
-        let $ = cheerio.load(encodedData);
-        let newsData = $('.newsList .block1').slice(1, 20); // 19개의 뉴스를 크롤링
+// export const updateNewsData = async () => {
+//     try {
+//         console.log("NEWS CRAWLING START!!!");
+//         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
+//         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
+//         let encodedData = iconv.decode(html.data, "EUC-KR");
+//         let $ = cheerio.load(encodedData);
+//         let newsData = $('.newsList .block1').slice(1, 20); // 19개의 뉴스를 크롤링
 
-        // 현재 아래의 newsData는 총 19개의 node를 가지게 된다.
-        const promises = newsData.map(async(idx, node) => {
-            let title = $(node).find('.articleSubject a').text().trim();
-            let company = $(node).find('.articleSummary .press').text().trim();
-            let link = $(node).find('.articleSubject a').attr('href');
-            let article_id = link.match(/article_id=([^&]+)/)[1];
-            let office_id = link.match(/office_id=([^&]+)/)[1];
-            let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-            let date = new Date($(node).find('.articleSummary .wdate').text().trim());
-            let img;
-            try {
-                img = await getNewsImageURL(newsLink); 
-            }
-            catch (error) {
-                console.log(error);
-                img = null;
-            }
-            return { title, company, newsLink, date, img };
-        });
-        const newsList = await Promise.all(promises);
-        console.log("NEWS CRAWLING CLEAR!!!");
-        await updateNewsDataDao(newsList);
-    } catch ( error ) {
-        console.error(error);
-        return error;
-    }
-}
+//         // 현재 아래의 newsData는 총 19개의 node를 가지게 된다.
+//         const promises = newsData.map(async(idx, node) => {
+//             let title = $(node).find('.articleSubject a').text().trim();
+//             let company = $(node).find('.articleSummary .press').text().trim();
+//             let link = $(node).find('.articleSubject a').attr('href');
+//             let article_id = link.match(/article_id=([^&]+)/)[1];
+//             let office_id = link.match(/office_id=([^&]+)/)[1];
+//             let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
+//             let date = new Date($(node).find('.articleSummary .wdate').text().trim());
+//             let img;
+//             try {
+//                 img = await getNewsImageURL(newsLink); 
+//             }
+//             catch (error) {
+//                 console.log(error);
+//                 img = null;
+//             }
+//             return { title, company, newsLink, date, img };
+//         });
+//         const newsList = await Promise.all(promises);
+//         console.log("NEWS CRAWLING CLEAR!!!");
+//         await updateNewsDataDao(newsList);
+//     } catch ( error ) {
+//         console.error(error);
+//         return error;
+//     }
+// }
 // scheduler.scheduleJob('*/30 * * * *', updateNewsData);
 
 
