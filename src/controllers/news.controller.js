@@ -376,7 +376,8 @@ export const predictAPI = async (req, res, next) => {
 import { spawn } from 'child_process';
 const predictNews = ( pyPath, title ) => {
     return new Promise((resolve, reject) => {
-        const process = spawn('python', [pyPath, title]); // 프로세스를 실행
+        const pythonExecutable = '/usr/bin/python3'; // Replace with the actual path to Python if necessary
+        const process = spawn(pythonExecutable, [pyPath, title]); // 프로세스를 실행
 
         process.on('close', (code) => {
             if ( code === 1 ) {
