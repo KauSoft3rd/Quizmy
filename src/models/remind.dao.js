@@ -216,10 +216,61 @@ export const getAccAlphaRemindListDao = async (user_id) => {
             const [info] = await db.query(getWordInfoSql, [item.words_id]);
             return { item, info };
         }));
-        
+
         remindList.sort(alphaService);
         db.release();
         return remindList;
+    } catch ( error ) {
+        return error;
+    }
+}
+
+
+
+
+
+// DB 갱신을 위한 DAO
+import { countWords } from './remind.sql';
+export const updateWordsLevelDao = async () => {
+    try {
+        const db = await pool.getConnection();
+        const [wordsList] = await db.query(await db.query(` UPDATE Words
+        SET level = CASE
+                        WHEN words_id IN (
+                            SELECT words_id
+                            FROM Remind
+                            GROUP BY words_id
+                            HAVING COUNT(*) >= 10 AND
+                                   SUM(CASE WHEN grade = 0 THEN 1 ELSE 0 END) / COUNT(*) >= 0.7
+                        ) THEN level + 1
+                        WHEN words_id IN (
+                            SELECT words_id
+                            FROM Remind
+                            GROUP BY words_id
+                            HAVING COUNT(*) >= 10 AND
+                                   SUM(CASE WHEN grade = 0 THEN 1 ELSE 0 END) / COUNT(*) < 0.7
+                        ) THEN level - 1
+                        ELSE level
+                    END
+        WHERE words_id IN (
+            SELECT words_id
+            FROM Remind
+            GROUP BY words_id
+            HAVING COUNT(*) >= 10
+        );
+    `));
+
+        // const wordsId = wordsList.map(word => word.words_id);
+        // console.log(wordsId);
+        // if (wordsId.length > 0) {
+        //     await db.query(`
+        //     UPDATE Words
+        //     SET level = level + 1
+        //     WHERE words_id IN (?);
+        // `, [wordsId])
+        // }
+        // console.log(wordsList);
+        db.commit();
     } catch ( error ) {
         return error;
     }

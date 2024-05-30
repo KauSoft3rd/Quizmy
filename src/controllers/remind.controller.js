@@ -185,3 +185,16 @@ export const getAccAlphaRemind = async (req, res, next) => {
         return res.send(response(status.INTERNAL_SERVER_ERROR, error));
     }
 }
+
+
+import { updateWordsLevelDao } from '../models/remind.dao';
+export const updateWordsLevel = async (req, res, next) => {
+    try {
+        const user_id = req.user_id;
+        updateWordsLevelDao();
+
+    } catch ( error ) {
+        console.log(error);
+        return res.send(response(status.INTERNAL_SERVER_ERROR, error));
+    }
+}
