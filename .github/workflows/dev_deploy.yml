@@ -51,7 +51,7 @@ jobs:
       - name: Verify Python Installation
         run: python --version
 
-      -name: Verify Pip Installation
+      - name: Verify Pip Installation
         run: pip --version
     
 
