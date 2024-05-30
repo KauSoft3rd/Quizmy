@@ -21,8 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3  
 
-
-
       # Node.js 세팅
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -35,6 +33,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      # dependencies 설치, test and build
+      - name: Install dependencies
+        run: npm ci   # dependencies 설치 npm ci, npm install 모두 다 됨!
+
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -45,13 +48,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install tensorflow
 
-      # dependencies 설치, test and build
-      - name: Install dependencies
-        run: npm ci   # dependencies 설치 npm ci, npm install 모두 다 됨!
-
       - name: Run Build
         run: npm run build # 빌드
-
 
 
       # 배포 패키지 생성
