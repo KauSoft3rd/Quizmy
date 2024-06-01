@@ -1,6 +1,6 @@
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { finishKakaoLogin, getUserInfo, kakaoLogin, levelTest, logoutUser, startKakaoLogin } from "../controllers/login.controller";
+import { finishKakaoLogin, getUserInfo, kakaoLogin, levelTest, logoutUser, startKakaoLogin } from "../controllers/login.controller.js";
 import { kakaoIdToUserIdMiddleware } from "../middleware/user.middleware.js";
 
 export const loginRouter = express.Router();

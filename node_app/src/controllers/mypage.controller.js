@@ -1,5 +1,5 @@
-import { response } from "../../src/config/response.js";
-import { status } from "../../src/config/response.status.js";
+import { response } from "../config/response.js";
+import { status } from "../config/response.status.js";
 import * as mypageService from "../services/mypage.service.js";
 import * as mypageDao from "../models/mypage.dao.js";
 

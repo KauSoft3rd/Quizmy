@@ -1,7 +1,7 @@
 import express from 'express';
 import { getNews, postBookmark, getMainNews, deleteBookmark, 
-    getNaverNewsKeyword, getNewsKeyword, getUserBookmark } from '../controllers/news.controller';
-import { deleteBookmarkMiddleware, postBookmarkMiddleware } from '../middleware/news.middleware';
+    getNaverNewsKeyword, getNewsKeyword, getUserBookmark } from '../controllers/news.controller.js';
+import { deleteBookmarkMiddleware, postBookmarkMiddleware } from '../middleware/news.middleware.js';
 import { kakaoIdToUserIdMiddleware } from "../middleware/user.middleware.js";
 
 export const newsRouter = express.Router();
@@ -16,9 +16,9 @@ newsRouter.get('/bookmark', kakaoIdToUserIdMiddleware, getUserBookmark); // 스�
 newsRouter.get('/keyword', kakaoIdToUserIdMiddleware, getNewsKeyword); // 키워드 획득하기
 newsRouter.get('/keywordNews', kakaoIdToUserIdMiddleware, getNaverNewsKeyword); // 키워드로 뉴스 조회하기
 
-import { getNewsFromDB } from '../controllers/news.controller';
+import { getNewsFromDB } from '../controllers/news.controller.js';
 newsRouter.get('/', kakaoIdToUserIdMiddleware, getNewsFromDB);
 // newsRouter.get('/test', kakaoIdToUserIdMiddleware, getMainNewsList);
 
-import { predictAPI } from '../controllers/news.controller';
-newsRouter.get('/pred', kakaoIdToUserIdMiddleware, predictAPI);
+// import { predictAPI } from '../controllers/news.controller';
+// newsRouter.get('/pred', kakaoIdToUserIdMiddleware, predictAPI);

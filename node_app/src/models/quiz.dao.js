@@ -36,7 +36,7 @@ export const getRandomWordDao = async (user_id) => {
 // 사용자 퀴즈를 시도한 결과에 따른 Remind Patch
 // 사용자가 새롭게 문제를 풀 경우 -> insert
 // 사용자가 풀었던 문제를 푼 경우 -> update
-import { getUserRemindListSql, updateWordGrade, insertWordGrade } from '../models/quiz.sql';
+import { getUserRemindListSql, updateWordGrade, insertWordGrade } from './quiz.sql';
 export const patchRemindWordDao = async (user_id, word_id, grade) => {
     try {
         const db = await pool.getConnection();
