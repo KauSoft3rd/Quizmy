@@ -40,7 +40,7 @@ jobs:
       # Nodejs app build and push
       - name: Build and push Node app
         run: |
-          docker buildx build --push -t goosmos/nodejs-app:latest ./nodejs_app
+          docker buildx build --push -t goosmos/nodejs-app:latest ./node_app
 
 
       # AWS CLI Install
