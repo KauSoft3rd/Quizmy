@@ -84,7 +84,7 @@ export const getAlphaRemindDao = async (user_id) => {
 
 
 // 오늘 시도한 단어를 최신순으로 조회
-import { todayNewestRemindListSql } from '../models/remind.sql';
+import { todayNewestRemindListSql } from './remind.sql';
 export const getTodayNewestRemindDao = async (user_id) => {
     try {
         const db = await pool.getConnection();

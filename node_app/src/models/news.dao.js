@@ -1,4 +1,4 @@
-import { deleteBookmarkSql, getBookmarkListSql, getRandomKeywordSql, postBookmarkSql, getRemindWordsTodaySql, getBookmarkData } from "./news.sql";
+import { deleteBookmarkSql, getBookmarkListSql, getRandomKeywordSql, postBookmarkSql, getRemindWordsTodaySql, getBookmarkData } from "./news.sql.js";
 import { getUserRemindWordsIdSql } from "./quiz.sql.js";
 import { randomFourKeywordSelectService } from "../services/new.service.js";
 import { pool } from "../config/db.config.js"; //db
@@ -95,7 +95,7 @@ export const getUserBookmarkDao = async (user_id) => {
 DAO 6 : 뉴스 크롤링 업데이트 수행
 */
 
-import { deleteCrawlingSql, updateCrawlingSql } from "./news.sql";
+import { deleteCrawlingSql, updateCrawlingSql } from "./news.sql.js";
 export const updateNewsDataDao = async (newsData) => {
     try {
         const db = await pool.getConnection();
@@ -147,7 +147,7 @@ export const updateNewsDao = async(newsData) => {
 DAO 8 : 데이터 베이스에 저장된 뉴스 크롤링 정보를 조회
 */
 
-import { getNewsFromDBSql } from "./news.sql";
+import { getNewsFromDBSql } from "./news.sql.js";
 export const getNewsDateDao = async () => {
     try {
         const db = await pool.getConnection();

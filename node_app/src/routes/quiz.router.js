@@ -1,5 +1,5 @@
 import express from 'express';
-import { getQuizWord, patchRemindWord, getTodayWords, getAccWords, getCorrectWords, getIncorrectWords, reqChatGPT } from '../controllers/quiz.controller';
+import { getQuizWord, patchRemindWord, getTodayWords, getAccWords, getCorrectWords, getIncorrectWords, reqChatGPT } from '../controllers/quiz.controller.js';
 import { kakaoIdToUserIdMiddleware } from "../middleware/user.middleware.js";
 
 export const quizRouter = express.Router();
