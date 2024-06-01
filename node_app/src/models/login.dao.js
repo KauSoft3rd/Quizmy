@@ -77,11 +77,11 @@ export const levelTest = async(id, point) => {
             id, 
             point,
             0,
-            JSON.stringify(["0%","0%","0%","0%","0%"]), 
+            JSON.stringify([0,0,0,0,0]), 
             0,
             0,
-            'Bronze',
-            JSON.stringify(["0","0","0","0","0"]),
+            1,
+            JSON.stringify([0,0,0,0,0]),
             0
         ]);
 
@@ -90,7 +90,7 @@ export const levelTest = async(id, point) => {
             id,
             0, // 스트릭
             0, // 뽑기 티켓
-            0 // 레벨북
+            1 // 레벨북
         ])
 
         conn.release();
@@ -108,7 +108,6 @@ export const getUserspec = async(id) => {
         const conn = await pool.getConnection();
 
         const userspec = await conn.query(getUserspecSql, [id]);
-        console.log("userspec: ", userspec[0][0]);
 
         conn.release();
 

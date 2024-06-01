@@ -1,5 +1,5 @@
 import { pool } from "../config/db.config.js"; //db
-import { addCountQuizSql, countUserQuizSql, getAllUserIdsSql, getAllUserWeekPercentSql, getQuizAllSql, getQuizCorrectSql, getTodayQuizDataSql, getTodayStreakSql, getUserLevelSql, getUserPointSql, getWeeklySql, getWeeklyStreakSql, insertTodayPercentSql, updateUserPointSql, updateWeeklySql, updateWeeklyStreakSql, updatetodayStreakSql } from "./mypage.sql.js";
+import { addCountQuizSql, addPointSql, addTodayPointSql, countUserQuizSql, getAllUserIdsSql, getAllUserWeekPercentSql, getQuizAllSql, getQuizCorrectSql, getQuizLevelSql, getTicketSql, getTodayQuizDataSql, getTodayStreakSql, getUserLevelSql, getUserPointSql, getUserTodayPointSql, getWeeklySql, getWeeklyStreakSql, getticketColorSql, insertTodayPercentSql, resetTicketSql, resetTodayPointSql, resetTodaySql, updateUserPointSql, updateWeeklySql, updateWeeklyStreakSql, updatetodayStreakSql } from "./mypage.sql.js";
 
 // today 퀴즈 정답률 조회
 // 테이블에도 추가해야
@@ -14,18 +14,22 @@ export const getTodayQuiz = async (id) => {
     const correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
     const allCount = getQuizAllData[0][0]["COUNT(*)"];
 
-    conn.release();
 
     if (allCount > 0) {
         // const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100) : '0';
-        const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100).toFixed(0) : '0';
+        const todayPercent = allCount > 0 ? Math.round((correctCount / allCount) * 100) : 0;
         // const ratio = (correctCount / allCount) * 100;
-        const result = todayPercent+"%";
+        const result = todayPercent;
         const insertTodayPercent = await conn.query(insertTodayPercentSql, [todayPercent, id]);
+        conn.release();
         return result;
     } else {
         // 푼 단어 없을 때 0% 반환
-        return '0%';
+        const insertTodayPercent = await conn.query(insertTodayPercentSql, [0, id]);
+
+        conn.release();
+
+        return 0;
     }
 }
 
@@ -36,6 +40,7 @@ export const getAllUserId = async ()=> {
 
         const allUserIdData = await conn.query(getAllUserIdsSql);
         console.log('allUserIdData: ', allUserIdData[0]);
+        conn.release();
         return allUserIdData[0];
     } catch (error) {
         console.log(error);
@@ -54,6 +59,8 @@ export const updateUserData = async () => {
         const id = user_ids[i].user_id;
         await updateWeeklyPercent(id);
         await updateWeeklyStreak(id);
+        await resetTodayData(id);
+        await resetTicketData(id);
     }
 
     const getAllUserWeekPercent = await conn.query(getAllUserWeekPercentSql);
@@ -72,15 +79,6 @@ export const updateWeeklyPercent = async (id) => {
         // 오늘 정답률 조회
         const todayPercentData = await conn.query(getTodayQuizDataSql, [id]);
 
-        // 오늘의 정답률 계산
-        /*
-        const correctData = await conn.query(getQuizCorrectSql, [userId]);
-        const allData = await conn.query(getQuizAllSql, [userId]);
-        const correctCount = correctData[0][0]["COUNT(*)"];
-        const allCount = allData[0][0]["COUNT(*)"];
-        const todayPercent = allCount > 0 ? ((correctCount / allCount) * 100).toFixed(2) : '0';
-        */
-
         console.log("todayPercent: ", todayPercentData[0][0].today_percent);
 
         const todayPercent = todayPercentData[0][0].today_percent;
@@ -88,7 +86,7 @@ export const updateWeeklyPercent = async (id) => {
         // 현재 weekly_percent 가져오기
         const weeklyData = await conn.query(getWeeklySql, [id]);
 
-        console.log("weeklyData: ", weeklyData);
+        console.log("weeklyData: ", weeklyData[0][0].weekly_percent);
         
         let weeklyPercent = weeklyData[0][0].weekly_percent ? JSON.parse(weeklyData[0][0].weekly_percent) : [];
         
@@ -96,7 +94,7 @@ export const updateWeeklyPercent = async (id) => {
         if (weeklyPercent.length >= 5) {
             weeklyPercent.shift(); // 배열의 첫 번째 정답률 제거
         }
-        weeklyPercent.push(`${todayPercent}%`); // 새로운 정답률 추가
+        weeklyPercent.push(todayPercent); // 새로운 정답률 추가
     
         // DB에 업데이트
         
@@ -122,7 +120,11 @@ export const getWeeklyPercent = async (id) => {
 
     console.log("currentWeeklyData: ", currentWeeklyData[0][0]);
 
-    return currentWeeklyData[0][0];
+    const weeklyData = JSON.parse(currentWeeklyData[0][0].weekly_percent);
+
+    console.log("weeklyData: ", weeklyData);
+
+    return weeklyData;
 }
 
 // 퀴즈 스트릭 조회
@@ -135,13 +137,13 @@ export const getStreak = async (id) => {
 
     let correctCount = getQuizCorrectData[0][0]["COUNT(*)"];
 
-    conn.release();
-
     if (correctCount > 0) {
         correctCount = 1;
     }
     
     await conn.query(updatetodayStreakSql, [correctCount, id]);
+
+    conn.release();
 
     return correctCount;
 }
@@ -153,10 +155,12 @@ export const getWeeklyStreak = async (id) => {
 
     console.log('getWeeklyStreakData: ', getWeeklyStreakData[0][0].streak_array);
 
-    const weeklyStreakData = getWeeklyStreakData[0][0].streak_array;
+    const weeklystreakData = JSON.parse(getWeeklyStreakData[0][0].streak_array);
+
+    console.log("weeklyData: ", weeklystreakData);
 
     conn.release();
-    return weeklyStreakData;
+    return weeklystreakData;
 }
 
 // 위클리 스트릭 업데이트
@@ -171,7 +175,7 @@ export const updateWeeklyStreak = async (id) => {
     // 현재 weekly_streak 가져오기
     const weeklyStreakData = await conn.query(getWeeklyStreakSql, [id]);
 
-    console.log("weeklyStreakData: ", weeklyStreakData);
+    console.log("weeklyStreakData: ", weeklyStreakData[0][0].streak_array);
     
     let weeklyStreak = weeklyStreakData[0][0].streak_array ? JSON.parse(weeklyStreakData[0][0].streak_array) : [];
 
@@ -186,12 +190,16 @@ export const updateWeeklyStreak = async (id) => {
     await conn.query(updateWeeklyStreakSql, [JSON.stringify(weeklyStreak), id]);
 
     const currentWeeklyStreakData = await conn.query(getWeeklyStreakSql, [id]);
+    conn.release();
 
     console.log('currentWeeklyStreakData: ', currentWeeklyStreakData[0][0]);
-    return currentWeeklyStreakData[0][0];
+
+    const weeklystreakData = JSON.parse(currentWeeklyStreakData[0][0].streak_array);
+
+    console.log("weeklyData: ", weeklystreakData);
+
+    return weeklystreakData;
 }
-
-
 
 // 유저 레벨 조회
 // 포인트 조회 -> 레벨로 치환
@@ -203,8 +211,6 @@ export const getLevel = async (id) => {
 
 
     const getUserLevelData = await conn.query(getUserLevelSql, [id]);
-
-    console.log('getUserLevelData: ', getUserLevelData[0][0].level);
 
     conn.release();
     return getUserLevelData[0][0].level;
@@ -228,10 +234,17 @@ export const getPoint = async(id) => {
     const conn = await pool.getConnection();
     const getUserPointData = await conn.query(getUserPointSql, [id]);
 
-    console.log('getUserPointData: ', getUserPointData[0][0].point);
-
     conn.release();
     return getUserPointData[0][0].point;
+}
+
+// 오늘 포인트 조회
+export const getTodayPoint = async(id) => {
+    const conn = await pool.getConnection();
+    const getUserTodayPointData = await conn.query(getUserTodayPointSql, [id]);
+
+    conn.release();
+    return getUserTodayPointData[0][0].todaypoint;
 }
 
 // 푼 문제 개수 확인
@@ -259,4 +272,92 @@ export const addCountQuiz = async (id) => {
     conn.release();
     
     return countUserQuizData;
+}
+
+// 전체 포인트 적재
+export const addQuizPoint = async (id, point) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(addPointSql, [point, id]);
+    const userPointData = await conn.query(getUserPointSql, [id]);
+
+    conn.release();
+    
+    return userPointData[0][0].point;
+}
+
+// 오늘 포인트 적재
+export const addQuizTodayPoint = async (id, point) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(addTodayPointSql, [point, id]);
+    const userTodayPointData = await conn.query(getUserTodayPointSql, [id]);
+
+    conn.release();
+    
+    return userTodayPointData[0][0].todaypoint;
+}
+
+// 오늘 userinfo 데이터 초기화
+export const resetTodayData = async (id) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(resetTodaySql, [id]);
+    const userTodayData = await conn.query(getAllUserWeekPercentSql, [id]);
+    console.log("userTodayPointData: ", userTodayData[0][0]);
+
+    conn.release();
+    
+    return userTodayData[0][0];
+}
+
+// 단어 레벨 조회
+export const getQuizLevel = async (id) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(resetTodaySql, [id]);
+    const quizlevel = await conn.query(getQuizLevelSql, [id]);
+
+    conn.release();
+    
+    return quizlevel[0][0].level;
+}
+
+// 티켓 개수 초기화
+export const resetTicketData = async (id) => {
+    const conn = await pool.getConnection();
+    
+    await conn.query(resetTicketSql, [id]);
+    const ticketdata = await conn.query(getTicketSql, [id]);
+    console.log("ticketdata[0][0].ticket: ", ticketdata[0][0].ticket);
+
+    conn.release();
+    
+    return ticketdata[0][0].ticket;
+}
+
+// 컬러칩 조회
+export const ticketColor = async (id) => {
+    try{
+        const conn = await pool.getConnection();
+    
+        const colorData = await conn.query(getticketColorSql, [id]);
+
+        let color;
+
+        if(colorData[0][0].color == 0) {
+            const getLevelData = await conn.query(getUserLevelSql, [id]);
+            color = getLevelData[0][0].level;
+        }
+        else color = colorData[0][0].color;
+
+        conn.release();
+
+        console.log('color: ', color);
+
+        return color;
+    } catch(error){
+        console.log(error);
+        return error;
+    }
 }
