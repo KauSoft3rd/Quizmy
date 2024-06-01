@@ -35,13 +35,13 @@ jobs:
       # Flask app build and push
       - name: Build and push Flask app
         run: |
-          docker buildx build -t goosmos/flask-app:latest ./flask-app
+          docker buildx build -t goosmos/flask-app:latest ./flask_app
           docker push goosmos/flask-app:latest
 
       # Nodejs app build and push
       - name: Build and push Node app
         run: |
-          docker buildx build -t goosmos/nodejs-app:latest ./nodejs-app
+          docker buildx build -t goosmos/nodejs-app:latest ./nodejs_app
           docker push goosmos/nodejs-app:latest
 
 
