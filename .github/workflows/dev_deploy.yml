@@ -29,21 +29,20 @@ jobs:
       - name: Log in Docker Hub
         uses: docker/login-action@v1
         with:
-          username: Goosmos
-          password: eksrufthgkr2024!
-
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       # Flask app build and push
       - name: Build and push Flask app
         run: |
-          docker buildx build -t Goosmos/flask-app:latest ./flask-app
-          docker push Goosmos/flask-app:latest
+          docker buildx build -t goosmos/flask-app:latest ./flask-app
+          docker push goosmos/flask-app:latest
 
       # Nodejs app build and push
       - name: Build and push Node app
         run: |
-          docker buildx build -t Goosmos/nodejs-app:latest ./nodejs-app
-          docker push Goosmos/nodejs-app:latest
+          docker buildx build -t quizmy/nodejs-app:latest ./nodejs-app
+          docker push quizmy/nodejs-app:latest
 
 
       # AWS CLI Install
