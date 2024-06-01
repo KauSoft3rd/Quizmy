@@ -61,6 +61,11 @@ jobs:
         run: |
           zip -r deploy.zip Dockerrun.aws.json .ebextensions/ .platform/ .elasticbeanstalk/
 
+      # Uploade to S3
+      - name: Uploade to S3
+        run: |
+         aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-058264143516/deploy.zip
+
       # Deploy to Elastic Beanstalk
       - name: Deploy to Beanstalk
         run: |
