@@ -60,7 +60,7 @@ jobs:
       # zip -r deploy.zip Dockerrun.aws.json .ebextensions/ .platform/ .elasticbeanstalk/
       - name: Zip Docker files
         run: |
-          zip -r deploy.zip docker-compose.yml .ebextensions/ .platform/
+          zip -r deploy.zip docker-compose.yml .ebextensions/ .platform/ flask_app/ node_app/
 
       # Uploade to S3
       - name: Uploade to S3
