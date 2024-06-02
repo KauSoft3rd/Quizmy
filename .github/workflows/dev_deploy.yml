@@ -57,9 +57,10 @@ jobs:
           aws-region: ap-northeast-2 
 
       # Zip the docker
+      # zip -r deploy.zip Dockerrun.aws.json .ebextensions/ .platform/ .elasticbeanstalk/
       - name: Zip Docker files
         run: |
-          zip -r deploy.zip Dockerrun.aws.json .ebextensions/ .platform/ .elasticbeanstalk/
+          zip -r deploy.zip docker-compose.yml .ebextensions/ .platform/
 
       # Uploade to S3
       - name: Uploade to S3
