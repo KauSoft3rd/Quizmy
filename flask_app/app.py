@@ -33,9 +33,9 @@ def predict_news_category(news_title):
 
 
 app = Flask(__name__)
-@app.route('/')
-def home() :
-    return 'This is home'
+# @app.route('/')
+# def home() :
+#     return 'This is home'
 
 @app.route('/flasktest')
 def home() :
