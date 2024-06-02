@@ -33,9 +33,9 @@ def predict_news_category(news_title):
 
 
 app = Flask(__name__)
-# @app.route('/')
-# def home() :
-#     return 'This is home'
+@app.route('/')
+def home() :
+    return 'This is home'
 
 @app.route('/flasktest')
 def home() :
@@ -74,4 +74,5 @@ scheduler.add_job(func=task, trigger="interval", minutes=30)
 scheduler.start()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
