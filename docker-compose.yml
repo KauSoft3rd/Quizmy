@@ -6,6 +6,8 @@ services:
       context: ./flask_app
     ports:
       - "5000:5000"
+    environment:
+      - PORT=5000
     networks:
       - app-network
 
@@ -14,6 +16,8 @@ services:
       context: ./node_app
     ports:
       - "3000:3000"
+    environment:
+      - PORT=3000
     networks:
       - app-network
 
