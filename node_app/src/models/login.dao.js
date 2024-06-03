@@ -82,13 +82,13 @@ export const levelTest = async(id, point) => {
             0,
             1,
             JSON.stringify([0,0,0,0,0]),
+            0,
             0
         ]);
 
         const itemresult = await conn.query(insertUserItemSql, [
             null,
             id,
-            0, // 스트릭
             0, // 뽑기 티켓
             1 // 레벨북
         ])
