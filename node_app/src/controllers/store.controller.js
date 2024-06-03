@@ -108,7 +108,7 @@ export const purchaseBook = async (req, res) => {
         console.log('user_id: ', user_id);
         console.log('req.body: ', req.body);
 
-        return res.send(response(status.SUCCESS, await storeService.purchaseBook(user_id, req.body.level)));
+        return res.send(response(status.SUCCESS, await storeService.purchaseBook(user_id, req.body.level, req.body.cost)));
     } catch (error) {
         console.log(error);
         return res.send(response(status.BAD_REQUEST, error));

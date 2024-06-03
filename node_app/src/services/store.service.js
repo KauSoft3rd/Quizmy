@@ -94,31 +94,45 @@ export const addPoint = async (id, point) => {
 }
 
 // 퀴즈북 구매
-export const purchaseBook = async (id, level) => {
+export const purchaseBook = async (id, level, cost) => {
     try {
-        // 본인 레벨 조회
-        const getUserLevelData = await mypageDao.getLevel(id);
+        // 포인트 조회
+        const currentPointData = await mypageDao.getPoint(id);
+        console.log("currentPointData: ", currentPointData);
 
-        const diff = level - getUserLevelData
-
-        if (diff > 2) {
-            return new BaseError(status.BOOK_LEVEL);
-        }
+        // 포인트 확인 - cost가 포인트보다 크면 오류
+        if (currentPointData < cost) return new BaseError(status.POINT_LACK);
         else {
-            // 지금 보유 중인 퀴즈북 레벨조회
-            const userQuizbookData = await storeDao.getQuizbook(id);
-            const bookdiff = level - userQuizbookData;
-            if (bookdiff == 1) {
-                // 퀴즈북 구매
-                await storeDao.purchaseBook(id);
-                const newUserQuizbookData = await storeDao.getQuizbook(id);
-                return newUserQuizbookData;
-            }
-            else if (bookdiff == 2) {
-                return new BaseError(status.BOOK_LEVEL_LACK);
+            // 본인 레벨 조회
+            const getUserLevelData = await mypageDao.getLevel(id);
+
+            const diff = level - getUserLevelData
+
+            if (diff > 2) {
+                return new BaseError(status.BOOK_LEVEL);
             }
             else {
-                return new BaseError(status.BOOK_ALREADY);
+                // 지금 보유 중인 퀴즈북 레벨조회
+                const userQuizbookData = await storeDao.getQuizbook(id);
+                const bookdiff = level - userQuizbookData;
+                if (bookdiff == 1) {
+                    // 퀴즈북 구매
+                    await storeDao.purchaseBook(id);
+                    const newUserQuizbookData = await storeDao.getQuizbook(id);
+
+                    // 포인트 줄이기
+                    const newPointData = currentPointData - cost;
+                    console.log('newPointData: ', newPointData);
+                    const updatePointData = await storeDao.updatePoint(id, newPointData);
+
+                    return newUserQuizbookData;
+                }
+                else if (bookdiff == 2) {
+                    return new BaseError(status.BOOK_LEVEL_LACK);
+                }
+                else {
+                    return new BaseError(status.BOOK_ALREADY);
+                }
             }
         }
     } catch (error){
