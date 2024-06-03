@@ -33,7 +33,7 @@ def predict_news_category(news_title):
 
 
 app = Flask(__name__)
-@app.route('/')
+@app.route('/pred')
 def home() :
     return 'This is home'
 
