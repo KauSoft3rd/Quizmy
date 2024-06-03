@@ -8,6 +8,7 @@ services:
       - "${FPORT}:${FPORT}"
     environment:
       - PORT=${FPORT}
+       
     networks:
       - app-network
 
@@ -18,8 +19,27 @@ services:
       - "${NPORT}:${NPORT}"
     environment:
       - PORT=${NPORT}
+      - DB_HOST=quizmydb.cpiwaee4eftz.ap-northeast-2.rds.amazonaws.com
+      - DB_PORT=3306
+      - DB_USER=quizmy
+      - DB_PASSWORD=eksrufthgkr2024!
+      - DB_NAME=QuizmyDB
     networks:
       - app-network
+  
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: eksrufthgkr2024!
+      MYSQL_DATABASE: QuizmyDB
+      MYSQL_USER: quizmy
+      MYSQL_PASSWORD: eksrufthgkr2024!
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+
 
 networks:
   app-network:

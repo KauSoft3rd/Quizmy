@@ -5,7 +5,7 @@ def getNewsList():
         host="quizmydb.cpiwaee4eftz.ap-northeast-2.rds.amazonaws.com",
         user="quizmy",
         password="eksrufthgkr2024!",
-        database="	QuizmyDB"
+        database="QuizmyDB"
     )
 
     mycursor = mydb.cursor()
@@ -19,7 +19,7 @@ def updateNewsList(newsList):
         host="quizmydb.cpiwaee4eftz.ap-northeast-2.rds.amazonaws.com",
         user="quizmy",
         password="eksrufthgkr2024!",
-        database="	QuizmyDB"
+        database="QuizmyDB"
     )
 
     query = 'INSERT INTO Crawling (title, company, newsLink, date, img) VALUES (%s, %s, %s, DATE_ADD(%s, INTERVAL 9 HOUR), %s)'
