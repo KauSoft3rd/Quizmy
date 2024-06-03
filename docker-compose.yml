@@ -26,19 +26,6 @@ services:
       - DB_NAME=QuizmyDB
     networks:
       - app-network
-  
-  mysql:
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: eksrufthgkr2024!
-      MYSQL_DATABASE: QuizmyDB
-      MYSQL_USER: quizmy
-      MYSQL_PASSWORD: eksrufthgkr2024!
-    ports:
-      - "3306:3306"
-    networks:
-      - app-network
-
 
 
 networks:
