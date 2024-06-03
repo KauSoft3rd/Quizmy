@@ -19,12 +19,20 @@ services:
       - "${NPORT}:${NPORT}"
     environment:
       - PORT=${NPORT}
-      - DB_HOST=quizmydb.cpiwaee4eftz.ap-northeast-2.rds.amazonaws.com
-      - DB_PORT=3306
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - DB_USER=quizmy
-      - DB_PASSWORD=eksrufthgkr2024!
-      - DB_TABLE=QuizmyDB
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_TABLE=${DB_TABLE}
       - DB_NAME=QuizmyDB
+      - CHAT_GPT_KEY=${CHAT_GPT_KEY}
+      - KAKAO_ID=${KAKAO_ID}
+      - KAKAO_SECRET=${KAKAO_SECRET}
+      - NAVER_ID=${NAVER_ID}
+      - NAVER_SECRET=${NAVER_SECRET}
+      - NEWS_API_KEY=${NEWS_API_KEY}
+      - REDIRECT_URL=${REDIRECT_URL}
+      - TOKEN_SECRET=${TOKEN_SECRET}
     networks:
       - app-network
 

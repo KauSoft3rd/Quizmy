@@ -3,3 +3,4 @@ mysql.connector
 requests
 tensorflow
 apscheduler
+python-dotenv
