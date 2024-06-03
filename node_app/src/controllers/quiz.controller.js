@@ -109,7 +109,7 @@ export const reqChatGPT = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const { prompt } = req.body;
-        const model = "gpt-3.5-turbo";
+        const model = "gpt-4o";
 
         const headers = {
             'Content-Type': 'application/json',
