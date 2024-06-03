@@ -23,6 +23,7 @@ services:
       - DB_PORT=3306
       - DB_USER=quizmy
       - DB_PASSWORD=eksrufthgkr2024!
+      - DB_TABLE=QuizmyDB
       - DB_NAME=QuizmyDB
     networks:
       - app-network
