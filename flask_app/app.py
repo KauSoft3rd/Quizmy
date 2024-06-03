@@ -37,10 +37,6 @@ app = Flask(__name__)
 def home() :
     return 'This is home'
 
-@app.route('/flasktest')
-def home() :
-    return 'This is flask home'
-
 @app.route('/pred', methods=['GET'])
 def pred() :
     newsList = getHeadlines()
