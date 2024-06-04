@@ -16,6 +16,8 @@ export const getRandomKeywordSql = 'SELECT word FROM Words WHERE words_id = ?';
 // 사용자가 오늘 풀었던 단어 중 정답 단어를 조회
 export const getRemindWordsTodaySql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 1 AND DATE(created_at) = CURDATE()';
 
+// 키워드 추천을 위해 사용자가 풀었던 문제 중 2개를 조회
+export const getUserNewsKeywordSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 1 LIMIT 2';
 
 // 데이터베이스에 저장된 크롤링 뉴스 정보를 조회
 export const getNewsFromDBSql = 'SELECT title, company, newsLink, date, img FROM Crawling ORDER BY date DESC';

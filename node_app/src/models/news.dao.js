@@ -53,22 +53,30 @@ export const deleteBookmarkDao = async (user_id, link) => {
 DAO 4 : 사용자의 단어 목록 중 4개를 조회
 */
 
+
+import { getUserNewsKeywordSql } from "./news.sql.js";
 export const getNewsKeywordDao = async (user_id) => {
+    let cnt = 4;
     try {
         const db = await pool.getConnection();
-        const [remindList] = await db.query(getUserRemindWordsIdSql, [user_id]);
-        const [todayList] = await db.query(getRemindWordsTodaySql, [user_id]);
+        // const [remindList] = await db.query(getUserRemindWordsIdSql, [user_id]);
+        const [todayList] = await db.query(getUserNewsKeywordSql, [user_id]); // 사용자가 풀었던 단어 중 2개 이하 조회
 
+        cnt -= todayList.length
+
+        const queryList = todayList.map(item => item.words_id);
         
-        const randomKeywordId = randomFourKeywordSelectService(remindList);
-        const randomKeyword = [];
-        for (let i = 0; i < randomKeywordId.length; i++) {
-            let [[word]] = await db.query(getRandomKeywordSql, [randomKeywordId[i].words_id]);
-            randomKeyword.push(word.word);
-        }
-        console.log(randomKeyword);
+        const test = `SELECT words_id FROM Words WHERE words_id NOT IN (${queryList.map(()=>'?').join(',')}) ORDER BY RAND() LIMIT ${cnt}`;
+        const [randomList] = await db.query(test, queryList);
+
+        const temp = [...todayList, ...randomList];
+
+        const result = await Promise.all(temp.map(async (item) => {
+            const [word] = await db.query(getRandomKeywordSql, [item.words_id]);
+            return word[0].word;
+        }));
         db.release();
-        return randomKeyword;
+        return result;
     } catch ( error ) {
         db.release(); // 연결 끊기
         return error;
