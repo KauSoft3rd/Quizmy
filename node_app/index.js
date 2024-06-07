@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 import { healthRoute } from './src/routes/health.router';
 import { newsRouter } from './src/routes/news.router';
@@ -9,10 +10,19 @@ import { quizRouter } from './src/routes/quiz.router';
 import { mypageRouter } from './src/routes/mypage.router';
 import { storeRouter } from './src/routes/store.router';
 import { homeRouter } from './src/routes/home.router';
+import { paypalRouter } from './src/routes/paypal.router.js';
 
 dotenv.config();
 
 const app = express();
+
+/*app.use(cors({ 
+    origin(origin, callback) {
+      callback(null, true)
+    },
+    credentials : true 
+}));
+*/
 
 app.set('port', process.env.PORT || 3000)   // 서버 포트 지정
 app.use(express.static('public'));          // 정적 파일 접근
@@ -30,6 +40,7 @@ app.use((err, req, res, next) => {
 
 app.listen(app.get('port'), () => {
     console.log(`Example app listening on port ${app.get('port')}`);
+
 })
 
 app.get('/', function (req, res) { 
@@ -44,3 +55,4 @@ app.use('/quiz', quizRouter);
 app.use('/mypage', mypageRouter);
 app.use('/store', storeRouter);
 app.use('/home', homeRouter);
+app.use('/paypal', paypalRouter);

@@ -2,6 +2,11 @@ import { response } from "../../src/config/response.js";
 import { status } from "../../src/config/response.status.js";
 import * as storeService from "../services/store.service.js";
 import * as storeDao from "../models/store.dao.js";
+import { paypalCheckout } from "./paypal.controller.js";
+import { createOrder } from "../middleware/paypal.js";
+import { saveOrder } from "../models/paypal.dao.js";
+
+const QUIZMY_BASE_URL = process.env.QUIZMY_BASE_URL;
 
 // 포인트 조회
 export const getPoint = async (req, res) => {
@@ -73,6 +78,8 @@ export const getTicket = async (req, res) => {
 }
 
 // 포인트 구매
+// 결제가 다 되고 나서 포인트가 쌓여야함
+// DB 합치진 못할거같고
 export const addPoint = async (req, res) => {
     try {
         console.log("포인트 구매");
@@ -80,7 +87,21 @@ export const addPoint = async (req, res) => {
         console.log('user_id: ', user_id);
         console.log('req.body: ', req.body);
 
-        return res.send(response(status.SUCCESS, await storeService.addPoint(user_id, req.body.point)));
+        const orderDto = req.body;
+        orderDto.application_context = {
+            return_url: `${QUIZMY_BASE_URL}/paypal/checkout/success?user_id=${user_id}&points=${req.body.point}`,
+            brand_name: 'Quizmy',
+            landing_page: 'BILLING'
+        };
+        const orderResponse = await createOrder(orderDto);
+        await saveOrder(orderResponse.id, user_id, orderResponse.status);
+        // res.status(200).json(orderResponse);
+        console.log('orderResponse: ', orderResponse.links[1]);
+
+        // const addPointData = await storeService.addPoint(user_id, req.body.point);
+
+        return res.send(response(status.SUCCESS, orderResponse.links[1]));
+        // return res.send(response(status.SUCCESS, addPointData, orderResponse.links[1]));
     } catch (error) {
         console.log(error);
         return res.send(response(status.BAD_REQUEST, error));
