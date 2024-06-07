@@ -264,14 +264,13 @@ export const getHeadlineNews = async (req, res, next) => {
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 스크랩 리스트를 조회
         const headline = await getHeadlineNewsDao(); // DB에 저장된 크롤링 뉴스를 조회
         const nowDate = new Date();
-
         let chk = false;
         if (bookmarkList.includes(headline[0].newsLink)) chk = true;
 
         const result = {
             title: headline[0].title,
             company: headline[0].company,
-            newsLink: headline[0].newsLink,
+            newsLink: headline[0].newsLink.replace(/"/g, ''),
             date: calculateDate(headline[0].date, nowDate),
             img: headline[0].img,
             check: chk
