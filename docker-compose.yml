@@ -33,6 +33,10 @@ services:
       - NEWS_API_KEY=${NEWS_API_KEY}
       - REDIRECT_URL=${REDIRECT_URL}
       - TOKEN_SECRET=${TOKEN_SECRET}
+      - PAYPAL_BASE_URL=${PAYPAL_BASE_URL}
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_SECRET=${PAYPAL_SECRET}
+      - QUIZMY_BASE_URL=${QUIZMY_BASE_URL}
     networks:
       - app-network
 
