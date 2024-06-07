@@ -58,15 +58,25 @@ jobs:
 
       # Deploy to EC2
 
+      - name: Create SSH key file
+        run: echo "${{ secrets.EC2_KEY }}" > key.pem
+
+      - name: Set SSH key permissions
+        run: chmod 600 key.pem
+
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ec2-user@ec2-52-78-124-209.ap-northeast-2.compute.amazonaws.com << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@ec2-52-78-124-209.ap-northeast-2.compute.amazonaws.com << 'EOF'
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
             docker pull goosmos/flask-app:latest
             docker pull goosmos/nodejs-app:latest
             docker-compose down
             docker-compose up -d
           EOF
+          
+      - name: Clean up
+        run: rm key.pem
+
 
 
 
