@@ -249,8 +249,8 @@ export const getNewsFromDB = async (req, res, next) => {
             const check = bookmarkList.some(item => item.link === newsLink);
             resultList.push({ title: title, company: company, newsLink: newsLink, date: timeDiff, img: img, check: check });
         }
-        console.log(resultList);
-        return res.send(response(status.SUCCESS, resultList));
+        console.log(resultList.slice(1));
+        return res.send(response(status.SUCCESS, resultList.slice(1)));
     } catch ( error ) {
         return res.send(response(status.INTERNAL_SERVER_ERROR));
     }
