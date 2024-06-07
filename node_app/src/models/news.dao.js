@@ -64,10 +64,16 @@ export const getNewsKeywordDao = async (user_id) => {
 
         cnt -= todayList.length
 
+        let test;
         const queryList = todayList.map(item => item.words_id);
-        
-        const test = `SELECT words_id FROM Words WHERE words_id NOT IN (${queryList.map(()=>'?').join(',')}) ORDER BY RAND() LIMIT ${cnt}`;
+        if (cnt !== 4) {
+            test = `SELECT words_id FROM Words WHERE words_id NOT IN (${queryList.map(()=>'?').join(',')}) ORDER BY RAND() LIMIT ${cnt}`;
+        }
+        else {
+            test = `SELECT words_id FROM Words WHERE words_id ORDER BY RAND() LIMIT ${cnt}`;
+        }
         const [randomList] = await db.query(test, queryList);
+        console.log(randomList); // 에러 발생
 
         const temp = [...todayList, ...randomList];
 
