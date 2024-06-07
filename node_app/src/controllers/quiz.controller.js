@@ -134,16 +134,3 @@ export const reqChatGPT = async (req, res, next) => {
         return res.send(response(status.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다."));
     }
 }
-
-// import natural from 'natural';
-// export const testapi = async (req, res, next) => {
-//     try {
-//         const tokenizer = new natural.WordTokenizer();
-//         const newTitle = "Node.js is a JavaScript runtime"
-//         const token = tokenizer.tokenize(newTitle);
-//         console.log(token);
-//         return res.send(response(status.SUCCESS, token));
-//     } catch ( error ) {
-//         return res.send(response(status.INTERNAL_SERVER_ERROR, error));
-//     }
-// }

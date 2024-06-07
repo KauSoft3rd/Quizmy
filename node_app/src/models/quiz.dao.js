@@ -24,7 +24,10 @@ export const getRandomWordDao = async (user_id) => {
         console.log(result);
         // 그 중 랜덤으로 하나 뽑아내기
         const quizWordsId = randomSelectService(result);
-        const [quiz] = await db.query(getRandomQuizSql, quizWordsId);
+        let [quiz] = await db.query(getRandomQuizSql, quizWordsId);
+
+        quiz[0].quizbook = quizbookLevel[0].quizbook
+
         console.log(quiz);
         db.release();
         return quiz;
