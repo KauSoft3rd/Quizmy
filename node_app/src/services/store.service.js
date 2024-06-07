@@ -75,11 +75,14 @@ export const useItem = async (id, item) => {
 // point = 증가할 포인트
 export const addPoint = async (id, point) => {
     try {  
+        console.log("id: ", id, "point: ", point);
         // 현재 포인트 조회
         const getCurrenttData = await mypageDao.getPoint(id);
 
         // 더한 포인트 
         const newPointData = getCurrenttData + point;
+
+        console.log('newPointData: ', newPointData);
 
         // 포인트 값 먼저 바꾸고
         const addPointData = await storeDao.updatePoint(id, newPointData);
@@ -87,7 +90,6 @@ export const addPoint = async (id, point) => {
         const currentPointData = await mypageDao.getPoint(id);
 
         return currentPointData;
-
     } catch (error){
         throw error;
     }
