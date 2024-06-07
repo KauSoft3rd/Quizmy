@@ -56,28 +56,31 @@ jobs:
           aws-secret-access-key: ${{secrets.AWS_ACTION_SECRET_ACCESS_KEY}}
           aws-region: ap-northeast-2 
 
-      # Deploy to EC2
-
-      - name: Create SSH key file
-        run: echo "${{ secrets.EC2_KEY }}" > key.pem
-
-      - name: Set SSH key permissions
-        run: chmod 600 key.pem
-
-      - name: Deploy to EC2
+      # Zip the docker
+      # zip -r deploy.zip Dockerrun.aws.json .ebextensions/ .platform/ .elasticbeanstalk/
+      - name: Zip Docker files
         run: |
-          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@ec2-52-78-124-209.ap-northeast-2.compute.amazonaws.com << 'EOF'
-            sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-            sudo docker pull goosmos/flask-app:latest
-            sudo docker pull goosmos/nodejs-app:latest
-            sudo docker-compose down
-            sudo docker-compose up -d
-          EOF
+          zip -r deploy.zip docker-compose.yml .ebextensions/ .platform/ flask_app/ node_app/
 
-      - name: Clean up
-        run: rm key.pem
+      # Uploade to S3
+      - name: Uploade to S3
+        run: |
+         aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-058264143516/deploy.zip
 
-
+      # Deploy to Elastic Beanstalk
+      - name: Deploy to Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
+          application_name: Quizmy-flask
+          environment_name: Quizmy-flask-env-1
+          version_label: github-action-${{ github.sha }}
+          deployment_package: deploy.zip
+          region: ap-northeast-2
+          wait_for_deployment: false
+          use_existing_version_if_available: true
+            
 
 
 
