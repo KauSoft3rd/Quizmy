@@ -167,3 +167,17 @@ export const getNewsDateDao = async () => {
         return error;
     }
 }
+
+
+import { getHeadLineNewsSql } from './news.sql.js';
+export const getHeadlineNewsDao = async () => {
+    try {
+        const db = await pool.getConnection();
+        let [headline] = await db.query(getHeadLineNewsSql);
+        db.release();
+        return headline;
+    } catch ( error ) {
+        db.release();
+        return error;
+    }
+}

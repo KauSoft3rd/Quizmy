@@ -1,55 +1,8 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
-// import iconv from 'iconv-lite';
 import { response } from '../config/response';
 import { status } from '../config/response.status';
 import { getBookmarkNewsDBDao, getNewsKeywordDao, getUserBookmarkDao } from '../models/news.dao';
 import { calculateDate, getNewsImageURL, getTimeDiff } from '../services/new.service';
-
-/*
-API 1 : 네이버페이 증권 사이트의 주요 뉴스 크롤링 API
-반환결과 : [ { 뉴스 제목 / 신문사 / 링크 / 시간차이 / 이미지 주소 }, ]
-*/
-
-// export const getNews = async (req, res, next) => {
-//     try {
-//         const user_id = req.user_id;
-//         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
-//         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
-//         let encodedData = iconv.decode(html.data, "EUC-KR");
-//         let $ = cheerio.load(encodedData);
-//         let newsData = $('.newsList .block1').slice(1, 9);
-
-//         const nowDate = new Date();
-//         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
-//         // 현재 아래의 newsData는 총 20개의 node를 가지게 된다.
-//         // node를 총 8번만 반복해서 promises 배열을 가질 수 있도록 코드를 수정해줘
-//         const promises = newsData.map(async(idx, node) => {
-//             let title = $(node).find('.articleSubject a').text().trim();
-//             let company = $(node).find('.articleSummary .press').text().trim();
-//             let link = $(node).find('.articleSubject a').attr('href');
-//             let article_id = link.match(/article_id=([^&]+)/)[1];
-//             let office_id = link.match(/office_id=([^&]+)/)[1];
-//             let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-//             let date = new Date($(node).find('.articleSummary .wdate').text().trim());
-//             let img;
-//             try {
-//                 img = await getNewsImageURL(newsLink); 
-//             }
-//             catch (error) {
-//                 console.log(error);
-//                 img = null;
-//             }
-//             let timeDiff = calculateDate(date, nowDate); // 크롤링한 시간을 분, 시간, 일 단위로 변환
-//             let check = bookmarkList.some(item => item.link === newsLink); // 사용자의 스크랩 목록에 존재하는 뉴스 기사인지 파악
-//             return { title, company, newsLink, date: timeDiff, img, check };
-//         });
-//         const newsList = await Promise.all(promises);
-//         return res.send(response(status.SUCCESS, newsList));
-//     } catch ( error ) {
-//         return res.send(response(status.INTERNAL_SERVER_ERROR));
-//     }
-// }
 
 /*
 API 2 : 뉴스 북마크 추가 API
@@ -303,48 +256,31 @@ export const getNewsFromDB = async (req, res, next) => {
     }
 }
 
-/*
-API 10 : 뉴스 크롤링 갱신
-요청형식 : 
-반환결과 : 
-*/
+ 
+import { getHeadlineNewsDao } from '../models/news.dao';
+export const getHeadlineNews = async (req, res, next) => {
+    try {
+        const user_id = req.user_id;
+        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 스크랩 리스트를 조회
+        const headline = await getHeadlineNewsDao(); // DB에 저장된 크롤링 뉴스를 조회
+        const nowDate = new Date();
 
-// import scheduler from 'node-schedule';
-// import { updateNewsDataDao } from '../models/news.dao';
-// export const updateNewsData = async () => {
-//     try {
-//         console.log("NEWS CRAWLING START!!!");
-//         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
-//         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
-//         let encodedData = iconv.decode(html.data, "EUC-KR");
-//         let $ = cheerio.load(encodedData);
-//         let newsData = $('.newsList .block1').slice(1, 20); // 19개의 뉴스를 크롤링
+        let chk = false;
+        if (bookmarkList.includes(headline[0].newsLink)) chk = true;
 
-//         // 현재 아래의 newsData는 총 19개의 node를 가지게 된다.
-//         const promises = newsData.map(async(idx, node) => {
-//             let title = $(node).find('.articleSubject a').text().trim();
-//             let company = $(node).find('.articleSummary .press').text().trim();
-//             let link = $(node).find('.articleSubject a').attr('href');
-//             let article_id = link.match(/article_id=([^&]+)/)[1];
-//             let office_id = link.match(/office_id=([^&]+)/)[1];
-//             let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-//             let date = new Date($(node).find('.articleSummary .wdate').text().trim());
-//             let img;
-//             try {
-//                 img = await getNewsImageURL(newsLink); 
-//             }
-//             catch (error) {
-//                 console.log(error);
-//                 img = null;
-//             }
-//             return { title, company, newsLink, date, img };
-//         });
-//         const newsList = await Promise.all(promises);
-//         console.log("NEWS CRAWLING CLEAR!!!");
-//         await updateNewsDataDao(newsList);
-//     } catch ( error ) {
-//         console.error(error);
-//         return error;
-//     }
-// }
-// scheduler.scheduleJob('*/30 * * * *', updateNewsData);
+        const result = {
+            title: headline[0].title,
+            company: headline[0].company,
+            newsLink: headline[0].newsLink,
+            date: calculateDate(headline[0].date, nowDate),
+            img: headline[0].img,
+            check: chk
+        }
+
+        console.log(result);
+        return res.send(response(status.SUCCESS, result));
+    } catch ( error ) {
+        console.log(error);
+        return res.send(response(status.INTERNAL_SERVER_ERROR));
+    }
+}

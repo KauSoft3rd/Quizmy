@@ -35,3 +35,6 @@ export const checkNewsSql = `SELECT 1 FROM Crawling WHERE newsLink = ?`;
 
 // DB 조회
 export const getDB = 'SELECT * FROM Crawling';
+
+// headline 뉴스 조회하기
+export const getHeadLineNewsSql = 'SELECT title, company, newsLink, date, img FROM Crawling ORDER BY date DESC LIMIT 1';
