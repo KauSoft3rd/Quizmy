@@ -1,4 +1,4 @@
-name: Node.js Dev CI/CD
+name: Node.js and Flask Dev CI/CD
 
 on:
   pull_request:      # pull request -> merge 가 되었을 때 Github Action 실행!
@@ -21,65 +21,129 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3   
 
-      # Node.js 세팅
-      - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      # Docker build
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Docker Hub 로그인
+      - name: Log in Docker Hub
+        uses: docker/login-action@v1
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Install Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      # dependencies 설치, test and build
-      - name: Install dependencies
-        run: npm ci   # dependencies 설치 npm ci, npm install 모두 다 됨!
-
-      - name: Run Build
-        run: npm run build # 빌드
-
-      # 배포 패키지 생성
-      - name: Generate deployment package
+      # Flask app build and push
+      - name: Build and push Flask app
         run: |
-          cp -R .platform dist
-          cp package.json dist/package.json
-          cp package-lock.json dist/package-lock.json
-          cp Procfile dist/Procfile
-          cd dist
-          zip -r deploy.zip .
-      
-      # 생성한 deploy.zip 파일 내부 확인용!
-      - name: Get Zip Inside
-        run: zipinfo -1 dist/deploy.zip
+          docker buildx build --push -t goosmos/flask-app:latest ./flask_app
 
-      # 현재 시간 얻기 (Build 시점의 시간 얻기)
-      - name: Get current time
-        uses: 1466587594/get-current-time@v2
-        id: current-time
+      # Nodejs app build and push
+      - name: Build and push Node app
+        run: |
+          docker buildx build --push -t goosmos/nodejs-app:latest ./node_app
+
+
+      # AWS CLI Install
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
+      - name: Config AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          format: YYYY-MM-DDTHH-mm-ss
-          utcOffset: "+09:00" # 한국 시간 고려
+          aws-access-key-id: ${{secrets.AWS_ACTION_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_ACTION_SECRET_ACCESS_KEY}}
+          aws-region: ap-northeast-2 
 
-      # 현재 시간 출력 (위에서 얻은 build 시점의 시간 보여주기)
-      - name: Show Current Time
-        run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}"
-        shell: bash 
+      # Zip the docker
+      # zip -r deploy.zip Dockerrun.aws.json .ebextensions/ .platform/ .elasticbeanstalk/
+      - name: Zip Docker files
+        run: |
+          zip -r deploy.zip docker-compose.yml .ebextensions/ .platform/ flask_app/ node_app/
 
-      # Beanstalk 배포
-      - name: Beanstalk Deploy
+      # Uploade to S3
+      - name: Uploade to S3
+        run: |
+         aws s3 cp deploy.zip s3://elasticbeanstalk-ap-northeast-2-058264143516/deploy.zip
+
+      # Deploy to Elastic Beanstalk
+      - name: Deploy to Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
-          aws_access_key: ${{secrets.AWS_ACTION_ACCESS_KEY_ID}}
-          aws_secret_key: ${{secrets.AWS_ACTION_SECRET_ACCESS_KEY}}
-          application_name: quizmy-dev
-          environment_name: Quizmy-dev-env 
-          version_label: github-action-${{ steps.current-time.outputs.formattedTime }}  # version_label은 이전에 배포한 label과 중복되면 안됨!
-          use_existing_version_if_available: true
+          aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
+          application_name: Quizmy-flask
+          environment_name: Quizmy-flask-env-1
+          version_label: github-action-${{ github.sha }}
+          deployment_package: deploy.zip
           region: ap-northeast-2
-          deployment_package: dist/deploy.zip
-          wait_for_deployment: false  # 바로 Beanstalk으로 넘어갈 수 있도록 함
+          wait_for_deployment: false
+          use_existing_version_if_available: true
+            
+
+
+
+# # 아래는 기존 작성된 코드이다.
+#       # Node.js 세팅
+#       - name: Set up Node.js ${{ matrix.node-version }}
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#           cache: 'npm'
+
+#       - name: Install Node.js ${{ matrix.node-version }}
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ matrix.node-version }}
+
+#       # dependencies 설치, test and build
+#       - name: Install dependencies
+#         run: npm ci   # dependencies 설치 npm ci, npm install 모두 다 됨!
+
+#       - name: Run Build
+#         run: npm run build # 빌드
+
+#       # 배포 패키지 생성
+#       - name: Generate deployment package
+#         run: |
+#           cp -R .platform dist
+#           cp package.json dist/package.json
+#           cp package-lock.json dist/package-lock.json
+#           cp Procfile dist/Procfile
+#           cd dist
+#           zip -r deploy.zip .
+      
+#       # 생성한 deploy.zip 파일 내부 확인용!
+#       - name: Get Zip Inside
+#         run: zipinfo -1 dist/deploy.zip
+
+#       # 현재 시간 얻기 (Build 시점의 시간 얻기)
+#       - name: Get current time
+#         uses: 1466587594/get-current-time@v2
+#         id: current-time
+#         with:
+#           format: YYYY-MM-DDTHH-mm-ss
+#           utcOffset: "+09:00" # 한국 시간 고려
+
+#       # 현재 시간 출력 (위에서 얻은 build 시점의 시간 보여주기)
+#       - name: Show Current Time
+#         run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}"
+#         shell: bash 
+
+#       # Beanstalk 배포
+#       - name: Beanstalk Deploy
+#         uses: einaregilsson/beanstalk-deploy@v21
+#         with:
+#           aws_access_key: ${{secrets.AWS_ACTION_ACCESS_KEY_ID}}
+#           aws_secret_key: ${{secrets.AWS_ACTION_SECRET_ACCESS_KEY}}
+#           application_name: quizmy-dev
+#           environment_name: Quizmy-dev-env 
+#           version_label: github-action-${{ steps.current-time.outputs.formattedTime }}  # version_label은 이전에 배포한 label과 중복되면 안됨!
+#           use_existing_version_if_available: true
+#           region: ap-northeast-2
+#           deployment_package: dist/deploy.zip
+#           wait_for_deployment: false  # 바로 Beanstalk으로 넘어갈 수 있도록 함
 
       # 그냥 다 했다고 출력하기
       - name: Deployed!

@@ -1,1 +1,0 @@
-web: npm ci & npm run start

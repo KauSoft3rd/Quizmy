@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build:
+      context: ./flask_app
+    ports:
+      - "${FPORT}:${FPORT}"
+    environment:
+      - PORT=${FPORT}
+       
+    networks:
+      - app-network
+
+  nodejs-app:
+    build:
+      context: ./node_app
+    ports:
+      - "${NPORT}:${NPORT}"
+    environment:
+      - PORT=${NPORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=quizmy
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_TABLE=${DB_TABLE}
+      - DB_NAME=QuizmyDB
+      - CHAT_GPT_KEY=${CHAT_GPT_KEY}
+      - KAKAO_ID=${KAKAO_ID}
+      - KAKAO_SECRET=${KAKAO_SECRET}
+      - NAVER_ID=${NAVER_ID}
+      - NAVER_SECRET=${NAVER_SECRET}
+      - NEWS_API_KEY=${NEWS_API_KEY}
+      - REDIRECT_URL=${REDIRECT_URL}
+      - TOKEN_SECRET=${TOKEN_SECRET}
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,6 @@
+Flask
+mysql.connector
+requests
+tensorflow-cpu
+apscheduler
+python-dotenv
