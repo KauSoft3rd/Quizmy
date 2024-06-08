@@ -1,6 +1,6 @@
 Flask
 mysql.connector
 requests
-tensorflow
+tensorflow-cpu
 apscheduler
 python-dotenv

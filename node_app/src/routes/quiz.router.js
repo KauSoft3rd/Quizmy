@@ -4,7 +4,7 @@ import { kakaoIdToUserIdMiddleware } from "../middleware/user.middleware.js";
 
 export const quizRouter = express.Router();
 
-quizRouter.get('/', kakaoIdToUserIdMiddleware, getQuizWord); // test
+quizRouter.get('/', kakaoIdToUserIdMiddleware, getQuizWord); // 
 quizRouter.patch('/', kakaoIdToUserIdMiddleware, patchRemindWord); //
 quizRouter.get('/today', kakaoIdToUserIdMiddleware, getTodayWords); //  
 quizRouter.get('/acc', kakaoIdToUserIdMiddleware, getAccWords); //
@@ -12,6 +12,3 @@ quizRouter.get('/correct', kakaoIdToUserIdMiddleware, getCorrectWords);
 quizRouter.get('/incorrect', kakaoIdToUserIdMiddleware, getIncorrectWords);
 
 quizRouter.post('/chat', kakaoIdToUserIdMiddleware, reqChatGPT); //
-
-// import { testapi } from '../controllers/quiz.controller'
-// quizRouter.get('/testapi', kakaoIdToUserIdMiddleware, testapi);

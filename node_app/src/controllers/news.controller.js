@@ -69,55 +69,6 @@ export const getUserBookmark = async (req, res, next) => {
 }
 
 /*
-API 5 : 뉴스 메인화면 기사 제공 API
-요청형식 : 
-반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
-*/
-
-// export const getMainNews = async (req, res, next) => {
-//     try {
-//         const user_id = req.user_id;
-//         let html = await axios.get("https://finance.naver.com/news/mainnews.naver", 
-//         { responseType: 'arraybuffer' }); //사이트의 html을 읽어온다
-//         let encodedData = iconv.decode(html.data, "EUC-KR");
-//         let $ = cheerio.load(encodedData);
-//         let newsData = $('#contentarea_left > div.mainNewsList._replaceNewsLink > ul > li:nth-child(1) > dl');
-//         let nowDate = new Date();
-
-//         let date = new Date(newsData.find('.articleSummary .wdate').text().trim());
-//         let timeDiff = calculateDate(date, nowDate);
-//         const bookmarkList = await getBookmarkNewsDBDao(user_id); // refactoring 가능 ( 최적화 문제 )
-
-//         let title = newsData.find('.articleSubject a').text().trim();
-//         let company = newsData.find('.articleSummary .press').text().trim();
-//         let link = newsData.find('.articleSubject a').attr('href');
-//         let article_id = link.match(/article_id=([^&]+)/)[1];
-//         let office_id = link.match(/office_id=([^&]+)/)[1];
-//         let newsLink = `https://n.news.naver.com/mnews/article/${office_id}/${article_id}`
-//         let check = bookmarkList.some(item => item.link === newsLink);
-//         let img; 
-//         try {
-//             img = await getNewsImageURL(newsLink); 
-//         }
-//         catch (error) {
-//             console.log(error);
-//             img = null;
-//         }
-//         let mainNews = {
-//             title: title,
-//             company: company,
-//             link: newsLink,
-//             date: timeDiff,
-//             img: img,
-//             check: check
-//         }
-//         return res.send(response(status.SUCCESS, mainNews));
-//     } catch ( error ) {
-//         return res.send(response(status.INTERNAL_SERVER_ERROR));
-//     }
-// }
-
-/*
 API 6 : 네이버 키워드 뉴스 API
 요청형식 : 
 반환결과 : { 뉴스 제목 / 신문사 / 링크 / 날짜 / 이미지 주소 }
@@ -189,45 +140,6 @@ export const getNewsKeyword = async (req, res, next) => {
 }
 
 /*
-API 8 : 카테고리의 주요 뉴스 조회 API
-요청형식 : 
-반환결과 : 
-*/
-
-export const getMainNewsList = async (req, res, next) => {
-    try {
-        const user_id = req.user_id;
-        const category = 'business';
-        const newsList = await axios.get(`https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${process.env.NEWS_API_KEY}`);
-        const newsData = newsList.data.articles;
-        const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 북마크 목록을 조회
-        const result = [];
-
-        newsData.forEach(item => {
-            let title = item.title.replace(/<[^>]*>?/gm, '');
-            let link = item.url;
-            let date = getTimeDiff(item.publishedAt);
-            let image = item.urlToImage;
-            let check = bookmarkList.some(item => item.link === link);
-            let company = "항공대"
-
-            result.push({
-                title: title,
-                company: company,
-                newsLink: link,
-                date: date,
-                img: image,
-                check: check
-            })
-        })
-        
-        return res.send(response(status.SUCCESS, result));
-    } catch ( error ) {
-        return res.send(response(status.INTERNAL_SERVER_ERROR));
-    }
-}
-
-/*
 API 9 : 데이터 베이스의 뉴스를 조회
 요청형식 : 
 반환결과 : 
@@ -256,7 +168,8 @@ export const getNewsFromDB = async (req, res, next) => {
     }
 }
 
- 
+
+// DB에서 헤드라인 뉴스 1개를 제공
 import { getHeadlineNewsDao } from '../models/news.dao';
 export const getHeadlineNews = async (req, res, next) => {
     try {
