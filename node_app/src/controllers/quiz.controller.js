@@ -105,9 +105,14 @@ export const getIncorrectWords = async (req, res, next) => {
     }
 }
 
+/*
+API 7 : 챗봇에게 대화를 하는 API
+반환결과 : [ 단어 : 뜻 ]
+*/
+
 export const reqChatGPT = async (req, res, next) => {
     try {
-        const user_id = req.user_id;
+        // const user_id = req.user_id;
         const { prompt } = req.body;
         const model = "gpt-4o";
 

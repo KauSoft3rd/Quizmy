@@ -20,7 +20,7 @@ export const getRemindWordsTodaySql = 'SELECT words_id FROM Remind WHERE user_id
 export const getUserNewsKeywordSql = 'SELECT words_id FROM Remind WHERE user_id = ? AND grade = 1 LIMIT 2';
 
 // 데이터베이스에 저장된 크롤링 뉴스 정보를 조회
-export const getNewsFromDBSql = 'SELECT title, company, newsLink, date, img FROM Crawling ORDER BY date DESC';
+export const getNewsFromDBSql = 'SELECT title, company, newsLink, date, img FROM Crawling ORDER BY date DESC LIMIT 20';
 
 // 크롤링한 모든 뉴스를 갱신하기 위해 기존 뉴스 정보를 삭제
 export const deleteCrawlingSql = 'DELETE FROM Crawling';
