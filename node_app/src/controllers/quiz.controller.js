@@ -3,6 +3,7 @@ import { status } from '../config/response.status';
 import axios from 'axios';
 import { getRandomWordDao, patchRemindWordDao, getTodayWordsDao, getAccWordsDao, getCorrectWordsDao, getIncorrectWordsDao } from '../models/quiz.dao';
 import { addCountQuiz, addQuizPoint } from '../services/mypage.service';
+import { updateWordsCntDao } from '../models/remind.dao';
 
 /*
 API 1 : 오늘 풀어볼 단어를 조회
@@ -34,7 +35,10 @@ export const patchRemindWord = async (req, res, next) => {
             await addCountQuiz(user_id);
             await addQuizPoint(user_id, words_id);
         } 
-        else msg = "오답입니다.";
+        else {
+            msg = "오답입니다.";
+            await updateWordsCntDao(words_id);
+        }
     
         await patchRemindWordDao(user_id, words_id, grade);
 

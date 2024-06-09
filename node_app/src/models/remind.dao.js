@@ -1,5 +1,9 @@
 import { getWordInfoSql, getUserWorkbookLevelSql, getWordsUnderUserLevelSql, 
-    getUserRemindListSql, todayRemindListSql, getNewestRemindListSql } from "./remind.sql";
+    getUserRemindListSql, todayRemindListSql, getNewestRemindListSql, 
+    updateWordsCntSql,
+    getWordsCntDataSql,
+    updateWordsCntZeroSql,
+    updateWordsLevelSql} from "./remind.sql";
 import { pool } from "../config/db.config";
 
 // 사용자 퀴즈북 레벨 조회
@@ -226,9 +230,41 @@ export const getAccAlphaRemindListDao = async (user_id) => {
 }
 
 
+// Words 테이블 cnt 값 늘리기
+// 많이 틀리면 레벨 올림
+// 틀린 사람이 10명이 넘으면 레벨 ++ 
+// 틀릴 때마다 그 단어에 cnt ++ 해서 (cnt = 해당 단어를 틀린 사람 수)
+// cnt 10 되면 해당 단어 레벨 ++ 하고 cnt 0 초기화
+export const updateWordsCntDao = async (words_id) => {
+    try {
+        const db = await pool.getConnection();
+        console.log("1");   
 
+        const [updateWordsCntData] = await db.query(updateWordsCntSql, [words_id]);
 
+        const wordsCntData = await db.query(getWordsCntDataSql, [words_id]);
 
+        console.log("wordsCntData: ", wordsCntData[0][0].cnt);
+
+        if(wordsCntData[0][0].cnt >= 10) {
+            // cnt 0으로 초기화
+            // 레벨 ++
+            await db.query(updateWordsLevelSql, [words_id]);
+        }
+
+        const newWordsCntData = await db.query(getWordsCntDataSql, [words_id]);
+
+        console.log('newWordsCntData: ', newWordsCntData[0][0]);
+
+        db.release();
+        return newWordsCntData[0][0];
+    } catch ( error ) {
+        console.log(error);
+        return error;
+    }
+}
+
+/*
 // DB 갱신을 위한 DAO
 import { countWords } from './remind.sql';
 export const updateWordsLevelDao = async () => {
@@ -275,3 +311,4 @@ export const updateWordsLevelDao = async () => {
         return error;
     }
 }
+*/
