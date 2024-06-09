@@ -27,4 +27,26 @@ def updateNewsList(newsList):
     for item in newsList:
         mycursor.execute(query, [item['title'], item['company'], item['newsLink'], item['date'], item['img']])
     mydb.commit()
+
+
+    count_query = 'SELECT COUNT(*) FROM Crwaling'
+    mycursor.execute(count_query)
+    total_count = mycursor.fetchone()[0]
+
+
+    if total_count > 100:
+        delete_query = '''
+        DELETE FROM Crawling
+        WHERE id IN (
+            SELECT id FROM (
+                SELECT id FROM Crawling
+                ORDER BY date ASC
+                LIMIT %s
+            ) AS subquery
+        )
+        ''' 
+
+        items_to_delete = total_count - 100
+        mycursor.execute(delete_query, (items_to_delete))
+        mydb.commit()
     mydb.close()
