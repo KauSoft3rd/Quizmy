@@ -29,7 +29,7 @@ def updateNewsList(newsList):
     mydb.commit()
 
 
-    count_query = 'SELECT COUNT(*) FROM Crwaling'
+    count_query = 'SELECT COUNT(*) FROM Crawling'
     mycursor.execute(count_query)
     total_count = mycursor.fetchone()[0]
 
@@ -47,6 +47,6 @@ def updateNewsList(newsList):
         ''' 
 
         items_to_delete = total_count - 100
-        mycursor.execute(delete_query, (items_to_delete))
+        mycursor.execute(delete_query, (items_to_delete, ))
         mydb.commit()
     mydb.close()
