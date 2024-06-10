@@ -34,10 +34,11 @@ export const patchRemindWord = async (req, res, next) => {
             msg = "정답입니다.";
             await addCountQuiz(user_id);
             await addQuizPoint(user_id, words_id);
+            await updateWordsCntDao(words_id, grade);
         } 
         else {
             msg = "오답입니다.";
-            await updateWordsCntDao(words_id);
+            await updateWordsCntDao(words_id, grade);
         }
     
         await patchRemindWordDao(user_id, words_id, grade);

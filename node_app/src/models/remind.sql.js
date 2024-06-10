@@ -44,7 +44,15 @@ export const getWordsCntDataSql = 'SELECT cnt FROM Words WHERE words_id = ?';
 export const getWordsDataSql = 'SELECT words_id, cnt, level FROM Words WHERE words_id = ?';
 
 // wordcnt 늘리기
-export const updateWordsCntSql = 'UPDATE Words SET cnt = cnt + 1 WHERE words_id = ?';
+export const plusWordsCntSql = 'UPDATE Words SET cnt = cnt + 1 WHERE words_id = ?';
+
+// wordcnt 줄이기
+export const minusWordsCntSql = 'UPDATE Words SET cnt = cnt - 1 WHERE words_id = ?';
 
 // 단어 레벨, cnt 업데이트
-export const updateWordsLevelSql = 'UPDATE Words SET cnt = 0, level = level + 1 WHERE words_id = ?';
+export const plusWordsLevelSql = 'UPDATE Words SET cnt = 10, level = level + 1 WHERE words_id = ?';
+
+export const minusWordsLevelSql = 'UPDATE Words SET cnt = 10, level = level - 1 WHERE words_id = ?';
+
+// 단어 레벨 조회
+export const getWordsLevelDataSql = 'SELECT level FROM Words WHERE words_id = ?';
