@@ -10,17 +10,26 @@ export const kakaoIdToUserIdMiddleware = async (req, res, next) => {
     if (!kakao_id) {
         return res.status(400).send({ message: 'kakao_id is required' });
     }
-    
+
+    // 변환 함수
+    const transformKakaoId = (id) => {
+        return id.replace(/\+/g, 'A').replace(/\//g, 'B').replace(/=/g, 'C');
+    };
+
+    const transformedKakaoId = transformKakaoId(kakao_id);
+
+    console.log("변환 kakao_id: ", transformedKakaoId);
+
     try {
-        let user = await LoginDao.checkUserId(kakao_id);
+        let user = await LoginDao.checkUserId(transformedKakaoId);
         if (user == undefined) {
             // return res.status(404).send({ message: 'User not found' });
-            const signupUser = await LoginDao.signUp(kakao_id);
-            user = await LoginDao.checkUserId(kakao_id);
+            const signupUser = await LoginDao.signUp(transformedKakaoId);
+            user = await LoginDao.checkUserId(transformedKakaoId);
         }
         // 요청 객체에 user_id 추가
         req.user_id = user.user_id;
-        next(); 
+        next();
         
     } catch (error) {
         console.error(error);
