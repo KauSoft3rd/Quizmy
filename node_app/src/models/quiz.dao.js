@@ -13,23 +13,26 @@ export const getRandomWordDao = async (user_id) => {
         // wordsList == 사용자 퀴즈북 레벨보다 같거나 낮은 단어 id 리스트
         const [wordsidList] = await db.query(getQuizWordsIdSql, quizbookLevel[0].quizbook); // 사용자의 퀴즈레벨 이하의 모든 퀴즈들을 조회
         //  correctList == 사용자가 맞춘 단어 리스트
-        console.log(wordsidList);
+        // console.log(wordsidList);
         const [correctList] = await db.query(getUserRemindWordsIdSql, [user_id]); 
-        console.log(correctList);
+        // console.log(correctList);
 
         const resultWordsIdList = wordsidList.filter(word => 
             !correctList.some(correct => correct.words_id === word.words_id));
 
         const result = resultWordsIdList.map(word => word.words_id);
-        console.log(result);
+        // console.log(result);
         // 그 중 랜덤으로 하나 뽑아내기
         const quizWordsId = randomSelectService(result);
         let [quiz] = await db.query(getRandomQuizSql, quizWordsId);
 
-        quiz[0].quizbook = quizbookLevel[0].quizbook
+        if (quiz.length === 0) {
+            return [];
+        }
 
-        console.log(quiz);
+        quiz[0].quizbook = quizbookLevel[0].quizbook
         db.release();
+        console.log(quiz);
         return quiz;
     } catch ( error ) {
         return error;
