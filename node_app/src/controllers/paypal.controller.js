@@ -118,8 +118,6 @@ export const paypalCheckoutSuccess = async (req, res) => {
 
         // HTML 응답을 클라이언트에게 전송
         return res.send(htmlResponse);
-        // return res.send(response(status.SUCCESS, addPointData, '결제가 완료되었습니다. Quizmy로 돌아가주세요'));
-        // return res.send(response(status.SUCCESS, successMessage));
     } catch (error) {
         console.log(error);
         return res.send(response(status.BAD_REQUEST, error));
