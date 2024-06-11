@@ -132,11 +132,11 @@ export const updateWeeklyPercent = async (req, res) => {
     }
 }
 
-/*scheduler.scheduleJob('0 0 * * *', function() {
+scheduler.scheduleJob('0 0 * * *', function() {
     console.log('유저 정보 갱신');
     mypageDao.updateUserData();
 });
-*/
+
 
 // 퀴즈 포인트 -> todaypoint, point 둘 다 적재
 // 투데이포인트 300 되면 적재 그만하기
