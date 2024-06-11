@@ -9,7 +9,7 @@ export const getRandomWordDao = async (user_id) => {
     try {
         const db = await pool.getConnection();
         // 사용자의 퀴즈북 레벨을 조회
-        const [quizbookLevel] = await db.query(getUserWorkbookLevelSql, [user_id]);
+        const [quizbookLevel] = await db.query(getUserWorkbookLevelSql, [user_id]); 
         // wordsList == 사용자 퀴즈북 레벨보다 같거나 낮은 단어 id 리스트
         const [wordsidList] = await db.query(getQuizWordsIdSql, quizbookLevel[0].quizbook); // 사용자의 퀴즈레벨 이하의 모든 퀴즈들을 조회
         //  correctList == 사용자가 맞춘 단어 리스트
@@ -24,12 +24,12 @@ export const getRandomWordDao = async (user_id) => {
         // console.log(result);
         // 그 중 랜덤으로 하나 뽑아내기
         const quizWordsId = randomSelectService(result);
-        let [quiz] = await db.query(getRandomQuizSql, quizWordsId);
 
-        if (quiz.length === 0) {
+        if (!quizWordsId) {
             return [];
         }
-
+        
+        let [quiz] = await db.query(getRandomQuizSql, quizWordsId);
         quiz[0].quizbook = quizbookLevel[0].quizbook
         db.release();
         console.log(quiz);
