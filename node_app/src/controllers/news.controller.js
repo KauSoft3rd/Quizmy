@@ -175,10 +175,22 @@ export const getHeadlineNews = async (req, res, next) => {
     try {
         const user_id = req.user_id;
         const bookmarkList = await getBookmarkNewsDBDao(user_id); // 사용자의 스크랩 리스트를 조회
+        // console.log("아래는 사용자의 북마크 리스트");
+        // console.log(bookmarkList);
         const headline = await getHeadlineNewsDao(); // DB에 저장된 크롤링 뉴스를 조회
+        // console.log("아래는 헤드라인 뉴스 링크");
+        // console.log(headline);
         const nowDate = new Date();
         let chk = false;
-        if (bookmarkList.includes(headline[0].newsLink)) chk = true;
+        // if (bookmarkList.includes(headline[0].newsLink)) chk = true;
+        bookmarkList.forEach(bookmark => {
+            if (decodeURIComponent(bookmark.link) === decodeURIComponent(headline[0].newsLink)) {
+                chk = true;
+            }
+        });
+
+        // console.log("스크랩 리스트를 확인한 결과");
+        // console.log(chk);
 
         const result = {
             title: headline[0].title,
