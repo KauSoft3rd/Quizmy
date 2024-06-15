@@ -189,9 +189,6 @@ export const getHeadlineNews = async (req, res, next) => {
             }
         });
 
-        // console.log("스크랩 리스트를 확인한 결과");
-        // console.log(chk);
-
         const result = {
             title: headline[0].title,
             company: headline[0].company,
