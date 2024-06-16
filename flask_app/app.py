@@ -55,7 +55,7 @@ def pred() :
 def task():
     newsList = getHeadlines()
     newsDBList = getNewsList()
-
+    print(newsDBList)
     result = []
 
     for item in newsList:

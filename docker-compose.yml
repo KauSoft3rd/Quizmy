@@ -8,6 +8,13 @@ services:
       - "${FPORT}:${FPORT}"
     environment:
       - PORT=${FPORT}
+      - NEWS_API_KEY=${NEWS_API_KEY}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=quizmy
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_TABLE=${DB_TABLE}
+      - DB_NAME=QuizmyDB
        
     networks:
       - app-network
