@@ -37,7 +37,7 @@ app = Flask(__name__)
 def home() :
     return 'This is home'
 
-@app.route('/pred', methods=['GET'])
+@app.route('/predtest', methods=['GET'])
 def pred() :
     newsList = getHeadlines()
     newsDBList = getNewsList()
@@ -55,7 +55,6 @@ def pred() :
 def task():
     newsList = getHeadlines()
     newsDBList = getNewsList()
-    print(newsDBList)
     result = []
 
     for item in newsList:

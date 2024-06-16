@@ -2,7 +2,6 @@ import requests
 import os
 
 def getHeadlines(country='kr'):
-    # api_key = 'f8f48014355e4d68b1c643401cf44e98'
     api_key = os.getenv('NEWS_API_KEY')
     if not api_key:
         raise ValueError("Please set the NEWS_API_KEY environment variable")
