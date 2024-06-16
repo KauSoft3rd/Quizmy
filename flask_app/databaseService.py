@@ -3,10 +3,6 @@ import os
 
 def getNewsList():
     mydb = mysql.connector.connect(
-        # host="quizmydb.cpiwaee4eftz.ap-northeast-2.rds.amazonaws.com",
-        # user="quizmy",
-        # password="eksrufthgkr2024!",
-        # database="QuizmyDB"
         host=os.getenv('DB_HOST'),
         user=os.getenv('DB_USER'),
         password=os.getenv('DB_PASSWORD'),
@@ -21,10 +17,10 @@ def getNewsList():
 
 def updateNewsList(newsList):
     mydb = mysql.connector.connect(
-        host="quizmydb.cpiwaee4eftz.ap-northeast-2.rds.amazonaws.com",
-        user="quizmy",
-        password="eksrufthgkr2024!",
-        database="QuizmyDB"
+        host=os.getenv('DB_HOST'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        database=os.getenv('DB_TABLE'),
     )
 
     query = 'INSERT INTO Crawling (title, company, newsLink, date, img) VALUES (%s, %s, %s, DATE_ADD(%s, INTERVAL 9 HOUR), %s)'
